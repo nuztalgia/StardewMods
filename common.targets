@@ -3,7 +3,7 @@
   <!-- common build settings -->
   <PropertyGroup>
     <Authors>Nuztalgia</Authors>
-    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RepositoryUrl>https://github.com/nuztalgia/StardewMods</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
