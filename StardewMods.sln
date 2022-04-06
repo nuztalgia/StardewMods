@@ -22,6 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSVCore", "DSVCore\DSVCore.
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.projitems*{71cf6d1f-55bf-4ebb-a1d4-f3418b176f75}*SharedItemsImports = 5
 		Common\Common.projitems*{78319fcd-1b61-4825-9763-66f56cef596a}*SharedItemsImports = 5
 		Common\Common.projitems*{d01808bc-bf83-4861-882b-7e792c3559e1}*SharedItemsImports = 13
 		Common\Common.projitems*{e527d160-c633-47fa-bde3-dae159acb4a3}*SharedItemsImports = 5

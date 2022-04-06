@@ -1,0 +1,20 @@
+{
+  "Name": "DSV Core",
+  "Author": "Nuztalgia",
+  "Version": "0.1.0",
+  "Description": "Experimenting with having all DSV options in one core mod.",
+  "UniqueID": "Nuztalgia.DSVCore",
+  "UpdateKeys": [],
+  "MinimumApiVersion": "3.13.0",
+  "EntryDll": "DSVCore.dll",
+  "Dependencies": [
+    {
+      "UniqueID": "Pathoschild.ContentPatcher",
+      "MinimumVersion": "1.25.0"
+    },
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    }
+  ]
+}
