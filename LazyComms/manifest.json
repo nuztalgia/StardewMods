@@ -1,14 +1,14 @@
 {
-  "Name": "Consolazy Comms",
+  "Name": "Lazy Comms",
   "Author": "Nuztalgia",
-  "Version": "0.1.0",
+  "Version": "1.0.0",
   "Description": "Too lazy to type out an ENTIRE console command? I gotchu fam.",
-  "UniqueID": "Nuztalgia.ConsolazyComms",
+  "UniqueID": "Nuztalgia.LazyComms",
   "UpdateKeys": [
     "Nexus:11549"
   ],
   "MinimumApiVersion": "3.13.0",
-  "EntryDll": "ConsolazyComms.dll",
+  "EntryDll": "LazyComms.dll",
   "Dependencies": [
     {
       "UniqueID": "SMAPI.ConsoleCommands",

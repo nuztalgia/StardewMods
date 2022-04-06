@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{D6BAE668-1
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = ".Common", "Common\.Common.shproj", "{D01808BC-BF83-4861-882B-7E792C3559E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsolazyComms", "ConsolazyComms\ConsolazyComms.csproj", "{78319FCD-1B61-4825-9763-66F56CEF596A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LazyComms", "LazyComms\LazyComms.csproj", "{78319FCD-1B61-4825-9763-66F56CEF596A}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

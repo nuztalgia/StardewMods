@@ -1,0 +1,27 @@
+{
+  // Default console commands (https://stardewvalleywiki.com/Modding:Console_commands)
+  "d": "debug",
+  "dg": "debug dialogue",
+  "ei": "debug ebi",
+  "ha": "hurry_all",
+  "p": "debug pausetime",
+  "s": "debug season",
+  "sm": "debug seenmail",
+  "w": "debug where",
+  "wc": "debug wctm",
+
+  // Content Patcher commands (https://github.com/Pathoschild/StardewMods/blob/develop/ContentPatcher/docs/author-guide/troubleshooting.md)
+  "da": "patch dump applied",
+  "do": "patch dump order",
+  "e": "patch export",
+  "i": "patch invalidate",
+  "pp": "patch parse",
+  "ps": "patch summary",
+  "pu": "patch update",
+  "r": "patch reload",
+
+  // Some examples of personal custom command aliases
+  "bk": "ei 2120303", // Trigger the Bear's Knowledge event
+  "co": "Nuztalgia.CoopOptions.CP", // ID for a CP pack to allow shorthand like 'r co'
+  "pfs": "pp \"{{AllCoops_FlowerSeason}}\" co", // Quickly parse specific tokens
+}
