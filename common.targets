@@ -18,6 +18,7 @@
   <!-- mod build package -->
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.0" />
+    <None Include="../LICENSE.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
