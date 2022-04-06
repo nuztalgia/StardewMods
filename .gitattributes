@@ -1,4 +1,2 @@
 # always normalize line endings
 * text=auto
-# don't mark comments as invalid syntax
-*.json linguist-language=JSON5
