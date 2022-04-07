@@ -16,7 +16,7 @@
   "settings.installed-packs.title": "Installed Content Packs:",
   "settings.installed-packs.description": "Click on any of these links to change your settings for specific packs.",
   "settings.installed-packs.none": "None. You should head on over to ModDrop and get some!",
-  "settings.missing-packs.title": "Missing Content Packs:",
-  "settings.missing-packs.description": "All of these packs are available on ModDrop. Just search for \"DSV\"!",
-  "settings.missing-packs.none": "You've got all of them! Thank you for supporting DSV <"
+  "settings.other-packs.title": "Other Content Packs:",
+  "settings.other-packs.description": "All of these packs are available on ModDrop. Just search for \"DSV\"!",
+  "settings.other-packs.none": "You've got all of them! Thank you for supporting DSV <"
 }
