@@ -12,8 +12,12 @@ public class ModEntry : Mod {
     I18n.Init(helper.Translation);
 
     helper.Events.GameLoop.GameLaunched += (object? sender, GameLaunchedEventArgs e) => {
-      new MenuRegistry(helper.ModRegistry, this.ModManifest).InitializeMenus();
-      new TokenRegistry(helper.ModRegistry, this.ModManifest).InitializeTokens();
+      bool contentPatcherSuccess = new ContentPatcherIntegration().RegisterTokens();
+      if (contentPatcherSuccess) {
+        new GenericModConfigMenuIntegration().SetUpConfigMenu(helper.WriteConfig);
+      } else {
+        Log.Warn("Something went wrong while registering CP tokens. Skipping GMCM setup.");
+      }
     };
   }
 }
