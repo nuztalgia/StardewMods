@@ -10,5 +10,13 @@
   "pack.sam-vincent-jodi-kent.name": "Sam, Vincent, Jodi & Kent",
   "pack.sebastian-maru-robin-demetrius.name": "Sebastian, Maru, Robin & Demetrius",
   "pack.shane-jas-marnie.name": "Shane, Jas & Marnie",
-  "pack.willy-clint-linus.name": "Willy, Clint & Linus"
+  "pack.willy-clint-linus.name": "Willy, Clint & Linus",
+  "settings.intro.title": "Welcome to Diverse Stardew Valley!",
+  "settings.intro.description": "Your selections here will be applied to all DSV content packs that you have installed. Visit the DSV website for more info: https://diversestardewvalley.weebly.com/list-of-options.html",
+  "settings.installed-packs.title": "Installed Content Packs:",
+  "settings.installed-packs.description": "Click on any of these links to change your settings for specific packs.",
+  "settings.installed-packs.none": "None. You should head on over to ModDrop and get some!",
+  "settings.missing-packs.title": "Missing Content Packs:",
+  "settings.missing-packs.description": "All of these packs are available on ModDrop. Just search for \"DSV\"!",
+  "settings.missing-packs.none": "You've got all of them! Thank you for supporting DSV <"
 }

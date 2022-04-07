@@ -31,6 +31,10 @@ internal abstract class BaseContentPackOptions {
     return (fieldInfo?.GetValue(null) is string key) ? I18n.GetByKey(key) : "???";
   }
 
+  internal string GetPageId() {
+    return this.ContentPackName;
+  }
+
   internal bool IsContentPackLoaded() {
     return Globals.ModRegistry.IsLoaded(this.ContentPackId);
   }
