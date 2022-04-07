@@ -163,7 +163,8 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
         name: () => name,
         allowedValues: Enum.GetNames(propertyInfo.PropertyType),
         getValue: () => propertyInfo.GetValue(optionsContainer)?.ToString() ?? "",
-        setValue: value => propertyInfo.SetValue(optionsContainer, value)
+        setValue: value => propertyInfo.SetValue(optionsContainer,
+                                                 Enum.Parse(propertyInfo.PropertyType, value))
     );
     return this;
   }
