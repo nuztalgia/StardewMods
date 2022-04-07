@@ -12,8 +12,10 @@ public class ModEntry : Mod {
     I18n.Init(helper.Translation);
 
     helper.Events.GameLoop.GameLaunched += (object? sender, GameLaunchedEventArgs e) => {
+      Log.Trace("Initializing Content Patcher integration.");
       bool contentPatcherSuccess = new ContentPatcherIntegration().RegisterTokens();
       if (contentPatcherSuccess) {
+        Log.Trace("Initializing Generic Mod Config Menu integration.");
         new GenericModConfigMenuIntegration().SetUpConfigMenu(helper.WriteConfig);
       } else {
         Log.Warn("Something went wrong while registering CP tokens. Skipping GMCM setup.");

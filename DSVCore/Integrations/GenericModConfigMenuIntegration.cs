@@ -51,6 +51,7 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
                       : I18n.Settings_InstalledPacks_None);
 
     foreach (BaseContentPackOptions options in availableOptions) {
+      Log.Trace($"'{options.GetDisplayName()}' pack is installed. Adding config menu.");
       this.AddPageLink(options.GetPageId(), $" > {options.GetDisplayName()}");
     }
 
@@ -61,11 +62,13 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
                       : I18n.Settings_OtherPacks_None);
 
     foreach (BaseContentPackOptions options in unavailableOptions) {
+      Log.Trace($"'{options.GetDisplayName()}' pack is *NOT* installed.");
       this.AddSectionTitle(() => $" * {options.GetDisplayName()}");
     }
   }
 
   private void SetUpOptionsPage(BaseContentPackOptions options) {
+    Log.Verbose($"Current config options for {options.GetDisplayName()}: {options}");
     this.AddPage(options.GetPageId(), options.GetDisplayName());
     // TODO: Actually add options to each page.
   }
