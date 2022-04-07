@@ -1,6 +1,6 @@
 namespace Nuztalgia.StardewMods.DSVCore;
 
-internal class AlexEvelynGeorgeOptions {
+internal class AlexEvelynGeorgeOptions : BaseContentPackOptions {
 
   internal class LocalOptions {
     internal enum FamilyVariant {

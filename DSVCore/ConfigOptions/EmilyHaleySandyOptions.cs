@@ -1,6 +1,6 @@
 namespace Nuztalgia.StardewMods.DSVCore;
 
-internal class EmilyHaleySandyOptions {
+internal class EmilyHaleySandyOptions : BaseContentPackOptions {
 
   internal class LocalOptions {
     internal enum FamilyVariant {

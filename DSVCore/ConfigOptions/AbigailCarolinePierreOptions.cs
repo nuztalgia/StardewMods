@@ -1,6 +1,6 @@
 namespace Nuztalgia.StardewMods.DSVCore;
 
-internal class AbigailCarolinePierreOptions {
+internal class AbigailCarolinePierreOptions : BaseContentPackOptions {
 
   internal class LocalOptions {
     internal enum AbigailVariant {

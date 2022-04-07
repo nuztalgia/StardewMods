@@ -1,6 +1,6 @@
 namespace Nuztalgia.StardewMods.DSVCore;
 
-internal class HarveyGusLewisOptions {
+internal class HarveyGusLewisOptions : BaseContentPackOptions {
 
   internal class LocalOptions {
     internal enum HarveyVariant {
