@@ -10,7 +10,7 @@ internal class HarveyGusLewisOptions : BaseContentPackOptions {
       Off
     }
 
-    internal enum HarveyCharacterMustache {
+    internal enum HarveySpriteMustache {
       Mustache,
       NoMustache
     }
@@ -23,8 +23,8 @@ internal class HarveyGusLewisOptions : BaseContentPackOptions {
         GlobalOptions.StandardLightweightConfig.Full;
     public bool PlatonicNpc { get; set; } = false;
     public GlobalOptions.Pyjamas Pyjamas { get; set; } = GlobalOptions.Pyjamas.True;
-    public LocalOptions.HarveyCharacterMustache CharacterMustache { get; set; } =
-        LocalOptions.HarveyCharacterMustache.NoMustache;
+    public LocalOptions.HarveySpriteMustache SpriteMustache { get; set; } =
+        LocalOptions.HarveySpriteMustache.NoMustache;
     public int WeddingOutfit { get; set; } = 1;
     public bool MermaidPendant { get; set; } = true;
     public bool GiftTastesChange { get; set; } = true;
@@ -35,6 +35,7 @@ internal class HarveyGusLewisOptions : BaseContentPackOptions {
         GlobalOptions.StandardVariant.Vanilla;
     public GlobalOptions.StandardLightweightConfig LightweightConfig { get; set; } =
         GlobalOptions.StandardLightweightConfig.Full;
+    public bool MermaidPendant { get; set; } = true;
     public bool LookingForLove { get; set; } = false;
   }
 
@@ -43,6 +44,7 @@ internal class HarveyGusLewisOptions : BaseContentPackOptions {
         GlobalOptions.StandardVariant.Vanilla;
     public GlobalOptions.StandardLightweightConfig LightweightConfig { get; set; } =
         GlobalOptions.StandardLightweightConfig.Full;
+    public bool MermaidPendant { get; set; } = true;
     public bool LookingForLove { get; set; } = false;
   }
 
