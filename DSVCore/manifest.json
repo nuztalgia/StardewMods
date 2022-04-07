@@ -1,9 +1,9 @@
 {
   "Name": "Diverse SDV",
-  "Author": "Nuztalgia",
-  "Version": "0.1.0",
-  "Description": "Experimenting with having all DSV options in one core mod.",
-  "UniqueID": "Nuztalgia.DSVCore",
+  "Author": "DSV Team",
+  "Version": "0.2.0",
+  "Description": "IDK WHAT TO PUT IN HERE!!! PLS SEND HELP",
+  "UniqueID": "DSVTeam.DSVCore",
   "UpdateKeys": [],
   "MinimumApiVersion": "3.13.0",
   "EntryDll": "DSVCore.dll",
