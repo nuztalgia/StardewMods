@@ -1,6 +1,6 @@
 namespace Nuztalgia.StardewMods.DSVCore;
 
-internal class GlobalOptions {
+internal static class GlobalOptions {
 
   internal enum StandardVariant {
     Vanilla,
