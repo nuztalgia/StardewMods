@@ -10,6 +10,9 @@ internal class ModConfig {
   public LeahElliottOptions LeahElliott { get; set; } = new();
   public MarlonGuntherMorrisOptions MarlonGuntherMorris { get; set; } = new();
   public PennyPamOptions PennyPam { get; set; } = new();
+  public SamVincentJodiKentOptions SamVincentJodiKent { get; set; } = new();
+  public SebastianMaruRobinDemetriusOptions SebastianMaruRobinDemetrius { get; set; } = new();
+  public ShaneJasMarnieOptions ShaneJasMarnie { get; set; } = new();
+  public WillyClintLinusOptions WillyClintLinus { get; set; } = new();
 
-  // TODO: Add all of the other packs.
 }
