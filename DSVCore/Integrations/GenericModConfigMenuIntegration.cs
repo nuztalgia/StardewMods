@@ -52,7 +52,7 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
 
     foreach (BaseContentPackOptions options in availableOptions) {
       Log.Trace($"'{options.GetDisplayName()}' pack is installed. Adding config menu.");
-      this.AddPageLink(options.GetPageId(), $" > {options.GetDisplayName()}");
+      this.AddPageLink(options.Name, $" > {options.GetDisplayName()}");
     }
 
     this.AddSpacing()
@@ -68,9 +68,44 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
   }
 
   private void SetUpOptionsPage(BaseContentPackOptions options) {
-    Log.Verbose($"Current config options for {options.GetDisplayName()}: {options}");
-    this.AddPage(options.GetPageId(), options.GetDisplayName());
-    // TODO: Actually add options to each page.
+    this.AddPage(options.Name, options.GetDisplayName());
+    foreach (PropertyInfo? propertyInfo in options.GetType().GetProperties()) {
+      if (propertyInfo?.GetValue(options) is BaseOptions character) {
+        this.AddSectionTitle(() => character.Name)
+            .AddCharacterOptions(character)
+            .AddSpacing();
+      } else {
+        Type? type = propertyInfo?.PropertyType;
+        Log.Warn($"Unexpected type '{type}' for property '{propertyInfo?.Name}'.");
+      }
+    }
+  }
+
+  private GenericModConfigMenuIntegration AddCharacterOptions(BaseOptions character) {
+    Log.Verbose($"Current config options for {character.Name}: {character}");
+    foreach (PropertyInfo? propertyInfo in character.GetType().GetProperties()) {
+      string propertyName = Globals.GetI18nString($"Settings_{propertyInfo.Name}_Name");
+      switch (propertyInfo.GetValue(character)) {
+        case Enum:
+          this.AddEnumOption(propertyName, propertyInfo, character);
+          break;
+        case bool:
+          this.AddBoolOption(propertyName, propertyInfo, character);
+          break;
+        case int:
+          // TODO: Set maximum value properly.
+          this.AddIntOption(propertyName, propertyInfo, character, max: 5);
+          break;
+        case string:
+          // TODO: Figure out whether string options will actually end up being used.
+          break;
+        default:
+          Type type = propertyInfo.PropertyType;
+          Log.Warn($"Unexpected type '{type}' for property '{propertyInfo.Name}'.");
+          break;
+      }
+    }
+    return this;
   }
 
   private GenericModConfigMenuIntegration AddSpacing() {
@@ -94,6 +129,42 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
 
   private GenericModConfigMenuIntegration AddPageLink(string pageId, string text) {
     this.Api!.AddPageLink(Globals.Manifest, pageId, () => text);
+    return this;
+  }
+
+  private GenericModConfigMenuIntegration AddBoolOption(
+      string name, PropertyInfo propertyInfo, BaseOptions optionsContainer) {
+    this.Api!.AddBoolOption(
+        mod: Globals.Manifest,
+        name: () => name,
+        getValue: () => ((bool?) propertyInfo.GetValue(optionsContainer)) ?? false,
+        setValue: value => propertyInfo.SetValue(optionsContainer, value)
+    );
+    return this;
+  }
+
+  private GenericModConfigMenuIntegration AddIntOption(
+      string name, PropertyInfo propertyInfo, BaseOptions optionsContainer, int? max = null) {
+    this.Api!.AddNumberOption(
+        mod: Globals.Manifest,
+        name: () => name,
+        min: 1,
+        max: max,
+        getValue: () => ((int?) propertyInfo.GetValue(optionsContainer)) ?? 1,
+        setValue: value => propertyInfo.SetValue(optionsContainer, value)
+    );
+    return this;
+  }
+
+  private GenericModConfigMenuIntegration AddEnumOption(
+      string name, PropertyInfo propertyInfo, BaseOptions optionsContainer) {
+    this.Api!.AddTextOption(
+        mod: Globals.Manifest,
+        name: () => name,
+        allowedValues: Enum.GetNames(propertyInfo.PropertyType),
+        getValue: () => propertyInfo.GetValue(optionsContainer)?.ToString() ?? "",
+        setValue: value => propertyInfo.SetValue(optionsContainer, value)
+    );
     return this;
   }
 }

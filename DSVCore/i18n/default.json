@@ -18,5 +18,20 @@
   "settings.installed-packs.none": "None. You should head on over to ModDrop and get some!",
   "settings.other-packs.title": "Other Content Packs:",
   "settings.other-packs.description": "All of these packs are available on ModDrop. Just search for \"DSV\"!",
-  "settings.other-packs.none": "You've got all of them! Thank you for supporting DSV <"
+  "settings.other-packs.none": "You've got all of them! Thank you for supporting DSV <",
+  "settings.variant.name": "Variant",
+  "settings.lightweight-config.name": "Lightweight Config",
+  "settings.platonic-npc.name": "Platonic NPC",
+  "settings.pyjamas.name": "Pyjamas",
+  "settings.wedding-outfit.name": "Wedding Outfit",
+  "settings.mermaid-pendant.name": "Mermaid Pendant",
+  "settings.maternity-sprites.name": "Maternity Sprites",
+  "settings.tattoos.name": "Tattoos",
+  "settings.accessories.name": "Accessories",
+  "settings.beard.name": "Beard",
+  "settings.gift-tastes-change.name": "Gift Tastes Change",
+  "settings.looking-for-love.name": "Looking for Love",
+  "settings.bert.name": "Bert",
+  "settings.trinnie.name": "Trinnie",
+  "settings.lenny.name": "Lenny"
 }
