@@ -24,84 +24,92 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
         reset: () => Globals.UpdateActiveConfig(this, new ModConfig()),
         save: () => writeConfig(Globals.Config)
     );
+    this.Api.OnFieldChanged(Globals.Manifest, this.OnFieldChanged);
 
-    List<BaseContentPackOptions> availableOptions = new();
-    List<BaseContentPackOptions> unavailableOptions = new();
+    List<BaseContentPackOptions> installedPacks = new();
+    List<BaseContentPackOptions> otherPacks = new();
 
-    foreach (PropertyInfo? propertyInfo in Globals.Config.GetType().GetProperties()) {
-      if (propertyInfo?.GetValue(Globals.Config) is BaseContentPackOptions options) {
-        (options.IsContentPackLoaded() ? availableOptions : unavailableOptions).Add(options);
+    foreach (PropertyInfo property in Globals.Config.GetType().GetProperties()) {
+      if (property.GetValue(Globals.Config) is BaseContentPackOptions contentPack) {
+        (contentPack.IsContentPackLoaded() ? installedPacks : otherPacks).Add(contentPack);
       }
     }
 
-    this.SetUpMainPage(availableOptions, unavailableOptions);
+    this.SetUpMainPage(installedPacks, otherPacks);
 
-    foreach (BaseContentPackOptions options in availableOptions) {
-      this.SetUpOptionsPage(options);
+    foreach (BaseContentPackOptions contentPack in installedPacks) {
+      this.SetUpContentPackPage(contentPack);
     }
   }
 
-  private void SetUpMainPage(IEnumerable<BaseContentPackOptions> availableOptions,
-                             IEnumerable<BaseContentPackOptions> unavailableOptions) {
+  private void OnFieldChanged(string fieldId, object newValue) {
+    Log.Trace($"Field '{fieldId}' was changed to: '{newValue}'.");
+    // TODO: Handle field changes somehow.
+  }
+
+  private void SetUpMainPage(IEnumerable<BaseContentPackOptions> installedPacks,
+                             IEnumerable<BaseContentPackOptions> otherPacks) {
     this.AddSectionTitle(I18n.Settings_Intro_Title)
         .AddParagraph(I18n.Settings_Intro_Description)
         .AddSectionTitle(I18n.Settings_InstalledPacks_Title)
-        .AddParagraph(availableOptions.Any()
+        .AddParagraph(installedPacks.Any()
                       ? I18n.Settings_InstalledPacks_Description
                       : I18n.Settings_InstalledPacks_None);
 
-    foreach (BaseContentPackOptions options in availableOptions) {
-      Log.Trace($"'{options.GetDisplayName()}' pack is installed. Adding config menu.");
-      this.AddPageLink(options.Name, $" > {options.GetDisplayName()}");
+    foreach (BaseContentPackOptions contentPack in installedPacks) {
+      Log.Trace($"'{contentPack.GetDisplayName()}' pack is installed. Adding config menu.");
+      this.AddPageLink(contentPack.Name, $" > {contentPack.GetDisplayName()}");
     }
 
     this.AddSpacing()
         .AddSectionTitle(I18n.Settings_OtherPacks_Title)
-        .AddParagraph(unavailableOptions.Any()
+        .AddParagraph(otherPacks.Any()
                       ? I18n.Settings_OtherPacks_Description
                       : I18n.Settings_OtherPacks_None);
 
-    foreach (BaseContentPackOptions options in unavailableOptions) {
-      Log.Trace($"'{options.GetDisplayName()}' pack is *NOT* installed.");
-      this.AddSectionTitle(() => $" * {options.GetDisplayName()}");
+    foreach (BaseContentPackOptions contentPack in otherPacks) {
+      Log.Trace($"'{contentPack.GetDisplayName()}' pack is *NOT* installed.");
+      this.AddSectionTitle(() => $" * {contentPack.GetDisplayName()}");
     }
   }
 
-  private void SetUpOptionsPage(BaseContentPackOptions options) {
-    this.AddPage(options.Name, options.GetDisplayName());
-    foreach (PropertyInfo? propertyInfo in options.GetType().GetProperties()) {
-      if (propertyInfo?.GetValue(options) is BaseOptions character) {
+  private void SetUpContentPackPage(BaseContentPackOptions contentPack) {
+    this.AddPage(contentPack.Name, contentPack.GetDisplayName());
+    foreach (PropertyInfo property in contentPack.GetType().GetProperties()) {
+      if (property.GetValue(contentPack) is BaseOptions character) {
         this.AddSectionTitle(() => character.Name)
             .AddCharacterOptions(character)
             .AddSpacing();
       } else {
-        Type? type = propertyInfo?.PropertyType;
-        Log.Warn($"Unexpected type '{type}' for property '{propertyInfo?.Name}'.");
+        Log.Error($"Invalid type '{property.PropertyType}' for property '{property.Name}'.");
       }
     }
   }
 
   private GenericModConfigMenuIntegration AddCharacterOptions(BaseOptions character) {
-    Log.Verbose($"Current config options for {character.Name}: {character}");
-    foreach (PropertyInfo? propertyInfo in character.GetType().GetProperties()) {
-      string propertyName = Globals.GetI18nString($"Settings_{propertyInfo.Name}_Name");
-      switch (propertyInfo.GetValue(character)) {
+    foreach (PropertyInfo property in character.GetType().GetProperties()) {
+      // TODO: Support other string namespaces instead of hardcoding it like this.
+      string optionName = Globals.GetI18nString($"Settings_{property.Name}_Name");
+      string fieldId = $"{character.Name}_{property.Name}";
+      object? propertyValue = property.GetValue(character);
+      Log.Verbose($"Option: {fieldId,-28}|  Value: {propertyValue}");
+
+      switch (propertyValue) {
         case Enum:
-          this.AddEnumOption(propertyName, propertyInfo, character);
+          this.AddEnumOption(fieldId, optionName, property, character);
           break;
         case bool:
-          this.AddBoolOption(propertyName, propertyInfo, character);
+          this.AddBoolOption(fieldId, optionName, property, character);
           break;
         case int:
-          // TODO: Set maximum value properly.
-          this.AddIntOption(propertyName, propertyInfo, character, max: 5);
+          // TODO: Set minimum and maximum values properly.
+          this.AddIntOption(fieldId, optionName, property, character, min: 1, max: 5);
           break;
         case string:
           // TODO: Figure out whether string options will actually end up being used.
-          break;
+          // For now, just fall through and log an error.
         default:
-          Type type = propertyInfo.PropertyType;
-          Log.Warn($"Unexpected type '{type}' for property '{propertyInfo.Name}'.");
+          Log.Error($"Unexpected type '{property.PropertyType}' for property '{property.Name}'.");
           break;
       }
     }
@@ -109,16 +117,16 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
   }
 
   private GenericModConfigMenuIntegration AddSpacing() {
-    return this.AddSectionTitle(() => "");
-  }
-
-  private GenericModConfigMenuIntegration AddSectionTitle(Func<string> text) {
-    this.Api!.AddSectionTitle(Globals.Manifest, text);
-    return this;
+    return this.AddSectionTitle(() => string.Empty);
   }
 
   private GenericModConfigMenuIntegration AddParagraph(Func<string> text) {
     this.Api!.AddParagraph(Globals.Manifest, text);
+    return this;
+  }
+
+  private GenericModConfigMenuIntegration AddSectionTitle(Func<string> text) {
+    this.Api!.AddSectionTitle(Globals.Manifest, text);
     return this;
   }
 
@@ -132,39 +140,42 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     return this;
   }
 
+  private GenericModConfigMenuIntegration AddEnumOption(
+      string fieldId, string name, PropertyInfo property, object container) {
+    this.Api!.AddTextOption(
+        mod: Globals.Manifest,
+        fieldId: fieldId,
+        name: () => name,
+        getValue: () => property.GetValue(container)?.ToString() ?? string.Empty,
+        setValue: value => property.SetValue(container, Enum.Parse(property.PropertyType, value)),
+        allowedValues: Enum.GetNames(property.PropertyType)
+    );
+    return this;
+  }
+
   private GenericModConfigMenuIntegration AddBoolOption(
-      string name, PropertyInfo propertyInfo, BaseOptions optionsContainer) {
+      string fieldId, string name, PropertyInfo property, object container) {
     this.Api!.AddBoolOption(
         mod: Globals.Manifest,
+        fieldId: fieldId,
         name: () => name,
-        getValue: () => ((bool?) propertyInfo.GetValue(optionsContainer)) ?? false,
-        setValue: value => propertyInfo.SetValue(optionsContainer, value)
+        getValue: () => ((bool?) property.GetValue(container)) ?? false,
+        setValue: value => property.SetValue(container, value)
     );
     return this;
   }
 
   private GenericModConfigMenuIntegration AddIntOption(
-      string name, PropertyInfo propertyInfo, BaseOptions optionsContainer, int? max = null) {
+      string fieldId, string name, PropertyInfo property, object container,
+      int? min = null, int? max = null) {
     this.Api!.AddNumberOption(
         mod: Globals.Manifest,
+        fieldId: fieldId,
         name: () => name,
-        min: 1,
-        max: max,
-        getValue: () => ((int?) propertyInfo.GetValue(optionsContainer)) ?? 1,
-        setValue: value => propertyInfo.SetValue(optionsContainer, value)
-    );
-    return this;
-  }
-
-  private GenericModConfigMenuIntegration AddEnumOption(
-      string name, PropertyInfo propertyInfo, BaseOptions optionsContainer) {
-    this.Api!.AddTextOption(
-        mod: Globals.Manifest,
-        name: () => name,
-        allowedValues: Enum.GetNames(propertyInfo.PropertyType),
-        getValue: () => propertyInfo.GetValue(optionsContainer)?.ToString() ?? "",
-        setValue: value => propertyInfo.SetValue(optionsContainer,
-                                                 Enum.Parse(propertyInfo.PropertyType, value))
+        getValue: () => ((int?) property.GetValue(container)) ?? 0,
+        setValue: value => property.SetValue(container, value),
+        min: min,
+        max: max
     );
     return this;
   }
