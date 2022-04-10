@@ -8,6 +8,10 @@ internal sealed class AbigailCarolinePierre : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("AbigailSpanishWeddingDress") ? 6 : 5;
+      }
     }
 
     internal sealed class Caroline : BaseCharacterSection {

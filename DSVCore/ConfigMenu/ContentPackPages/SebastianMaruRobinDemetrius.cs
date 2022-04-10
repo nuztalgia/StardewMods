@@ -11,6 +11,10 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       public SebastianGlasses Glasses { get; set; } = SebastianGlasses.NoGlasses;
       public bool Helmet { get; set; } = true;
       public bool Piercings { get; set; } = false;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("SebastianDutchRomanianOrDutchVietnameseWeddingOutfits") ? 6 : 4;
+      }
     }
 
     internal sealed class Maru : BaseBachelorexSection {
@@ -20,6 +24,10 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       public int WeddingOutfit { get; set; } = 1;
       public bool Scrubs { get; set; } = true;
       public bool SpriteGlasses { get; set; } = false;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("MaruDutchXhosaWeddingDress") ? 6 : 5;
+      }
     }
 
     internal sealed class Robin : BaseCharacterSection {

@@ -9,6 +9,10 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
       public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public bool Tattoos { get; set; } = true;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("AlexJewishWeddingSuit") ? 6 : 5;
+      }
     }
 
     internal sealed class Evelyn : BaseCharacterSection {

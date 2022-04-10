@@ -13,6 +13,10 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
       public bool Stubble { get; set; } = false;
       public bool Piercings { get; set; } = false;
       public bool Binder { get; set; } = true;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("SamNorwegianWeddingSuit") ? 4 : 3;
+      }
     }
 
     internal sealed class Vincent : BaseCharacterSection {

@@ -8,6 +8,10 @@ internal sealed class LeahElliott : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("LeahPolishWeddingOutfits") ? 7 : 5;
+      }
     }
 
     internal sealed class Elliott : BaseBachelorexSection {
@@ -15,6 +19,10 @@ internal sealed class LeahElliott : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("ElliottScottishWeddingKilt") ? 6 : 5;
+      }
     }
   }
 

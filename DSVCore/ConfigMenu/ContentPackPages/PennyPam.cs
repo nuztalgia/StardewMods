@@ -8,6 +8,10 @@ internal sealed class PennyPam : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("PennyIrishWeddingDress") ? 6 : 5;
+      }
     }
 
     internal sealed class Pam : BaseCharacterSection {

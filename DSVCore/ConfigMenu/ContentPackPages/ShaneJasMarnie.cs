@@ -9,6 +9,10 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
       public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public ShaneSelfCare SelfCare { get; set; } = ShaneSelfCare.Dynamic;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("ShaneGeorgianWeddingSuit") ? 6 : 5;
+      }
     }
 
     internal sealed class Jas : BaseCharacterSection {

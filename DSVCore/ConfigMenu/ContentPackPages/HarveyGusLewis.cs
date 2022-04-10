@@ -10,6 +10,10 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
       public int WeddingOutfit { get; set; } = 1;
       public bool GiftTastesChange { get; set; } = true;
       public bool SpriteMustache { get; set; } = false;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("HarveyHungarianWeddingSuit") ? 5 : 4;
+      }
     }
 
     internal sealed class Gus : BaseCharacterSection {

@@ -22,7 +22,7 @@ internal abstract class BaseBachelorexSection : BaseCharacterSection {
 
   internal override int? GetMaxValue(PropertyInfo property) {
     return (property.Name == PropertyNameWeddingOutfit)
-            ? 5 // TODO: Properly implement this for each bachelorex, factoring in Elaho's mods.
+            ? this.GetNumberOfWeddingOutfits()
             : base.GetMaxValue(property);
   }
 
@@ -34,5 +34,11 @@ internal abstract class BaseBachelorexSection : BaseCharacterSection {
     } else {
       return base.GetTooltip(property);
     }
+  }
+
+  protected abstract int GetNumberOfWeddingOutfits();
+
+  protected static bool HasElahoMod(string modName) {
+    return Globals.ModRegistry.IsLoaded($"Elaho.{modName}");
   }
 }

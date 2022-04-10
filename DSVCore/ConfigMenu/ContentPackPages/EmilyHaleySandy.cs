@@ -9,6 +9,10 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public bool Tattoos { get; set; } = true;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("EmilyUkrainianWeddingDress") ? 7 : 6;
+      }
     }
 
     internal sealed class Haley : BaseBachelorexSection {
@@ -19,6 +23,10 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       public bool HairCuffs { get; set; } = false;
       public bool Piercings { get; set; } = false;
       public bool BlackCamera { get; set; } = false;
+
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("HaleyRussianWeddingDress") ? 7 : 6;
+      }
     }
 
     internal sealed class Sandy : BaseCharacterSection {
