@@ -1,9 +1,9 @@
 {
   "Name": "Diverse SDV",
   "Author": "DSV Team",
-  "Version": "0.2.0",
+  "Version": "0.3.0",
   "Description": "Core mod for Diverse Stardew Valley that manages config options.",
-  "UniqueID": "DSVTeam.DSVCore",
+  "UniqueID": "DSVTeam.DiverseSeasonalOutfits.Core",
   "UpdateKeys": [],
   "MinimumApiVersion": "3.13.0",
   "EntryDll": "DSVCore.dll",

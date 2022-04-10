@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
-internal abstract class BaseOptions {
+internal abstract class BaseMenuComponent {
 
   private static readonly JsonSerializerSettings JsonSettings = new() {
     Formatting = Formatting.Indented,
@@ -12,11 +12,15 @@ internal abstract class BaseOptions {
 
   internal readonly string Name;
 
-  protected BaseOptions() {
-    this.Name = this.GetType().Name.Replace("Options", "");
+  protected BaseMenuComponent() {
+    this.Name = this.GetType().Name;
   }
 
   public override string ToString() {
     return JsonConvert.SerializeObject(this, JsonSettings);
   }
+
+  internal abstract string GetDisplayName();
+
+  internal abstract bool IsAvailable();
 }
