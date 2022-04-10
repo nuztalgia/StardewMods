@@ -6,6 +6,7 @@ namespace Nuztalgia.StardewMods.DSVCore;
 internal sealed class CoreAndCompatPage : BaseMenuPage {
 
   public CoreOptionsSection CoreOptions { get; set; } = new();
+  public CompatSections.FlowerQueensCrown FlowerQueensCrown { get; set; } = new();
   public CompatSections.PlatonicPAF PlatonicPartnersAndFriendships { get; set; } = new();
   public CompatSections.LookingForLove LookingForLove { get; set; } = new();
 

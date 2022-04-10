@@ -44,11 +44,12 @@
   "option.tattoos": "Tattoos",
   "option.beard": "Beard",
 
-  // Option labels displayed exactly once in a specific character's section.
+  // Option labels displayed exactly once in a specific menu section.
   "option.alternate-cecily": "Alternate Cecily",
   "option.binder": "Binder",
   "option.black-camera": "Black Camera",
   "option.eye-color": "Eye Color",
+  "option.flower-queen": "Flower Queen",
   "option.glasses": "Glasses",
   "option.hair-cuffs": "Hair Cuffs",
   "option.hat-junimos": "Hat Junimos",
@@ -65,6 +66,7 @@
   "option.sprite-mustache": "Sprite Mustache",
   "option.sprite-smile": "Sprite Smile",
   "option.stubble": "Stubble",
+  "option.townspeople-only": "Townspeople Only",
 
   // Option labels and tooltips regarding compatibility with other mods.
   // The sequence "{0}" will be replaced by a specific character's name.
@@ -79,6 +81,10 @@
   "tooltip.immersion.simple": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features or a lightweight selection to reduce lag. See the DSV website for details.",
   "tooltip.pyjamas": "Toggles whether or not {0} will wear pyjamas in the morning and evening. If \"Marriage\" is selected, pyjamas will only be worn in the farmhouse after marriage. Can only be used if Immersion is set to \"Full\".",
   "tooltip.wedding-outfit": "Selects which wedding outfit {0} will wear when getting married. See the DSV website for images and details. Can only be used if Immersion is NOT set to \"Ultralight\".",
+
+  // Tooltips for the "Flower Queen's Crown" section on the "Core & Compatibility" page.
+  "tooltip.flower-queen": "Gives other NPCs a chance to be the Flower Queen during the Flower Dance. If \"Random\" is selected, one person will be chosen each year. If \"Everyone\" is selected, all eligible townspeople will wear Flower Queen crowns.",
+  "tooltip.townspeople-only": "Allows custom NPCs to be Flower Queen candidates as well. Enable this option if you only want the Pelican Town marriage candidates and children to be eligible.",
 
   // Tooltips displayed on the "Abigail, Caroline & Pierre" content pack page.
   "tooltip.abigail.variant": "The DSV version of Abigail is mixed Chinese-Filipino; her mother Caroline is Filipino, and her father Pierre is Chinese. Both her vanilla and modded variants can be either plus-sized or straight-sized.",

@@ -91,7 +91,11 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
 
     if (compatSections.Any()) {
       this.SetUpAvailableSections(compatSections);
-    } else {
+    }
+
+    // Show the placeholder if there are no compat mods or if the only one is Flower Queen's Crown.
+    if (!compatSections.Any() || ((compatSections.Count() == 1)
+                                  && (compatSections.First().Name == "FlowerQueensCrown"))) {
       this.AddSectionTitle(I18n.Compat_Placeholder_Title)
           .AddParagraph(I18n.Compat_Placeholder_Description);
     }
