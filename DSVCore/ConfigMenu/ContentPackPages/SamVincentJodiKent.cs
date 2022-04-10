@@ -6,7 +6,6 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
     internal sealed class Sam : BaseBachelorexSection {
       public SamVariant Variant { get; set; } = SamVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public SamEyeColor EyeColor { get; set; } = SamEyeColor.Default;
       public bool Beard { get; set; } = false;

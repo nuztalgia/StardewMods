@@ -12,6 +12,8 @@
   // Various text displayed on the "Core & Compatibility" page.
   "core.section.title": "Core Options",
   "core.section.description": "Your choices in this section will be applied to all supported characters from your installed DSV content packs.",
+  "option.pyjamas": "Pyjamas",
+  "tooltip.pyjamas": "Toggles whether or not the marriage candidates will wear pyjamas in the morning and evening. If \"Marriage\" is selected, pyjamas will only be worn by your spouse in the farmhouse after marriage. Only applies to specific characters when their Immersion is set to \"Full\".",
   "option.mermaid-pendants": "Mermaid Pendants",
   "tooltip.mermaid-pendants": "Toggles whether or not your spouse (or spouse-to-be) will wear a mermaid pendant after you get engaged or married. The pendant will be visible on their indoor outfit portraits in Spring, Summer and Fall. Only applies to specific characters when their Immersion is NOT set to \"Ultralight\".",
   "option.maternity-sprites": "Maternity Sprites",
@@ -37,7 +39,6 @@
   // Option labels displayed multiple times throughout the content pack menu pages.
   "option.variant": "Variant",
   "option.immersion": "Immersion",
-  "option.pyjamas": "Pyjamas",
   "option.wedding-outfit": "Wedding Outfit",
   "option.gift-tastes-change": "Gift Tastes Change",
   "option.piercings": "Piercings",
@@ -79,7 +80,6 @@
   // The sequence "{0}" will be replaced by a specific character's name.
   "tooltip.immersion.standard": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features, a lightweight selection to reduce lag, or an ultra-lightweight selection. See the DSV website for details.",
   "tooltip.immersion.simple": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features or a lightweight selection to reduce lag. See the DSV website for details.",
-  "tooltip.pyjamas": "Toggles whether or not {0} will wear pyjamas in the morning and evening. If \"Marriage\" is selected, pyjamas will only be worn in the farmhouse after marriage. Can only be used if Immersion is set to \"Full\".",
   "tooltip.wedding-outfit": "Selects which wedding outfit {0} will wear when getting married. See the DSV website for images and details. Can only be used if Immersion is NOT set to \"Ultralight\".",
 
   // Tooltips for the "Flower Queen's Crown" section on the "Core & Compatibility" page.

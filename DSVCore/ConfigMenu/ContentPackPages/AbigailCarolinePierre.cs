@@ -6,7 +6,6 @@ internal sealed class AbigailCarolinePierre : BaseContentPackPage {
     internal sealed class Abigail : BaseBachelorexSection {
       public AbigailVariant Variant { get; set; } = AbigailVariant.VanillaStraightSize;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
 
       protected override int GetNumberOfWeddingOutfits() {

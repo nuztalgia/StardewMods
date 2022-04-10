@@ -6,7 +6,6 @@ internal sealed class LeahElliott : BaseContentPackPage {
     internal sealed class Leah : BaseBachelorexSection {
       public LeahVariant Variant { get; set; } = LeahVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
 
       protected override int GetNumberOfWeddingOutfits() {
@@ -17,7 +16,6 @@ internal sealed class LeahElliott : BaseContentPackPage {
     internal sealed class Elliott : BaseBachelorexSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
 
       protected override int GetNumberOfWeddingOutfits() {

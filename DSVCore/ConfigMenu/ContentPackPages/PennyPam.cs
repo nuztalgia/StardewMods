@@ -6,7 +6,6 @@ internal sealed class PennyPam : BaseContentPackPage {
     internal sealed class Penny : BaseBachelorexSection {
       public PennyVariant Variant { get; set; } = PennyVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
 
       protected override int GetNumberOfWeddingOutfits() {

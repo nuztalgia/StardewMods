@@ -6,7 +6,6 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
     internal sealed class Sebastian : BaseBachelorexSection {
       public SebastianVariant Variant { get; set; } = SebastianVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public SebastianGlasses Glasses { get; set; } = SebastianGlasses.NoGlasses;
       public bool Helmet { get; set; } = true;
@@ -20,7 +19,6 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
     internal sealed class Maru : BaseBachelorexSection {
       public MaruVariant Variant { get; set; } = MaruVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public bool Scrubs { get; set; } = true;
       public bool SpriteGlasses { get; set; } = false;

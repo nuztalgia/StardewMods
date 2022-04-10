@@ -5,14 +5,7 @@ namespace Nuztalgia.StardewMods.DSVCore;
 // "Bachelorex" is a gender-neutral term for "Bachelor" or "Bachelorette".
 internal abstract class BaseBachelorexSection : BaseCharacterSection {
 
-  private const string PropertyNamePyjamas = "Pyjamas";
   private const string PropertyNameWeddingOutfit = "WeddingOutfit";
-
-  internal enum PyjamaHabits {
-    Pyjamas,
-    NoPyjamas,
-    Marriage
-  }
 
   internal override int? GetMinValue(PropertyInfo property) {
     return (property.Name == PropertyNameWeddingOutfit)
@@ -27,13 +20,9 @@ internal abstract class BaseBachelorexSection : BaseCharacterSection {
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
-    if (property.Name == PropertyNamePyjamas) {
-      return this.FormatCharacterString(I18n.Tooltip_Pyjamas);
-    } else if (property.Name == PropertyNameWeddingOutfit) {
-      return this.FormatCharacterString(I18n.Tooltip_WeddingOutfit);
-    } else {
-      return base.GetTooltip(property);
-    }
+    return (property.Name == PropertyNameWeddingOutfit)
+            ? this.FormatCharacterString(I18n.Tooltip_WeddingOutfit)
+            : base.GetTooltip(property);
   }
 
   protected abstract int GetNumberOfWeddingOutfits();

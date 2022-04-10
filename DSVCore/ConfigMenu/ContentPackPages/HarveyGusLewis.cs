@@ -6,7 +6,6 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
     internal sealed class Harvey : BaseBachelorexSection {
       public HarveyVariant Variant { get; set; } = HarveyVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public bool GiftTastesChange { get; set; } = true;
       public bool SpriteMustache { get; set; } = false;

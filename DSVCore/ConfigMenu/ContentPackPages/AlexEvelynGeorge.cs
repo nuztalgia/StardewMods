@@ -6,7 +6,6 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
     internal sealed class Alex : BaseBachelorexSection {
       public FamilyVariant Variant { get; set; } = FamilyVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public bool Tattoos { get; set; } = true;
 

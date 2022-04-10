@@ -6,7 +6,6 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
     internal sealed class Shane : BaseBachelorexSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
       public int WeddingOutfit { get; set; } = 1;
       public ShaneSelfCare SelfCare { get; set; } = ShaneSelfCare.Dynamic;
 

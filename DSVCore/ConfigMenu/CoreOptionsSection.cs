@@ -4,6 +4,13 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal sealed class CoreOptionsSection : BaseMenuSection {
 
+  internal enum PyjamaHabits {
+    Pyjamas,
+    NoPyjamas,
+    Marriage
+  }
+
+  public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
   public bool MermaidPendants { get; set; } = true;
   public bool MaternitySprites { get; set; } = false;
 
