@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
 internal abstract class RidgesideVillage : BaseCompatSection {
@@ -31,6 +34,10 @@ internal abstract class RidgesideVillage : BaseCompatSection {
   }
 
   internal RidgesideVillage() : base(ModId, ModName) { }
+
+  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+    // TODO: Implement.
+  }
 
   internal override string GetDisplayName() {
     return $"{ModName}: {this.Name}";

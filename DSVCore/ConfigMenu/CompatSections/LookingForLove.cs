@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
@@ -18,6 +20,10 @@ internal sealed class LookingForLove : BaseCompatSection {
   public bool Wizard { get; set; } = true;
 
   internal LookingForLove() : base(ModId, ModName) { }
+
+  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+    // TODO: Implement.
+  }
 
   protected override string? GetOptionName(PropertyInfo property) {
     return string.Format(I18n.Option_LookingForLove(), property.Name);

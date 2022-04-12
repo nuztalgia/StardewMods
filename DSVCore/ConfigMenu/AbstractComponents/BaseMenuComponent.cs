@@ -1,5 +1,8 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -19,6 +22,25 @@ internal abstract class BaseMenuComponent {
   public override string ToString() {
     return JsonConvert.SerializeObject(this, JsonSettings);
   }
+
+  protected static IEnumerable<string> WrapTokenValue(object? value) {
+    if ((value is int intValue) && (intValue < 0)) {
+      value = null; // Negativity is unacceptable.
+    }
+    return ((value?.ToString() is string stringValue) && (stringValue.Length > 0))
+            ? new[] { stringValue }
+            : Array.Empty<string>();
+  }
+
+  protected void AddTokenByProperty(Dictionary<string, Func<IEnumerable<string>>> tokenMap,
+      string propertyName, string? customPrefix = null, string? customSuffix = null) {
+    if (this.GetType().GetProperty(propertyName) is PropertyInfo property) {
+      string tokenName = (customPrefix ?? this.Name) + (customSuffix ?? propertyName);
+      tokenMap.Add(tokenName, () => WrapTokenValue(property.GetValue(this)));
+    }
+  }
+
+  internal abstract void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap);
 
   internal abstract string GetDisplayName();
 

@@ -113,7 +113,6 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
 
   private GenericModConfigMenuIntegration AddSectionOptions(BaseMenuSection section) {
     foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
-      Log.Verbose($"Option: {item.UniqueId, -25}|  Value: {item.Value}");
       string displayName = " >  " + item.Name;
       switch (item.Value) {
         case Enum:

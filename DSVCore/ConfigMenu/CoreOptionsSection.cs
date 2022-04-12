@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -13,6 +15,10 @@ internal sealed class CoreOptionsSection : BaseMenuSection {
   public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
   public bool MermaidPendants { get; set; } = true;
   public bool MaternitySprites { get; set; } = false;
+
+  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+    // TODO: Implement.
+  }
 
   internal override string GetDisplayName() {
     return I18n.Core_Section_Title();

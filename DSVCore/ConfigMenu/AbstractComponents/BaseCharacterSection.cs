@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -20,6 +21,10 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   internal enum SimpleImmersion {
     Full,
     Light
+  }
+
+  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+    // TODO: Implement.
   }
 
   internal override string GetDisplayName() {
