@@ -20,9 +20,9 @@ internal sealed class PennyPam : BaseContentPackPage {
   }
 
   internal enum PennyVariant {
-    MixedRace,
-    ModdedWhiteSmaller,
-    ModdedWhiteLarger,
+    Mixed,
+    ModdedAirynNotsnufffieSmall,
+    ModdedAirynNotsnufffieLarge,
     Vanilla,
     Off
   }

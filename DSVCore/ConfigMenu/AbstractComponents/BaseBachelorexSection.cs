@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -6,6 +8,12 @@ namespace Nuztalgia.StardewMods.DSVCore;
 internal abstract class BaseBachelorexSection : BaseCharacterSection {
 
   private const string PropertyNameWeddingOutfit = "WeddingOutfit";
+
+  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+    base.AddTokens(tokenMap);
+    this.AddTokenByProperty(tokenMap, PropertyNameWeddingOutfit,
+                            customPrefix: PropertyNameWeddingOutfit, customSuffix: this.Name);
+  }
 
   internal override int? GetMinValue(PropertyInfo property) {
     return (property.Name == PropertyNameWeddingOutfit)

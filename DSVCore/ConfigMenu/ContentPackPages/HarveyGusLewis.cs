@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class HarveyGusLewis : BaseContentPackPage {
@@ -9,6 +12,14 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
       public int WeddingOutfit { get; set; } = 1;
       public bool GiftTastesChange { get; set; } = true;
       public bool SpriteMustache { get; set; } = false;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(tokenMap, nameof(this.GiftTastesChange));
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.SpriteMustache), customSuffix: "CharacterMustache",
+            valueIfTrue: "Mustache", valueIfFalse: "NoMustache");
+      }
 
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("HarveyHungarianWeddingSuit") ? 5 : 4;

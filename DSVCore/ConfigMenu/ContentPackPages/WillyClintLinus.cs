@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class WillyClintLinus : BaseContentPackPage {
@@ -12,6 +15,12 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public bool Scar { get; set; } = false;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.Scar), valueIfTrue: "Scar", valueIfFalse: "NoScar");
+      }
     }
 
     internal sealed class Linus : BaseCharacterSection {

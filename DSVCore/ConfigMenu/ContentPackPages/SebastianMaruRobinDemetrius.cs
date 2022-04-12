@@ -40,8 +40,8 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
   }
 
   internal enum SebastianVariant {
-    ModdedBlackHair,
-    ModdedPurpleHair,
+    ModdedBlack,
+    ModdedPurple,
     Vanilla,
     Off
   }

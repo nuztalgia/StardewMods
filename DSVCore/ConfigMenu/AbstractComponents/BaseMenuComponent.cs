@@ -23,9 +23,13 @@ internal abstract class BaseMenuComponent {
     return JsonConvert.SerializeObject(this, JsonSettings);
   }
 
-  protected static IEnumerable<string> WrapTokenValue(object? value) {
+  protected static IEnumerable<string> WrapTokenValue(
+      object? value, string? valueIfTrue = null, string? valueIfFalse = null) {
     if ((value is int intValue) && (intValue < 0)) {
       value = null; // Negativity is unacceptable.
+    }
+    if (value is bool boolValue) {
+      value = boolValue ? (valueIfTrue ?? value) : (valueIfFalse ?? value);
     }
     return ((value?.ToString() is string stringValue) && (stringValue.Length > 0))
             ? new[] { stringValue }
@@ -33,10 +37,12 @@ internal abstract class BaseMenuComponent {
   }
 
   protected void AddTokenByProperty(Dictionary<string, Func<IEnumerable<string>>> tokenMap,
-      string propertyName, string? customPrefix = null, string? customSuffix = null) {
+      string propertyName, string? customPrefix = null, string? customSuffix = null,
+      string? valueIfTrue = null, string? valueIfFalse = null) {
     if (this.GetType().GetProperty(propertyName) is PropertyInfo property) {
       string tokenName = (customPrefix ?? this.Name) + (customSuffix ?? propertyName);
-      tokenMap.Add(tokenName, () => WrapTokenValue(property.GetValue(this)));
+      tokenMap.Add(tokenName,
+                   () => WrapTokenValue(property.GetValue(this), valueIfTrue, valueIfFalse));
     }
   }
 
