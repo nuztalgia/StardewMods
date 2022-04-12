@@ -24,7 +24,8 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   }
 
   internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    // TODO: Implement.
+    this.AddTokenByProperty(tokenMap, "Variant");
+    this.AddTokenByProperty(tokenMap, "Immersion", customSuffix: "LightweightConfig");
   }
 
   internal override string GetDisplayName() {

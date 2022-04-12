@@ -36,7 +36,8 @@ internal abstract class RidgesideVillage : BaseCompatSection {
   internal RidgesideVillage() : base(ModId, ModName) { }
 
   internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    // TODO: Implement.
+    this.AddTokenByProperty(
+        tokenMap, "Variant", customPrefix: "RidgesideVillage", customSuffix: this.Name);
   }
 
   internal override string GetDisplayName() {

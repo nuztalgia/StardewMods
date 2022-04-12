@@ -17,7 +17,17 @@ internal sealed class CoreOptionsSection : BaseMenuSection {
   public bool MaternitySprites { get; set; } = false;
 
   internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    // TODO: Implement.
+    this.AddTokenByProperty(tokenMap, nameof(this.MermaidPendants), customPrefix: "");
+    this.AddTokenByProperty(tokenMap, nameof(this.MaternitySprites), customPrefix: "");
+
+    tokenMap.Add(nameof(this.Pyjamas), () => {
+      return WrapTokenValue(this.Pyjamas switch {
+        PyjamaHabits.Pyjamas => "True",
+        PyjamaHabits.NoPyjamas => "False",
+        PyjamaHabits.Marriage => "Marriage",
+        _ => "False",
+      });
+    });
   }
 
   internal override string GetDisplayName() {

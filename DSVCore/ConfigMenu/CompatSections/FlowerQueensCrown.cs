@@ -20,7 +20,8 @@ internal sealed class FlowerQueensCrown : BaseCompatSection {
   internal FlowerQueensCrown() : base(ModId, ModName) { }
 
   internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    // TODO: Implement.
+    this.AddTokenByProperty(tokenMap, nameof(this.FlowerQueen), customSuffix: "");
+    this.AddTokenByProperty(tokenMap, nameof(this.TownspeopleOnly), customPrefix: "");
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
