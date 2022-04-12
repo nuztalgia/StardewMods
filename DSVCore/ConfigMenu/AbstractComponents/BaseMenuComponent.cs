@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -43,6 +44,18 @@ internal abstract class BaseMenuComponent {
       string tokenName = (customPrefix ?? this.Name) + (customSuffix ?? propertyName);
       tokenMap.Add(tokenName,
                    () => WrapTokenValue(property.GetValue(this), valueIfTrue, valueIfFalse));
+    }
+  }
+
+  protected IEnumerable<string> GetCombinedTokenValues(params string[] propertyNames) {
+    Type type = this.GetType();
+    IEnumerable<PropertyInfo> properties = propertyNames.Any()
+                                           ? propertyNames.Select(name => type.GetProperty(name)!)
+                                           : type.GetProperties();
+    foreach (PropertyInfo property in properties) {
+      if ((property.GetValue(this) is bool boolValue) && boolValue) {
+        yield return property.Name;
+      }
     }
   }
 

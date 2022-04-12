@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class SamVincentJodiKent : BaseContentPackPage {
@@ -13,6 +16,15 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
       public bool Piercings { get; set; } = false;
       public bool Binder { get; set; } = true;
 
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(tokenMap, nameof(this.EyeColor), customSuffix: "Eyes");
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.Binder), valueIfTrue: "Binder", valueIfFalse: "NoBinder");
+        tokenMap.Add("SamExtras", () => this.GetCombinedTokenValues(
+            nameof(this.Beard), nameof(this.Stubble), nameof(this.Piercings)));
+      }
+
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("SamNorwegianWeddingSuit") ? 4 : 3;
       }
@@ -27,6 +39,11 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public bool GiftTastesChange { get; set; } = true;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(tokenMap, nameof(this.GiftTastesChange));
+      }
     }
 
     internal sealed class Kent : BaseCharacterSection {

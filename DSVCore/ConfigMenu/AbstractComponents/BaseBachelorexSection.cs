@@ -11,8 +11,7 @@ internal abstract class BaseBachelorexSection : BaseCharacterSection {
 
   internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
     base.AddTokens(tokenMap);
-    this.AddTokenByProperty(tokenMap, PropertyNameWeddingOutfit,
-                            customPrefix: PropertyNameWeddingOutfit, customSuffix: this.Name);
+    this.AddTokenByProperty(tokenMap, PropertyNameWeddingOutfit);
   }
 
   internal override int? GetMinValue(PropertyInfo property) {

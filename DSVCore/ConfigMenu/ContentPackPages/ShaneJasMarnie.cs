@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class ShaneJasMarnie : BaseContentPackPage {
@@ -8,6 +11,11 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public int WeddingOutfit { get; set; } = 1;
       public ShaneSelfCare SelfCare { get; set; } = ShaneSelfCare.Dynamic;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(tokenMap, nameof(this.SelfCare));
+      }
 
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("ShaneGeorgianWeddingSuit") ? 6 : 5;
@@ -23,6 +31,13 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public bool SpriteSmile { get; set; } = true;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.SpriteSmile), customSuffix: "CharacterSmile",
+            valueIfTrue: "Smile", valueIfFalse: "NoSmile");
+      }
     }
   }
 

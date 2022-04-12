@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
@@ -10,6 +13,10 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
 
     internal sealed class Mermaids : BaseCharacterSection {
       public MermaidRandomization Randomization { get; set; } = MermaidRandomization.RandomBoth;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        this.AddTokenByProperty(tokenMap, nameof(this.Randomization), customSuffix: "");
+      }
     }
 
     internal sealed class Wizard : BaseCharacterSection {
@@ -19,6 +26,13 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       public bool ShoulderJunimos { get; set; } = false;
       public bool SpiritCreatures { get; set; } = false;
       public WizardMarriageMod MarriageMod { get; set; } = WizardMarriageMod.None;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(tokenMap, nameof(this.MarriageMod));
+        tokenMap.Add("WizardFamiliars", () => this.GetCombinedTokenValues(
+            nameof(this.HatJunimos), nameof(this.ShoulderJunimos), nameof(this.SpiritCreatures)));
+      }
     }
 
     internal sealed class Witch : BaseCharacterSection {
@@ -35,7 +49,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
     RandomBoth,
     RandomUpper,
     RandomLower,
-    Lightweight,
+    Light,
     Off
   }
 

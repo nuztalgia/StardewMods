@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
@@ -11,6 +14,17 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       public bool Helmet { get; set; } = true;
       public bool Piercings { get; set; } = false;
 
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(tokenMap, nameof(this.Glasses));
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.Helmet), customSuffix: "Safety",
+            valueIfTrue: "Helmet", valueIfFalse: "NoHelmet");
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.Piercings),
+            valueIfTrue: "Piercings", valueIfFalse: "NoPiercings");
+      }
+
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("SebastianDutchRomanianOrDutchVietnameseWeddingOutfits") ? 6 : 4;
       }
@@ -22,6 +36,16 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       public int WeddingOutfit { get; set; } = 1;
       public bool Scrubs { get; set; } = true;
       public bool SpriteGlasses { get; set; } = false;
+
+      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+        base.AddTokens(tokenMap);
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.Scrubs), customSuffix: "HospitalVariant",
+            valueIfTrue: "Scrubs", valueIfFalse: "NoScrubs");
+        this.AddTokenByProperty(
+            tokenMap, nameof(this.SpriteGlasses), customSuffix: "CharacterGlasses",
+            valueIfTrue: "Glasses", valueIfFalse: "NoGlasses");
+      }
 
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("MaruDutchXhosaWeddingDress") ? 6 : 5;

@@ -22,7 +22,7 @@ internal sealed class LookingForLove : BaseCompatSection {
   internal LookingForLove() : base(ModId, ModName) { }
 
   internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    tokenMap.Add("LookingForLove", this.GetTokenValues);
+    tokenMap.Add("LookingForLove", () => this.GetCombinedTokenValues());
   }
 
   protected override string? GetOptionName(PropertyInfo property) {
@@ -31,13 +31,5 @@ internal sealed class LookingForLove : BaseCompatSection {
 
   protected override string? GetTooltip(PropertyInfo property) {
     return string.Format(I18n.Tooltip_LookingForLove(), property.Name);
-  }
-
-  private IEnumerable<string> GetTokenValues() {
-    foreach (PropertyInfo property in this.GetType().GetProperties()) {
-      if ((property.GetValue(this) is bool isLookingForLove) && isLookingForLove) {
-        yield return property.Name;
-      }
-    }
   }
 }

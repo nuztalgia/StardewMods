@@ -25,7 +25,7 @@ internal sealed class PlatonicPAF : BaseCompatSection {
   internal PlatonicPAF() : base(ModId, ModName) { }
 
   internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    tokenMap.Add("PlatonicNPCs", this.GetTokenValues);
+    tokenMap.Add("PlatonicNPCs", () => this.GetCombinedTokenValues());
   }
 
   protected override string? GetOptionName(PropertyInfo property) {
@@ -34,13 +34,5 @@ internal sealed class PlatonicPAF : BaseCompatSection {
 
   protected override string? GetTooltip(PropertyInfo property) {
     return string.Format(I18n.Tooltip_PlatonicPartnersAndFriendships(), property.Name);
-  }
-
-  private IEnumerable<string> GetTokenValues() {
-    foreach (PropertyInfo property in this.GetType().GetProperties()) {
-      if ((property.GetValue(this) is bool isPlatonicNpc) && isPlatonicNpc) {
-        yield return property.Name;
-      }
-    }
   }
 }
