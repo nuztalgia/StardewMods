@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
@@ -9,13 +6,18 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
     internal sealed class Krobus : BaseCharacterSection {
       public SimpleVariant Variant { get; set; } = SimpleVariant.Modded;
       public SimpleImmersion Immersion { get; set; } = SimpleImmersion.Full;
+
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<SimpleVariant>(() => this.Variant);
+        this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
+      }
     }
 
     internal sealed class Mermaids : BaseCharacterSection {
       public MermaidRandomization Randomization { get; set; } = MermaidRandomization.RandomBoth;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        this.AddTokenByProperty(tokenMap, nameof(this.Randomization), customSuffix: "");
+      internal override void RegisterTokens() {
+        TokenRegistry.AddEnumToken<MermaidRandomization>("Mermaids", () => this.Randomization);
       }
     }
 
@@ -27,16 +29,25 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       public bool SpiritCreatures { get; set; } = false;
       public WizardMarriageMod MarriageMod { get; set; } = WizardMarriageMod.None;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.MarriageMod));
-        tokenMap.Add("WizardFamiliars", () => this.GetCombinedTokenValues(
-            nameof(this.HatJunimos), nameof(this.ShoulderJunimos), nameof(this.SpiritCreatures)));
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
+        this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
+        TokenRegistry.AddCompositeToken("WizardFamiliars", new() {
+          ["HatJunimos"] = () => this.Immersion.IsFull() && this.HatJunimos,
+          ["ShoulderJunimos"] = () => this.Immersion.IsFull() && this.ShoulderJunimos,
+          ["SpiritCreatures"] = () => this.Immersion.IsFull() && this.SpiritCreatures
+        });
+        // TODO: Determine whether we should be smarter about the value we return for this token.
+        TokenRegistry.AddEnumToken<WizardMarriageMod>("WizardMarriageMod", () => this.MarriageMod);
       }
     }
 
     internal sealed class Witch : BaseCharacterSection {
       public SimpleVariant Variant { get; set; } = SimpleVariant.Off;
+
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<SimpleVariant>(() => this.Variant);
+      }
     }
   }
 

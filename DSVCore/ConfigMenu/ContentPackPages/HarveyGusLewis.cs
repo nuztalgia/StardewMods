@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class HarveyGusLewis : BaseContentPackPage {
@@ -13,12 +10,16 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
       public bool GiftTastesChange { get; set; } = true;
       public bool SpriteMustache { get; set; } = false;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.GiftTastesChange));
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.SpriteMustache), customSuffix: "CharacterMustache",
-            valueIfTrue: "Mustache", valueIfFalse: "NoMustache");
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<HarveyVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+        TokenRegistry.AddBoolToken(
+            "HarveyGiftTastesChange",
+            () => (this.Variant is HarveyVariant.ModdedSikh) && this.GiftTastesChange);
+        TokenRegistry.AddBoolToken(
+            "HarveyCharacterMustache",
+            () => (this.Variant is HarveyVariant.Vanilla) && this.SpriteMustache,
+            autoValueString: "Mustache");
       }
 
       protected override int GetNumberOfWeddingOutfits() {
@@ -47,5 +48,4 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
   public Sections.Harvey Harvey { get; set; } = new();
   public Sections.Gus Gus { get; set; } = new();
   public Sections.Lewis Lewis { get; set; } = new();
-  public CompatSections.RidgesideVillage.Lenny Lenny { get; set; } = new();
 }

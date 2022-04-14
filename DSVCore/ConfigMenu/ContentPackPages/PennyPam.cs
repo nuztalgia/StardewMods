@@ -8,6 +8,11 @@ internal sealed class PennyPam : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public int WeddingOutfit { get; set; } = 1;
 
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<PennyVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+      }
+
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("PennyIrishWeddingDress") ? 6 : 5;
       }

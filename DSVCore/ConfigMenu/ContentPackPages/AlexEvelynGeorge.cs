@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class AlexEvelynGeorge : BaseContentPackPage {
@@ -12,10 +9,11 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
       public int WeddingOutfit { get; set; } = 1;
       public bool Tattoos { get; set; } = true;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.Tattoos), valueIfTrue: "Tattoos", valueIfFalse: "NoTattoos");
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<FamilyVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+        this.RegisterAutoNamedBoolToken(
+            "Tattoos", () => (this.Variant is FamilyVariant.Samoan) && this.Tattoos);
       }
 
       protected override int GetNumberOfWeddingOutfits() {
@@ -26,6 +24,11 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
     internal sealed class Evelyn : BaseCharacterSection {
       public FamilyVariant Variant { get; set; } = FamilyVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<FamilyVariant>(() => this.Variant);
+        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+      }
     }
 
     internal sealed class George : BaseCharacterSection {
@@ -33,9 +36,11 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public GeorgeBeard Beard { get; set; } = GeorgeBeard.Dynamic;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.Beard));
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<FamilyVariant>(() => this.Variant);
+        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+        TokenRegistry.AddEnumToken<GeorgeBeard>("GeorgeBeard",
+            () => this.Immersion.IsNotUltralight() ? this.Beard : GeorgeBeard.NoBeard);
       }
     }
   }

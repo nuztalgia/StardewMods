@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -7,27 +5,20 @@ namespace Nuztalgia.StardewMods.DSVCore;
 internal sealed class CoreOptionsSection : BaseMenuSection {
 
   internal enum PyjamaHabits {
-    Pyjamas,
-    NoPyjamas,
+    True,
+    False,
     Marriage
   }
 
-  public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.Pyjamas;
+  public PyjamaHabits Pyjamas { get; set; } = PyjamaHabits.True;
   public bool MermaidPendants { get; set; } = true;
   public bool MaternitySprites { get; set; } = false;
 
-  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    this.AddTokenByProperty(tokenMap, nameof(this.MermaidPendants), customPrefix: "");
-    this.AddTokenByProperty(tokenMap, nameof(this.MaternitySprites), customPrefix: "");
-
-    tokenMap.Add(nameof(this.Pyjamas), () => {
-      return WrapTokenValue(this.Pyjamas switch {
-        PyjamaHabits.Pyjamas => "True",
-        PyjamaHabits.NoPyjamas => "False",
-        PyjamaHabits.Marriage => "Marriage",
-        _ => "False",
-      });
-    });
+  internal override void RegisterTokens() {
+    // TODO: Shift more of the computation for the Pyjamas token from the content packs to this mod.
+    TokenRegistry.AddEnumToken<PyjamaHabits>("Pyjamas", () => this.Pyjamas);
+    TokenRegistry.AddBoolToken("MermaidPendants", () => this.MermaidPendants);
+    TokenRegistry.AddBoolToken("MaternitySprites", () => this.MaternitySprites);
   }
 
   internal override string GetDisplayName() {

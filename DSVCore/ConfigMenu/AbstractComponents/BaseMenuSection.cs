@@ -26,12 +26,12 @@ internal abstract class BaseMenuSection : BaseMenuComponent {
     }
   }
 
-  internal virtual int? GetMinValue(PropertyInfo property) {
-    return null; // Subclasses should implement this method properly if they expect it to be called.
+  internal virtual int GetMinValue(PropertyInfo property) {
+    return int.MinValue; // Subclasses should implement this properly if they expect to use it.
   }
 
-  internal virtual int? GetMaxValue(PropertyInfo property) {
-    return null; // Subclasses should implement this method properly if they expect it to be called.
+  internal virtual int GetMaxValue(PropertyInfo property) {
+    return int.MaxValue; // Subclasses should implement this properly if they expect to use it.
   }
 
   protected virtual string? GetOptionName(PropertyInfo property) {

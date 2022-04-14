@@ -46,13 +46,11 @@
   "option.beard": "Beard",
 
   // Option labels displayed exactly once in a specific menu section.
-  "option.alternate-cecily": "Alternate Cecily",
   "option.binder": "Binder",
-  "option.black-cam": "Black Camera",
-  "option.cuffs": "Hair Cuffs",
+  "option.black-camera": "Black Camera",
   "option.eye-color": "Eye Color",
-  "option.flower-queen": "Flower Queen",
   "option.glasses": "Glasses",
+  "option.hair-cuffs": "Hair Cuffs",
   "option.hat-junimos": "Hat Junimos",
   "option.helmet": "Helmet",
   "option.marriage-mod": "Marriage Mod",
@@ -67,31 +65,38 @@
   "option.sprite-mustache": "Sprite Mustache",
   "option.sprite-smile": "Sprite Smile",
   "option.stubble": "Stubble",
-  "option.townspeople-only": "Townspeople Only",
 
-  // Option labels and tooltips regarding compatibility with other mods.
+  // Basic option labels and tooltips for compatibility with FQC & other mods.
+  "option.flower-queens-crown.flower-queen": "Flower Queen",
+  "tooltip.flower-queens-crown.flower-queen": "Gives other NPCs a chance to be the Flower Queen during the Flower Dance. If \"Random\" is selected, one person will be chosen each year. If \"Everyone\" is selected, all eligible townspeople will wear Flower Queen crowns. Note: Some extra dialogue lines are not available if \"Everyone\" is selected.",
+  "option.flower-queens-crown.townspeople-only": "Townspeople Only",
+  "tooltip.flower-queens-crown.townspeople-only": "Allows custom NPCs to be Flower Queen candidates as well. Enable this option if you only want the Pelican Town marriage candidates and children to be eligible.",
+  "option.ridgeside-village.bert-variant": "Bert Variant",
+  "tooltip.ridgeside-village.bert-variant": "Adds compatible portraits and sprites for RSV's Bert, so that he is Filipino to match his cousin Caroline's modded DSV variant.",
+  "option.ridgeside-village.trinnie-variant": "Trinnie Variant",
+  "tooltip.ridgeside-village.trinnie-variant": "Adds compatible portraits and sprites for RSV's Trinnie, so that she is mixed Filipino-German to match her aunt Caroline's modded DSV variant. A black-haired or green-haired version is available.",
+  "option.ridgeside-village.lenny-variant": "Lenny Variant",
+  "tooltip.ridgeside-village.lenny-variant": "Adds compatible portraits and sprites for RSV's Lenny, so that she is Black to match her brother Lewis's modded DSV variant.",
+  "option.make-gunther-real.alternate-cecily": "Alternate Cecily",
+  "tooltip.make-gunther-real.alternate-cecily": "Toggles whether Gunther's daughter Cecily will use alternate sprites and portraits that match DSV's Gunther. Set this to false if you prefer Cecily's original art.",
+
+  // Character-specific option labels and tooltips for compatibility with other mods.
   // The sequence "{0}" will be replaced by a specific character's name.
-  "option.platonic-partners-and-friendships": "Platonic: {0}",
-  "tooltip.platonic-partners-and-friendships": "Make sure this option is turned on if you have {0} set to \"Platonic\" in Platonic Partners and Friendships.",
-  "option.looking-for-love": "Dateable: {0}",
-  "tooltip.looking-for-love": "Make sure this option is turned on if you have {0} set to \"Dateable\" in Looking for Love.",
+  "option.platonic-partners-and-friendships.platonic-npc": "Platonic: {0}",
+  "tooltip.platonic-partners-and-friendships.platonic-npc": "Make sure this option is turned on if you have {0} set to \"Platonic\" in Platonic Partners and Friendships.",
+  "option.looking-for-love.dateable-npc": "Dateable: {0}",
+  "tooltip.looking-for-love.dateable-npc": "Make sure this option is turned on if you have {0} set to \"Dateable\" in Looking for Love.",
 
   // Tooltips displayed multiple times throughout the content pack menu pages.
   // The sequence "{0}" will be replaced by a specific character's name.
-  "tooltip.immersion.standard": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features, a lightweight selection to reduce lag, or an ultra-lightweight selection. See the DSV website for details.",
-  "tooltip.immersion.simple": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features or a lightweight selection to reduce lag. See the DSV website for details.",
+  "tooltip.immersion.standard": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features, a lightweight selection to reduce lag, or an ultra-lightweight selection.",
+  "tooltip.immersion.simple": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features or a lightweight selection to reduce lag.",
   "tooltip.wedding-outfit": "Selects which wedding outfit {0} will wear when getting married. See the DSV website for images and details. Can only be used if Immersion is NOT set to \"Ultralight\".",
-
-  // Tooltips for the "Flower Queen's Crown" section on the "Core & Compatibility" page.
-  "tooltip.flower-queen": "Gives other NPCs a chance to be the Flower Queen during the Flower Dance. If \"Random\" is selected, one person will be chosen each year. If \"Everyone\" is selected, all eligible townspeople will wear Flower Queen crowns.",
-  "tooltip.townspeople-only": "Allows custom NPCs to be Flower Queen candidates as well. Enable this option if you only want the Pelican Town marriage candidates and children to be eligible.",
 
   // Tooltips displayed on the "Abigail, Caroline & Pierre" content pack page.
   "tooltip.abigail.variant": "The DSV version of Abigail is mixed Chinese-Filipino; her mother Caroline is Filipino, and her father Pierre is Chinese. Both her vanilla and modded variants can be either plus-sized or straight-sized.",
   "tooltip.caroline.variant": "The DSV version of Caroline is Filipino; her daughter Abigail is mixed-race Chinese-Filipino.",
   "tooltip.pierre.variant": "The DSV version of Pierre is Chinese; his daughter Abigail is mixed-race Chinese-Filipino.",
-  "tooltip.bert.variant": "Adds compatible portraits and sprites for RSV's Bert, so that he is Filipino to match his cousin Caroline's modded DSV variant. Only applicable if Ridgeside Village is installed.",
-  "tooltip.trinnie.variant": "Adds compatible portraits and sprites for RSV's Trinnie, so that she is mixed Filipino-German to match her aunt Caroline's modded DSV variant. A black-haired or green-haired version is available. Only applicable if Ridgeside Village is installed.",
 
   // Tooltips displayed on the "Alex, Evelyn & George" content pack page.
   "tooltip.alex.variant": "Alex has two DSV variants, along with his grandparents, George and Evelyn. He is either Samoan or Mexican.",
@@ -104,9 +109,9 @@
   "tooltip.emily.variant": "Emily has two DSV variants, along with her sister Haley. She is either Black or Romani; both versions have natural hair dyed blue.",
   "tooltip.emily.tattoos": "Chooses whether or not Emily has colorful tattoos. This option applies to all of Emily's variants. Can only be used if Immersion is set to \"Full\".",
   "tooltip.haley.variant": "Haley has two DSV variants, along with her sister Emily. She is either Black or Romani; Black Haley has dreadlocks while Romani Haley has dark curly hair.",
-  "tooltip.haley.cuffs": "Chooses whether or not Haley's Black variant has hair cuffs. Doesn't affect her vanilla or Romani variants.",
+  "tooltip.haley.hair-cuffs": "Chooses whether or not Haley's Black variant has hair cuffs. Doesn't affect her vanilla or Romani variants.",
   "tooltip.haley.piercings": "Chooses whether or not Haley has nose and eyebrow piercings. This option applies to all of Haley's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
-  "tooltip.haley.black-cam": "Changes Haley's camera from brown to black. This option applies to all of Haley's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
+  "tooltip.haley.black-camera": "Changes Haley's camera from brown to black. This option applies to all of Haley's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
   "tooltip.sandy.variant": "The DSV version of Sandy is Indian and wears a hijab.",
   "tooltip.sandy.gift-tastes-change": "Changes modded Sandy's gift tastes so that she dislikes alcoholic drinks, to reflect that alcohol is prohibited for Muslim people. Doesn't affect her vanilla variant.",
 
@@ -116,7 +121,6 @@
   "tooltip.harvey.sprite-mustache": "Gives Harvey's character sprite a mustache to match his portraits. Only affects his vanilla variant.",
   "tooltip.gus.variant": "The DSV version of Gus is Turkish.",
   "tooltip.lewis.variant": "The DSV version of Lewis is Black.",
-  "tooltip.lenny.variant": "Adds compatible portraits and sprites for RSV's Lenny, so that she is Black to match her brother Lewis's modded DSV variant. Only applicable if Ridgeside Village is installed.",
 
   // Tooltips displayed on the "Krobus, Mermaids, Wizard & Witch" content pack page.
   "tooltip.krobus.variant": "The DSV version of Krobus wears various pieces of human attire.",
@@ -135,7 +139,6 @@
   // Tooltips displayed on the "Marlon, Gunther & Morris" content pack page.
   "tooltip.marlon.variant": "The DSV version of Marlon is Mongolian. Note: DSV's version of Marlon is incompatible with Stardew Valley Expanded. If you use SVE, this option must be set to \"Off\".",
   "tooltip.gunther.variant": "The DSV version of Gunther is Afghan. Note: DSV's version of Gunther is incompatible with Stardew Valley Expanded. If you use SVE, this option must be set to \"Off\".",
-  "tooltip.gunther.alternate-cecily": "Toggles whether Gunther's daughter Cecily will use alternate sprites and portraits that match DSV's Gunther. Set this to false if you prefer Cecily's original art. Only applicable if Make Gunther Real is installed.",
   "tooltip.morris.seasonal-outfits": "Morris does not have a true DSV variant, but this option allows him to use alternative seasonal outfits with his existing sprites and portraits. Note: DSV's version of Morris is incompatible with Stardew Valley Expanded. If you use SVE, this option must be turned off.",
 
   // Tooltips displayed on the "Penny & Pam" content pack page.
@@ -144,11 +147,11 @@
 
   // Tooltips displayed on the "Sam, Vincent, Jodi & Kent" content pack page.
   "tooltip.sam.variant": "The DSV version of Sam is mixed-race West Asian and white, with lighter or darker-skinned options. Sam is a transgender man in all of his DSV variants, and players in a heterosexual relationship with him will adopt children unless Pregnancy Role is installed.",
-  "tooltip.sam.eye-color": "Sam's \"Default\" eyes are blue, but DSV offers an \"Alternate\" option for green eyes. These colors are used for his vanilla and lighter modded variants. His darker modded variant will use brown as the default and dark blue as the alternate color. Selecting \"Heterochromia\" will make his left eye the default color and his right eye the alternate color.",
-  "tooltip.sam.beard": "Chooses whether or not Sam has a beard. This option can be combined with the other choices, and applies to all of Sam's variants.",
-  "tooltip.sam.stubble": "Chooses whether or not Sam has stubble. This option can be combined with the other choices, and applies to all of Sam's variants.",
-  "tooltip.sam.piercings": "Chooses whether or not Sam has lip, ear, and eyebrow piercings. This option can be combined with the other choices, and applies to all of Sam's variants.",
   "tooltip.sam.binder": "Chooses whether or not Sam wears a tanktop-style binder which is visible when he goes swimming and during certain events. With this option turned off, he will have top surgery scars visible on his character sprite. This option applies to all of Sam's variants.",
+  "tooltip.sam.eye-color": "Sam's \"Default\" eyes are blue, but DSV offers an \"Alternate\" option for green eyes. These colors are used for his vanilla and lighter modded variants. His darker modded variant will use brown as the default and dark blue as the alternate color. Selecting \"Heterochromia\" will make his left eye the default color and his right eye the alternate color. Can only be used if Immersion is NOT set to \"Ultralight\".",
+  "tooltip.sam.beard": "Chooses whether or not Sam has a beard. This option can be combined with the other choices, and applies to all of Sam's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
+  "tooltip.sam.stubble": "Chooses whether or not Sam has stubble. This option can be combined with the other choices, and applies to all of Sam's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
+  "tooltip.sam.piercings": "Chooses whether or not Sam has lip, ear, and eyebrow piercings. This option can be combined with the other choices, and applies to all of Sam's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
   "tooltip.vincent.variant": "The DSV version of Vincent is mixed-race West Asian and white, like his brother Sam.",
   "tooltip.jodi.variant": "The DSV version of Jodi is Iranian and wears a hijab.",
   "tooltip.jodi.gift-tastes-change": "Changes modded Jodi's gift tastes so that she dislikes alcoholic drinks, to reflect that alcohol is prohibited for Muslim people. Doesn't affect her vanilla variant.",
@@ -156,9 +159,9 @@
 
   // Tooltips displayed on the "Sebastian, Maru, Robin & Demetrius" content pack page.
   "tooltip.sebastian.variant": "The DSV version of Sebastian is Vietnamese like his mother, Robin. He has a black-haired version and a purple-haired version.",
-  "tooltip.sebastian.glasses": "Chooses whether or not Sebastian wears glasses. If \"Dynamic\" is selected, he will only wear them in private. This option applies to all of Sebastian's variants.",
   "tooltip.sebastian.helmet": "Chooses whether or not Sebastian will wear a helmet when he rides his motorbike. This option applies to all of Sebastian's variants.",
-  "tooltip.sebastian.piercings": "Chooses whether or not Sebastian has lip and ear piercings. This option applies to all of Sebastian's variants.",
+  "tooltip.sebastian.glasses": "Chooses whether or not Sebastian wears glasses. If \"Dynamic\" is selected, he will only wear them in private. This option applies to all of Sebastian's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
+  "tooltip.sebastian.piercings": "Chooses whether or not Sebastian has lip and ear piercings. This option applies to all of Sebastian's variants. Can only be used if Immersion is NOT set to \"Ultralight\".",
   "tooltip.maru.variant": "The DSV version of Maru is mixed-race Black and South-East Asian; her father Demetrius is Black and her mother Robin is Vietnamese. She has two versions with different art styles, one by Notsnufffie and the other by Lavender.",
   "tooltip.maru.scrubs": "Chooses whether or not Maru will wear scrubs instead of her white nurse uniform while working at the hospital. The color of her scrubs is randomly selected each day and can be light grey, navy, or green. This option applies to all of Maru's variants.",
   "tooltip.maru.sprite-glasses": "Gives Maru's character sprite glasses to match her portraits. Only affects her vanilla and Notsnufffie variants.",

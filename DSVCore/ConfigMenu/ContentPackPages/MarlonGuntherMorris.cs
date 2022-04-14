@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class MarlonGuntherMorris : BaseContentPackPage {
@@ -8,25 +5,26 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
   internal static class Sections {
     internal sealed class Marlon : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
+
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
+      }
     }
 
     internal sealed class Gunther : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public bool AlternateCecily { get; set; } = true;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.AlternateCecily), customPrefix: "");
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
       }
     }
 
     internal sealed class Morris : BaseCharacterSection {
       public bool SeasonalOutfits { get; set; } = true;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.SeasonalOutfits), customSuffix: "Variant",
+      internal override void RegisterTokens() {
+        TokenRegistry.AddBoolToken(
+            "MorrisVariant", () => this.SeasonalOutfits,
             valueIfTrue: "Vanilla", valueIfFalse: "Off");
       }
     }

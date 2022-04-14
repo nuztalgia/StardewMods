@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
@@ -8,6 +6,7 @@ internal sealed class PlatonicPAF : BaseCompatSection {
 
   private const string ModId = "Amaranthacyan.PlatonicPartnersandFriendships";
   private const string ModName = "Platonic Partners and Friendships";
+  private const string TokenName = "PlatonicNPCs";
 
   public bool Abigail { get; set; } = true;
   public bool Alex { get; set; } = true;
@@ -24,15 +23,33 @@ internal sealed class PlatonicPAF : BaseCompatSection {
 
   internal PlatonicPAF() : base(ModId, ModName) { }
 
-  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-    tokenMap.Add("PlatonicNPCs", () => this.GetCombinedTokenValues());
+  internal override void RegisterTokens() {
+    if (this.IsAvailable()) {
+      // TODO: See if we can get this token directly from PlatonicPaF's own mod config.
+      TokenRegistry.AddCompositeToken(TokenName, new() {
+        ["Abigail"] = () => this.Abigail,
+        ["Alex"] = () => this.Alex,
+        ["Elliott"] = () => this.Elliott,
+        ["Emily"] = () => this.Emily,
+        ["Haley"] = () => this.Haley,
+        ["Harvey"] = () => this.Harvey,
+        ["Leah"] = () => this.Leah,
+        ["Maru"] = () => this.Maru,
+        ["Penny"] = () => this.Penny,
+        ["Sam"] = () => this.Sam,
+        ["Sebastian"] = () => this.Sebastian,
+        ["Shane"] = () => this.Shane
+      });
+    } else {
+      RegisterDummyTokens(TokenName);
+    }
   }
 
   protected override string? GetOptionName(PropertyInfo property) {
-    return string.Format(I18n.Option_PlatonicPartnersAndFriendships(), property.Name);
+    return string.Format(I18n.Option_PlatonicPartnersAndFriendships_PlatonicNpc(), property.Name);
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
-    return string.Format(I18n.Tooltip_PlatonicPartnersAndFriendships(), property.Name);
+    return string.Format(I18n.Tooltip_PlatonicPartnersAndFriendships_PlatonicNpc(), property.Name);
   }
 }

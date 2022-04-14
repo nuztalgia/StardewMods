@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class SamVincentJodiKent : BaseContentPackPage {
@@ -10,19 +7,23 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
       public SamVariant Variant { get; set; } = SamVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public int WeddingOutfit { get; set; } = 1;
+      public bool Binder { get; set; } = true;
       public SamEyeColor EyeColor { get; set; } = SamEyeColor.Default;
       public bool Beard { get; set; } = false;
       public bool Stubble { get; set; } = false;
       public bool Piercings { get; set; } = false;
-      public bool Binder { get; set; } = true;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.EyeColor), customSuffix: "Eyes");
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.Binder), valueIfTrue: "Binder", valueIfFalse: "NoBinder");
-        tokenMap.Add("SamExtras", () => this.GetCombinedTokenValues(
-            nameof(this.Beard), nameof(this.Stubble), nameof(this.Piercings)));
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<SamVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+        this.RegisterAutoNamedBoolToken("Binder", () => this.Binder);
+        TokenRegistry.AddEnumToken<SamEyeColor>("SamEyes",
+            () => this.Immersion.IsNotUltralight() ? this.EyeColor : SamEyeColor.Default);
+        TokenRegistry.AddCompositeToken("SamExtras", new() {
+          ["Beard"] = () => this.Immersion.IsNotUltralight() && this.Beard,
+          ["Stubble"] = () => this.Immersion.IsNotUltralight() && this.Stubble,
+          ["Piercings"] = () => this.Immersion.IsNotUltralight() && this.Piercings
+        });
       }
 
       protected override int GetNumberOfWeddingOutfits() {
@@ -40,9 +41,11 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public bool GiftTastesChange { get; set; } = true;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.GiftTastesChange));
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
+        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+        TokenRegistry.AddBoolToken(
+            "JodiGiftTastesChange", () => this.Variant.IsModded() && this.GiftTastesChange);
       }
     }
 

@@ -7,8 +7,10 @@ internal sealed class CoreAndCompatPage : BaseMenuPage {
 
   public CoreOptionsSection CoreOptions { get; set; } = new();
   public CompatSections.FlowerQueensCrown FlowerQueensCrown { get; set; } = new();
+  public CompatSections.RidgesideVillage RidgesideVillage { get; set; } = new();
   public CompatSections.PlatonicPAF PlatonicPartnersAndFriendships { get; set; } = new();
   public CompatSections.LookingForLove LookingForLove { get; set; } = new();
+  public CompatSections.MakeGuntherReal MakeGuntherReal { get; set; } = new();
 
   internal override string GetDisplayName() {
     return I18n.Page_CoreAndCompat();

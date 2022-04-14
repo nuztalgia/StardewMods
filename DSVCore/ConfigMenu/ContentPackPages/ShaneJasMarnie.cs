@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class ShaneJasMarnie : BaseContentPackPage {
@@ -12,9 +9,11 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
       public int WeddingOutfit { get; set; } = 1;
       public ShaneSelfCare SelfCare { get; set; } = ShaneSelfCare.Dynamic;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.SelfCare));
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+        // TODO: Determine what should happen if Immersion is Ultralight and SelfCare is Dynamic.
+        TokenRegistry.AddEnumToken<ShaneSelfCare>("ShaneSelfCare", () => this.SelfCare);
       }
 
       protected override int GetNumberOfWeddingOutfits() {
@@ -32,11 +31,13 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public bool SpriteSmile { get; set; } = true;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.SpriteSmile), customSuffix: "CharacterSmile",
-            valueIfTrue: "Smile", valueIfFalse: "NoSmile");
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
+        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+        TokenRegistry.AddBoolToken(
+            "MarnieCharacterSmile",
+            () => (this.Variant is StandardVariant.Vanilla) && this.SpriteSmile,
+            autoValueString: "Smile");
       }
     }
   }

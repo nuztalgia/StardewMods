@@ -1,7 +1,6 @@
-using Nuztalgia.StardewMods.Common;
-using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -18,11 +17,9 @@ internal abstract class BaseMenuPage : BaseMenuComponent {
     }
   }
 
-  internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
+  internal override void RegisterTokens() {
     foreach (BaseMenuSection section in this.GetAllSections()) {
-      if (section.IsAvailable()) {
-        section.AddTokens(tokenMap);
-      }
+      section.RegisterTokens();
     }
   }
 }

@@ -8,6 +8,11 @@ internal sealed class LeahElliott : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public int WeddingOutfit { get; set; } = 1;
 
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<LeahVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+      }
+
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("LeahPolishWeddingOutfits") ? 7 : 5;
       }
@@ -17,6 +22,11 @@ internal sealed class LeahElliott : BaseContentPackPage {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public int WeddingOutfit { get; set; } = 1;
+
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+      }
 
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("ElliottScottishWeddingKilt") ? 6 : 5;

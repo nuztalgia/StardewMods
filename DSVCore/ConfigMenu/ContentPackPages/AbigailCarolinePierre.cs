@@ -8,6 +8,11 @@ internal sealed class AbigailCarolinePierre : BaseContentPackPage {
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public int WeddingOutfit { get; set; } = 1;
 
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<AbigailVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+      }
+
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("AbigailSpanishWeddingDress") ? 6 : 5;
       }
@@ -35,6 +40,4 @@ internal sealed class AbigailCarolinePierre : BaseContentPackPage {
   public Sections.Abigail Abigail { get; set; } = new();
   public Sections.Caroline Caroline { get; set; } = new();
   public Sections.Pierre Pierre { get; set; } = new();
-  public CompatSections.RidgesideVillage.Bert Bert { get; set; } = new();
-  public CompatSections.RidgesideVillage.Trinnie Trinnie { get; set; } = new();
 }

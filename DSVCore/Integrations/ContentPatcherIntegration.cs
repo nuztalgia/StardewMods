@@ -17,17 +17,15 @@ internal class ContentPatcherIntegration : BaseIntegration<IContentPatcherAPI> {
       return false;
     }
 
-    Dictionary<string, Func<IEnumerable<string>>> tokenMap = new();
-
     foreach (PropertyInfo property in Globals.Config.GetType().GetProperties()) {
       if (property.GetValue(Globals.Config) is BaseMenuPage page) {
-        page.AddTokens(tokenMap);
+        page.RegisterTokens();
       }
     }
 
-    foreach (KeyValuePair<string, Func<IEnumerable<string>>> token in tokenMap) {
-      string tokenValue = string.Join(", ", token.Value!());
-      Log.Verbose($"Token Name: {token.Key,-28}|  Current Value: {tokenValue}");
+    foreach (KeyValuePair<string, Func<IEnumerable<string>>> token in TokenRegistry.GetData()) {
+      string currentTokenValue = string.Join(", ", token.Value!());
+      Log.Verbose($"Token Name: {token.Key,-28}|  Current Value: '{currentTokenValue}'");
       this.Api.RegisterToken(Globals.Manifest, token.Key, token.Value);
     }
 

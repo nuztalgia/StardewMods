@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
@@ -10,19 +7,18 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       public SebastianVariant Variant { get; set; } = SebastianVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
       public int WeddingOutfit { get; set; } = 1;
-      public SebastianGlasses Glasses { get; set; } = SebastianGlasses.NoGlasses;
       public bool Helmet { get; set; } = true;
       public bool Piercings { get; set; } = false;
+      public SebastianGlasses Glasses { get; set; } = SebastianGlasses.NoGlasses;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(tokenMap, nameof(this.Glasses));
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.Helmet), customSuffix: "Safety",
-            valueIfTrue: "Helmet", valueIfFalse: "NoHelmet");
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.Piercings),
-            valueIfTrue: "Piercings", valueIfFalse: "NoPiercings");
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<SebastianVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+        this.RegisterAutoNamedBoolToken("Helmet", () => this.Helmet);
+        this.RegisterAutoNamedBoolToken("Piercings",
+            () => this.Immersion.IsNotUltralight() && this.Piercings);
+        TokenRegistry.AddEnumToken<SebastianGlasses>("SebastianGlasses",
+            () => this.Immersion.IsNotUltralight() ? this.Glasses : SebastianGlasses.NoGlasses);
       }
 
       protected override int GetNumberOfWeddingOutfits() {
@@ -37,14 +33,15 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       public bool Scrubs { get; set; } = true;
       public bool SpriteGlasses { get; set; } = false;
 
-      internal override void AddTokens(Dictionary<string, Func<IEnumerable<string>>> tokenMap) {
-        base.AddTokens(tokenMap);
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.Scrubs), customSuffix: "HospitalVariant",
-            valueIfTrue: "Scrubs", valueIfFalse: "NoScrubs");
-        this.AddTokenByProperty(
-            tokenMap, nameof(this.SpriteGlasses), customSuffix: "CharacterGlasses",
-            valueIfTrue: "Glasses", valueIfFalse: "NoGlasses");
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<MaruVariant>(() => this.Variant);
+        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+        this.RegisterAutoNamedBoolToken("Scrubs", () => this.Scrubs);
+        TokenRegistry.AddBoolToken(
+            "MaruCharacterGlasses",
+            () => (this.Variant is MaruVariant.Vanilla or MaruVariant.ModdedNotsnufffie)
+                  && this.SpriteGlasses,
+            autoValueString: "Glasses");
       }
 
       protected override int GetNumberOfWeddingOutfits() {
@@ -60,6 +57,11 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
     internal sealed class Demetrius : BaseCharacterSection {
       public DemetriusVariant Variant { get; set; } = DemetriusVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      internal override void RegisterTokens() {
+        this.RegisterVariantToken<DemetriusVariant>(() => this.Variant);
+        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+      }
     }
   }
 
