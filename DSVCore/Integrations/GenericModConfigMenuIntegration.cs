@@ -166,9 +166,9 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
         fieldId: fieldId,
         name: () => name,
         tooltip: () => tooltip,
-        getValue: () => property.GetValue(section)?.ToString() ?? string.Empty,
-        setValue: value => property.SetValue(section, Enum.Parse(property.PropertyType, value)),
-        allowedValues: Enum.GetNames(property.PropertyType)  // TODO: Use I18n to better display these.
+        getValue: () => section.GetCurrentValueDisplayName(property),
+        setValue: valueDisplayName => section.SetValueByDisplayName(property, valueDisplayName),
+        allowedValues: section.GetAllValueDisplayNames(property).ToArray()
     );
     return this;
   }
