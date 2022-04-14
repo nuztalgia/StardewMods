@@ -3,7 +3,8 @@ namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 internal sealed class RidgesideVillage : BaseCompatSection {
 
   internal enum OnlyModdedVariant {
-    Modded, Off
+    Modded,
+    Off
   }
 
   internal enum TrinnieCustomVariant {
