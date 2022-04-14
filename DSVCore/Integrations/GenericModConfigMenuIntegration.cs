@@ -1,9 +1,9 @@
-using GenericModConfigMenu;
-using Nuztalgia.StardewMods.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GenericModConfigMenu;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -41,7 +41,7 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
 
     foreach (BaseContentPackPage contentPack in installedPacks) {
       this.AddPage(contentPack.Name, contentPack.GetDisplayName())
-          .SetUpAvailableSections(contentPack.GetAllSections());
+          .SetUpSections(contentPack.GetAllSections());
     }
   }
 
@@ -81,7 +81,7 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
 
   private void SetUpCoreAndCompatPage(CoreAndCompatPage coreAndCompat) {
     BaseMenuSection coreOptions = coreAndCompat.CoreOptions;
-    IEnumerable<BaseMenuSection> compatSections = coreAndCompat.GetCompatSections();
+    IEnumerable<BaseMenuSection> compatSections = coreAndCompat.GetAvailableCompatSections();
 
     this.AddPage(coreAndCompat.Name, coreAndCompat.GetDisplayName())
         .AddSectionTitle(coreOptions.GetDisplayName())
@@ -90,7 +90,7 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
         .AddSpacing();
 
     if (compatSections.Any()) {
-      this.SetUpAvailableSections(compatSections);
+      this.SetUpSections(compatSections);
     }
 
     // Show the placeholder if there are no compat mods or if the only one is Flower Queen's Crown.
@@ -101,13 +101,11 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     }
   }
 
-  private void SetUpAvailableSections(IEnumerable<BaseMenuSection> sections) {
+  private void SetUpSections(IEnumerable<BaseMenuSection> sections) {
     foreach (BaseMenuSection section in sections) {
-      if (section.IsAvailable()) {
-        this.AddSectionTitle(section.GetDisplayName())
-            .AddSectionOptions(section)
-            .AddSpacing();
-      }
+      this.AddSectionTitle(section.GetDisplayName())
+          .AddSectionOptions(section)
+          .AddSpacing();
     }
   }
 
@@ -162,42 +160,42 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
   }
 
   private GenericModConfigMenuIntegration AddEnumOption(
-      BaseMenuSection container, string fieldId, string name, string tooltip, PropertyInfo property) {
+      BaseMenuSection section, string fieldId, string name, string tooltip, PropertyInfo property) {
     this.Api!.AddTextOption(
         mod: Globals.Manifest,
         fieldId: fieldId,
         name: () => name,
         tooltip: () => tooltip,
-        getValue: () => property.GetValue(container)?.ToString() ?? string.Empty,
-        setValue: value => property.SetValue(container, Enum.Parse(property.PropertyType, value)),
-        allowedValues: Enum.GetNames(property.PropertyType)
+        getValue: () => property.GetValue(section)?.ToString() ?? string.Empty,
+        setValue: value => property.SetValue(section, Enum.Parse(property.PropertyType, value)),
+        allowedValues: Enum.GetNames(property.PropertyType)  // TODO: Use I18n to better display these.
     );
     return this;
   }
 
   private GenericModConfigMenuIntegration AddBoolOption(
-      BaseMenuSection container, string fieldId, string name, string tooltip, PropertyInfo property) {
+      BaseMenuSection section, string fieldId, string name, string tooltip, PropertyInfo property) {
     this.Api!.AddBoolOption(
         mod: Globals.Manifest,
         fieldId: fieldId,
         name: () => name,
         tooltip: () => tooltip,
-        getValue: () => ((bool?) property.GetValue(container)) ?? false,
-        setValue: value => property.SetValue(container, value)
+        getValue: () => ((bool?) property.GetValue(section)) ?? false,
+        setValue: value => property.SetValue(section, value)
     );
     return this;
   }
 
   private GenericModConfigMenuIntegration AddIntOption(
-      BaseMenuSection container, string fieldId, string name, string tooltip, 
+      BaseMenuSection section, string fieldId, string name, string tooltip, 
       PropertyInfo property, int? min = null, int? max = null) {
     this.Api!.AddNumberOption(
         mod: Globals.Manifest,
         fieldId: fieldId,
         name: () => name,
         tooltip: () => tooltip,
-        getValue: () => ((int?) property.GetValue(container)) ?? 0,
-        setValue: value => property.SetValue(container, value),
+        getValue: () => ((int?) property.GetValue(section)) ?? 0,
+        setValue: value => property.SetValue(section, value),
         min: min,
         max: max
     );

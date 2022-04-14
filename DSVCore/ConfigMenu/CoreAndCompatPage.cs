@@ -21,7 +21,7 @@ internal sealed class CoreAndCompatPage : BaseMenuPage {
     return true;
   }
 
-  internal IEnumerable<BaseMenuSection> GetCompatSections() {
+  internal IEnumerable<BaseMenuSection> GetAvailableCompatSections() {
     return this.GetAllSections().Where(
         section => section.IsAvailable() && section is BaseCompatSection);
   }
