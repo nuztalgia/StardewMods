@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
 internal sealed class MakeGuntherReal : BaseCompatSection {
