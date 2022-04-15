@@ -11,6 +11,11 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
         this.RegisterVariantToken<WillyVariant>(() => this.Variant);
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Spring_1_Base";
+      }
     }
 
     internal sealed class Clint : BaseCharacterSection {
@@ -23,6 +28,11 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
         this.RegisterAutoNamedBoolToken("Scar", () => this.Scar);
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Winter_2_Base";
+      }
     }
 
     internal sealed class Linus : BaseCharacterSection {
@@ -32,6 +42,12 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
       internal override void RegisterTokens() {
         this.RegisterVariantToken<LinusVariant>(() => this.Variant);
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+      }
+
+      internal override string GetPreviewPortraitPath() {
+        return (this.Variant == LinusVariant.Vanilla)
+               ? "Linus/Portraits/Default/Linus_Spring_1_Sun"
+               : string.Empty;
       }
     }
   }

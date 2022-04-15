@@ -16,6 +16,11 @@ internal sealed class LeahElliott : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("LeahPolishWeddingOutfits") ? 7 : 5;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_2_Base";
+      }
     }
 
     internal sealed class Elliott : BaseBachelorexSection {
@@ -30,6 +35,11 @@ internal sealed class LeahElliott : BaseContentPackPage {
 
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("ElliottScottishWeddingKilt") ? 6 : 5;
+      }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_1_Base";
       }
     }
   }

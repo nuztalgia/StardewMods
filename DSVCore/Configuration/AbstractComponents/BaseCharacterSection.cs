@@ -7,7 +7,9 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseCharacterSection : BaseMenuSection {
 
-  private const string VariantTokenName = "Variant";
+  private const string VariantPropertyName = "Variant";
+  private const string VariantTokenName = VariantPropertyName;
+  private const string ImmersionPropertyName = "Immersion";
   private const string ImmersionTokenName = "LightweightConfig";
 
   internal enum StandardVariant {
@@ -29,7 +31,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
 
   // Subclasses should override this method if they have any non-standard tokens.
   internal override void RegisterTokens() {
-    if (this.TryGetTokenProperty(propertyName: "Variant", out PropertyInfo? variantProperty)) {
+    if (this.TryGetTokenProperty(VariantPropertyName, out PropertyInfo? variantProperty)) {
       this.RegisterVariantToken<StandardVariant>(() => variantProperty.GetValue(this));
     }
     this.TryRegisterStandardImmersionTokenUsingReflection();
@@ -43,6 +45,23 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   internal override bool IsAvailable() {
     // This is only checked if the character's content pack is loaded, so they're always available.
     return true;
+  }
+
+  internal virtual string GetPreviewPortraitPath() {
+    if ((this.GetType().GetProperty(VariantPropertyName) is PropertyInfo property)
+        && (property.GetValue(this)?.ToString() is string currentVariant)
+        && (currentVariant != "Off")) {
+      string outfit = this.GetPreviewOutfit(out bool hasDefaultDirectory);
+      string customDirectory = hasDefaultDirectory ? "Default/" : string.Empty;
+      return $"{this.Name}/Portraits/{customDirectory}{currentVariant}/{this.Name}_{outfit}.png";
+    }
+    return string.Empty;
+  }
+
+  // Subclasses should implement this properly if they rely on GetPreviewPortraitPath() calling it.
+  protected virtual string GetPreviewOutfit(out bool hasDefaultDirectory) {
+    hasDefaultDirectory = false;
+    return string.Empty;
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
@@ -63,10 +82,10 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
 
   protected void RegisterVariantToken<T>(Func<object?> getValue) where T : Enum {
     string enumName = typeof(T).Name;
-    if (enumName.EndsWith(VariantTokenName)) {
+    if (enumName.EndsWith(VariantPropertyName)) {
       TokenRegistry.AddEnumToken<T>(this.Name + VariantTokenName, getValue);
     } else {
-      Log.Error($"Enum named '{enumName}' doesn't end with '{VariantTokenName}'. That's " +
+      Log.Error($"Enum named '{enumName}' doesn't end with '{VariantPropertyName}'. That's " +
                 $"confusing. Will not register '{VariantTokenName}' token for '{this.Name}'.");
     }
   }
@@ -83,7 +102,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
 
   // Use the above method instead of this one when possible, because reflection is slow.
   protected void TryRegisterStandardImmersionTokenUsingReflection() {
-    if (this.TryGetTokenProperty(propertyName: "Immersion", out PropertyInfo? property)) {
+    if (this.TryGetTokenProperty(ImmersionPropertyName, out PropertyInfo? property)) {
       this.RegisterImmersionToken<StandardImmersion>(() => property.GetValue(this));
     }
   }

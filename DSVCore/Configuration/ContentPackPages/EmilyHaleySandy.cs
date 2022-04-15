@@ -18,6 +18,11 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("EmilyUkrainianWeddingDress") ? 7 : 6;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Spring_1_Sun";
+      }
     }
 
     internal sealed class Haley : BaseBachelorexSection {
@@ -41,6 +46,11 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("HaleyRussianWeddingDress") ? 7 : 6;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Spring_2_Sun";
+      }
     }
 
     internal sealed class Sandy : BaseCharacterSection {
@@ -53,6 +63,11 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
         this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
         TokenRegistry.AddBoolToken(
             "SandyGiftTastesChange", () => this.Variant.IsModded() && this.GiftTastesChange);
+      }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Winter_2_Base";
       }
     }
   }

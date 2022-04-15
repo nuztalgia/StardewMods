@@ -19,6 +19,11 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("AlexJewishWeddingSuit") ? 6 : 5;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_1_Base";
+      }
     }
 
     internal sealed class Evelyn : BaseCharacterSection {
@@ -28,6 +33,11 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
       internal override void RegisterTokens() {
         this.RegisterVariantToken<FamilyVariant>(() => this.Variant);
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+      }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Summer_1_Base";
       }
     }
 
@@ -41,6 +51,11 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
         TokenRegistry.AddEnumToken<GeorgeBeard>("GeorgeBeard",
             () => this.Immersion.IsNotUltralight() ? this.Beard : GeorgeBeard.NoBeard);
+      }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_1_Rain";
       }
     }
   }

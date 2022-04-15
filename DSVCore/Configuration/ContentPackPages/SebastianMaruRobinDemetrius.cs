@@ -24,6 +24,11 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("SebastianDutchRomanianOrDutchVietnameseWeddingOutfits") ? 6 : 4;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Winter_1_Sun";
+      }
     }
 
     internal sealed class Maru : BaseBachelorexSection {
@@ -47,11 +52,21 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("MaruDutchXhosaWeddingDress") ? 6 : 5;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Winter_2_Base";
+      }
     }
 
     internal sealed class Robin : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Summer_1_Base";
+      }
     }
 
     internal sealed class Demetrius : BaseCharacterSection {
@@ -61,6 +76,11 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       internal override void RegisterTokens() {
         this.RegisterVariantToken<DemetriusVariant>(() => this.Variant);
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+      }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Spring_1_Base";
       }
     }
   }

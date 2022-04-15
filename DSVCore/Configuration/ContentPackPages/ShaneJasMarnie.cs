@@ -16,6 +16,16 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
         TokenRegistry.AddEnumToken<ShaneSelfCare>("ShaneSelfCare", () => this.SelfCare);
       }
 
+      internal override string GetPreviewPortraitPath() {
+        if (this.Variant == StandardVariant.Off) {
+          return string.Empty;
+        }
+        string outfitPath = (this.SelfCare == ShaneSelfCare.Messy)
+                            ? "Messy/Shane_Fall_1_Sun"
+                            : "Neat/Shane_Fall_2_Sun";
+        return $"Shane/Portraits/{this.Variant}/{outfitPath}.png";
+      }
+
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("ShaneGeorgianWeddingSuit") ? 6 : 5;
       }
@@ -24,6 +34,11 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
     internal sealed class Jas : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_1_Base";
+      }
     }
 
     internal sealed class Marnie : BaseCharacterSection {
@@ -38,6 +53,11 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
             "MarnieCharacterSmile",
             () => (this.Variant is StandardVariant.Vanilla) && this.SpriteSmile,
             autoValueString: "Smile");
+      }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Spring_1_Sun";
       }
     }
   }

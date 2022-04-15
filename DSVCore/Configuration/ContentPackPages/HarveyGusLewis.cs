@@ -25,16 +25,31 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("HarveyHungarianWeddingSuit") ? 5 : 4;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_1_Sun";
+      }
     }
 
     internal sealed class Gus : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Spring_1_Rain";
+      }
     }
 
     internal sealed class Lewis : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Summer_1_Base";
+      }
     }
   }
 

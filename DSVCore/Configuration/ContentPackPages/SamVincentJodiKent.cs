@@ -29,11 +29,21 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("SamNorwegianWeddingSuit") ? 4 : 3;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_1_Base";
+      }
     }
 
     internal sealed class Vincent : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Summer_1_Base";
+      }
     }
 
     internal sealed class Jodi : BaseCharacterSection {
@@ -47,11 +57,21 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
         TokenRegistry.AddBoolToken(
             "JodiGiftTastesChange", () => this.Variant.IsModded() && this.GiftTastesChange);
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Summer_2_Rain";
+      }
     }
 
     internal sealed class Kent : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Fall_1_Rain";
+      }
     }
   }
   

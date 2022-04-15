@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using GenericModConfigMenu;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -40,8 +42,7 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     this.SetUpCoreAndCompatPage(coreAndCompat);
 
     foreach (BaseContentPackPage contentPack in installedPacks) {
-      this.AddPage(contentPack.Name, contentPack.GetDisplayName())
-          .SetUpSections(contentPack.GetAllSections());
+      this.SetUpContentPackPage(contentPack);
     }
   }
 
@@ -89,8 +90,10 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
         .AddSectionOptions(coreOptions)
         .AddSpacing();
 
-    if (compatSections.Any()) {
-      this.SetUpSections(compatSections);
+    foreach (BaseMenuSection section in compatSections) {
+      this.AddSectionTitle(section.GetDisplayName())
+          .AddSectionOptions(section)
+          .AddSpacing();
     }
 
     // Show the placeholder if there are no compat mods or if the only one is Flower Queen's Crown.
@@ -101,10 +104,17 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     }
   }
 
-  private void SetUpSections(IEnumerable<BaseMenuSection> sections) {
-    foreach (BaseMenuSection section in sections) {
-      this.AddSectionTitle(section.GetDisplayName())
-          .AddSectionOptions(section)
+  private void SetUpContentPackPage(BaseContentPackPage contentPack) {
+    this.AddPage(contentPack.Name, contentPack.GetDisplayName());
+
+    foreach (BaseCharacterSection character in contentPack.GetAllSections()) {
+      // TODO: Also show other non-portrait preview images.
+      ImagePreviews.InitializePortrait(
+          contentPack.GetModContentHelper(), character.Name, character.GetPreviewPortraitPath);
+
+      this.AddSectionTitle(character.GetDisplayName())
+          .AddSectionOptions(character)
+          .AddImage(ImagePreviews.GetPortraitImage(character.Name), ImagePreviews.PortraitBounds)
           .AddSpacing();
     }
   }
@@ -199,6 +209,19 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
         min: min,
         max: max
     );
+    return this;
+  }
+
+  private GenericModConfigMenuIntegration AddImage(
+      Texture2D? texture, Rectangle bounds, int scaleFactor = 3) {
+    if (texture is not null) {
+      this.Api!.AddImage(
+          mod: Globals.Manifest,
+          texture: () => texture,
+          texturePixelArea: bounds,
+          scale: scaleFactor
+      );
+    }
     return this;
   }
 }

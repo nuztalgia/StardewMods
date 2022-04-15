@@ -16,11 +16,21 @@ internal sealed class PennyPam : BaseContentPackPage {
       protected override int GetNumberOfWeddingOutfits() {
         return HasElahoMod("PennyIrishWeddingDress") ? 6 : 5;
       }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = false;
+        return "Spring_1_Sun";
+      }
     }
 
     internal sealed class Pam : BaseCharacterSection {
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Summer_1_Sun";
+      }
     }
   }
 

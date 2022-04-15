@@ -11,6 +11,12 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         this.RegisterVariantToken<SimpleVariant>(() => this.Variant);
         this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
       }
+
+      internal override string GetPreviewPortraitPath() {
+        return (this.Variant == SimpleVariant.Modded)
+               ? "Krobus/Portraits/Krobus_1_Snow"
+               : string.Empty;
+      }
     }
 
     internal sealed class Mermaids : BaseCharacterSection {
@@ -39,6 +45,11 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         });
         // TODO: Determine whether we should be smarter about the value we return for this token.
         TokenRegistry.AddEnumToken<WizardMarriageMod>("WizardMarriageMod", () => this.MarriageMod);
+      }
+
+      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
+        hasDefaultDirectory = true;
+        return "Spring_1";
       }
     }
 
