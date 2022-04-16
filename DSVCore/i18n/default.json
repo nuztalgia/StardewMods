@@ -9,9 +9,9 @@
   "main.other-packs.description": "All of these packs are available on ModDrop. Just search for \"DSV\"!",
   "main.other-packs.none": "You've got all of them. Thank you for supporting DSV! <",
 
-  // Various text displayed on the "Core & Compatibility" page.
+  // Various text displayed on the "Core Options & Compatibility" page.
   "core.section.title": "Core Options",
-  "core.section.description": "Your choices in this section will be applied to all supported characters from your installed DSV content packs.",
+  "core.section.description": "Your choices here will be applied to all supported characters from your installed DSV content packs.",
   "option.pyjamas": "Pyjamas",
   "tooltip.pyjamas": "Toggles whether or not the marriage candidates will wear pyjamas in the morning and evening. If \"Marriage\" is selected, pyjamas will only be worn by your spouse in the farmhouse after marriage. Only applies to specific characters when their Immersion is set to \"Full\".",
   "option.mermaid-pendants": "Mermaid Pendants",
@@ -22,7 +22,7 @@
   "compat.placeholder.description": "You currently don't have any mods that require DSV's settings to match theirs - but if you did, this is where those options would be!",
 
   // Titles of each of the menu pages (excluding the main screen).
-  "page.core-and-compat": "Core & Compatibility",
+  "page.core-and-compat": "Core Options & Compatibility",
   "page.abigail-caroline-pierre": "Abigail, Caroline & Pierre",
   "page.alex-evelyn-george": "Alex, Evelyn & George",
   "page.emily-haley-sandy": "Emily, Haley & Sandy",
