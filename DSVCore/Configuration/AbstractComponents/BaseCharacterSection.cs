@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Nuztalgia.StardewMods.Common;
@@ -47,15 +48,18 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     return true;
   }
 
-  internal virtual string GetPreviewPortraitPath() {
-    if ((this.GetType().GetProperty(VariantPropertyName) is PropertyInfo property)
-        && (property.GetValue(this)?.ToString() is string currentVariant)
-        && (currentVariant != "Off")) {
-      string outfit = this.GetPreviewOutfit(out bool hasDefaultDirectory);
-      string customDirectory = hasDefaultDirectory ? "Default/" : string.Empty;
-      return $"{this.Name}/Portraits/{customDirectory}{currentVariant}/{this.Name}_{outfit}.png";
-    }
-    return string.Empty;
+  internal virtual string GetPreviewImagePath(
+      string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
+    bool hasProperty = ephemeralProperties.TryGetValue(VariantPropertyName, out object? value);
+    return (hasProperty && (value?.ToString() is string variant))
+           ? this.GetPreviewImagePath(imageDirectory, variant)
+           : string.Empty;
+  }
+
+  protected virtual string GetPreviewImagePath(string imageDirectory, string variant) {
+    string outfit = this.GetPreviewOutfit(out bool hasDefaultDirectory);
+    string customDirectory = hasDefaultDirectory ? "Default/" : string.Empty;
+    return $"{this.Name}/{imageDirectory}/{customDirectory}{variant}/{this.Name}_{outfit}.png";
   }
 
   // Subclasses should implement this properly if they rely on GetPreviewPortraitPath() calling it.

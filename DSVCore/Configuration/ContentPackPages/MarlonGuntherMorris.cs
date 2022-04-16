@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class MarlonGuntherMorris : BaseContentPackPage {
@@ -38,8 +40,12 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
             valueIfTrue: "Vanilla", valueIfFalse: "Off");
       }
 
-      internal override string GetPreviewPortraitPath() {
-        return this.SeasonalOutfits ? "Morris/Portraits/Morris_Fall_1_Base" : string.Empty;
+      internal override string GetPreviewImagePath(
+          string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
+        var getValue = ephemeralProperties.TryGetValue;
+        return (getValue(nameof(this.SeasonalOutfits), out object? value) && (value is true))
+               ? $"Morris/{imageDirectory}/Morris_Fall_1_Base"
+               : string.Empty;
       }
     }
   }

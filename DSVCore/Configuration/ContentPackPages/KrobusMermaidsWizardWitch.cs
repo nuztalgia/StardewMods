@@ -12,10 +12,8 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
       }
 
-      internal override string GetPreviewPortraitPath() {
-        return (this.Variant == SimpleVariant.Modded)
-               ? "Krobus/Portraits/Krobus_1_Snow"
-               : string.Empty;
+      protected override string GetPreviewImagePath(string imageDirectory, string _) {
+        return $"Krobus/{imageDirectory}/Krobus_1_Snow";
       }
     }
 

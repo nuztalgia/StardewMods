@@ -44,10 +44,8 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
       }
 
-      internal override string GetPreviewPortraitPath() {
-        return (this.Variant == LinusVariant.Vanilla)
-               ? "Linus/Portraits/Default/Linus_Spring_1_Sun"
-               : string.Empty;
+      protected override string GetPreviewImagePath(string imageDirectory, string _) {
+        return $"Linus/{imageDirectory}/Default/Linus_Spring_1_Sun";
       }
     }
   }

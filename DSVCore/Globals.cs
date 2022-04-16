@@ -10,6 +10,7 @@ internal static class Globals {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value. Reviewed.
   internal static IManifest Manifest { get; private set; }
   internal static IModRegistry ModRegistry { get; private set; }
+  internal static IGameContentHelper ContentHelper { get; private set; }
   internal static ModConfig Config { get; private set; }
 #pragma warning restore CS8618
 
@@ -18,6 +19,7 @@ internal static class Globals {
   internal static void Initialize(IManifest manifest, IModHelper modHelper) {
     Manifest = manifest;
     ModRegistry = modHelper.ModRegistry;
+    ContentHelper = modHelper.GameContent;
     Config = modHelper.ReadConfig<ModConfig>();
   }
 

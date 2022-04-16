@@ -46,9 +46,12 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     }
   }
 
-  private void OnFieldChanged(string fieldId, object newValue) {
+  private void OnFieldChanged(string fieldId, object? newValue) {
     Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
-    // TODO: Handle field changes somehow.
+    if (newValue is string valueDisplayName) {
+      newValue = ValueNameLookup.GetValueName(valueDisplayName);
+    }
+    ImagePreviews.SetFieldValue(fieldId, newValue);
   }
 
   private void SetUpMainPage(CoreAndCompatPage coreAndCompat,
@@ -108,33 +111,37 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     this.AddPage(contentPack.Name, contentPack.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPack.GetAllSections()) {
-      // TODO: Also show other non-portrait preview images.
-      ImagePreviews.InitializePortrait(
-          contentPack.GetModContentHelper(), character.Name, character.GetPreviewPortraitPath);
+      // TODO: Lay out the preview images more nicely.
+      ImagePreviews.InitializeCharacter(
+          contentPack.GetModContentHelper(), character.Name, character.GetPreviewImagePath);
 
       this.AddSectionTitle(character.GetDisplayName())
           .AddSectionOptions(character)
           .AddImage(ImagePreviews.GetPortraitImage(character.Name), ImagePreviews.PortraitBounds)
+          .AddImage(ImagePreviews.GetSpriteImage(character.Name), ImagePreviews.SpriteBounds)
           .AddSpacing();
     }
   }
 
   private GenericModConfigMenuIntegration AddSectionOptions(BaseMenuSection section) {
     foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
+      string fieldId = item.UniqueId;
       string displayName = " >  " + item.Name;
+      ImagePreviews.SetFieldValue(fieldId, item.Value);
+
       switch (item.Value) {
         case Enum:
-          this.AddEnumOption(section, item.UniqueId, displayName, item.Tooltip, item.Property);
+          this.AddEnumOption(section, fieldId, displayName, item.Tooltip, item.Property);
           break;
         case bool:
-          this.AddBoolOption(section, item.UniqueId, displayName, item.Tooltip, item.Property);
+          this.AddBoolOption(section, fieldId, displayName, item.Tooltip, item.Property);
           break;
         case int:
-          this.AddIntOption(section, item.UniqueId, displayName, item.Tooltip, item.Property,
+          this.AddIntOption(section, fieldId, displayName, item.Tooltip, item.Property,
                             section.GetMinValue(item.Property), section.GetMaxValue(item.Property));
           break;
         default:
-          Log.Error($"Unexpected type '{item.Value?.GetType()}' for option '{item.UniqueId}'.");
+          Log.Error($"Unexpected type '{item.Value?.GetType()}' for option '{fieldId}'.");
           break;
       }
     }

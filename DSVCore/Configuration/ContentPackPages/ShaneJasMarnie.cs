@@ -16,18 +16,15 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
         TokenRegistry.AddEnumToken<ShaneSelfCare>("ShaneSelfCare", () => this.SelfCare);
       }
 
-      internal override string GetPreviewPortraitPath() {
-        if (this.Variant == StandardVariant.Off) {
-          return string.Empty;
-        }
+      protected override int GetNumberOfWeddingOutfits() {
+        return HasElahoMod("ShaneGeorgianWeddingSuit") ? 6 : 5;
+      }
+
+      protected override string GetPreviewImagePath(string imageDirectory, string variant) {
         string outfitPath = (this.SelfCare == ShaneSelfCare.Messy)
                             ? "Messy/Shane_Fall_1_Sun"
                             : "Neat/Shane_Fall_2_Sun";
-        return $"Shane/Portraits/{this.Variant}/{outfitPath}.png";
-      }
-
-      protected override int GetNumberOfWeddingOutfits() {
-        return HasElahoMod("ShaneGeorgianWeddingSuit") ? 6 : 5;
+        return $"Shane/{imageDirectory}/{variant}/{outfitPath}.png";
       }
     }
 
