@@ -111,15 +111,16 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     this.AddPage(contentPack.Name, contentPack.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPack.GetAllSections()) {
-      // TODO: Lay out the preview images more nicely.
       ImagePreviews.InitializeCharacter(
           contentPack.GetModContentHelper(), character.Name, character.GetPreviewImagePath);
 
       this.AddSectionTitle(character.GetDisplayName())
           .AddSectionOptions(character)
-          .AddImage(ImagePreviews.GetPortraitImage(character.Name), ImagePreviews.PortraitBounds)
-          .AddImage(ImagePreviews.GetSpriteImage(character.Name), ImagePreviews.SpriteBounds)
-          .AddSpacing();
+          .AddComplexOption(
+              name: " =  " + I18n.Option_Preview(),
+              tooltip: string.Format(I18n.Tooltip_Preview(), character.Name),
+              height: ImagePreviews.PreviewHeight + ImagePreviews.PreviewMargin,
+              drawAction: (sb, position) => ImagePreviews.Draw(character.Name, sb, position));
     }
   }
 
@@ -219,16 +220,15 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     return this;
   }
 
-  private GenericModConfigMenuIntegration AddImage(
-      Texture2D? texture, Rectangle bounds, int scaleFactor = 3) {
-    if (texture is not null) {
-      this.Api!.AddImage(
-          mod: Globals.Manifest,
-          texture: () => texture,
-          texturePixelArea: bounds,
-          scale: scaleFactor
-      );
-    }
+  private GenericModConfigMenuIntegration AddComplexOption(
+      string name, string tooltip, int height, Action<SpriteBatch, Vector2> drawAction) {
+    this.Api!.AddComplexOption(
+        mod: Globals.Manifest,
+        name: () => name,
+        tooltip: () => tooltip,
+        height: () => height,
+        draw: drawAction
+    );
     return this;
   }
 }

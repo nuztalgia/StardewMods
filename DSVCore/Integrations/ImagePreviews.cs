@@ -33,6 +33,18 @@ internal static class ImagePreviews {
       this.CurrentSprite = this.GetImageTexture(SpriteDirectory);
     }
 
+    internal void DrawPreview(SpriteBatch sb, Vector2 position) {
+      if (this.CurrentPortrait is not null) {
+        sb.Draw(this.CurrentPortrait, position, PortraitBounds, PortraitScale);
+        position.X += (PortraitWidth * PortraitScale) + PreviewMargin;
+        position.Y += SpriteHeight;
+      }
+
+      if (this.CurrentSprite is not null) {
+        sb.Draw(this.CurrentSprite, position, SpriteBounds, SpriteScale);
+      }
+    }
+
     private Texture2D? GetImageTexture(string imageDirectory) {
       string imagePath = this.GetPreviewImagePath(imageDirectory, this.EphemeralProperties);
       if (!string.IsNullOrEmpty(imagePath)) {
@@ -49,6 +61,9 @@ internal static class ImagePreviews {
     }
   }
 
+  internal const int PreviewHeight = PortraitHeight * PortraitScale;
+  internal const int PreviewMargin = 16;
+
   private const string PortraitDirectory = "Portraits";
   private const int PortraitWidth = 64;
   private const int PortraitHeight = 64;
@@ -59,8 +74,8 @@ internal static class ImagePreviews {
   private const int SpriteHeight = 32;
   private const int SpriteScale = 5;
 
-  internal static readonly Rectangle PortraitBounds = new(0, 0, PortraitWidth, PortraitHeight);
-  internal static readonly Rectangle SpriteBounds = new(0, 0, SpriteWidth, SpriteHeight);
+  private static readonly Rectangle PortraitBounds = new(0, 0, PortraitWidth, PortraitHeight);
+  private static readonly Rectangle SpriteBounds = new(0, 0, SpriteWidth, SpriteHeight);
 
   private static readonly Dictionary<string, CharacterPreview> CharacterPreviews = new();
 
@@ -75,16 +90,6 @@ internal static class ImagePreviews {
     CharacterPreviews.Add(characterName, characterPreview);
   }
 
-  internal static Texture2D? GetPortraitImage(string characterName) {
-    CharacterPreviews.TryGetValue(characterName, out CharacterPreview? characterPreview);
-    return characterPreview?.CurrentPortrait;
-  }
-
-  internal static Texture2D? GetSpriteImage(string characterName) {
-    CharacterPreviews.TryGetValue(characterName, out CharacterPreview? characterPreview);
-    return characterPreview?.CurrentSprite;
-  }
-
   internal static void SetFieldValue(string fieldId, object? propertyValue) {
     (string characterName, string propertyKey) = fieldId.Split('_');
     if (AllowedEphemeralProperties.Contains(propertyKey)
@@ -92,6 +97,18 @@ internal static class ImagePreviews {
       // TODO: All ephemeral properties should be set to their defaults when menu is opened/closed.
       character.UpdateEphemeralProperty(propertyKey, propertyValue);
     }
+  }
+
+  internal static void Draw(string characterName, SpriteBatch sb, Vector2 position) {
+    CharacterPreviews.TryGetValue(characterName, out CharacterPreview? character);
+    character?.DrawPreview(sb, position);
+  }
+
+  // Extension method for SpriteBatch. Uses default values for irrelevant/unused parameters.
+  private static void Draw(this SpriteBatch sb,
+      Texture2D texture, Vector2 position, Rectangle sourceRect, float scale) {
+    sb.Draw(texture, position, sourceRect, color: Color.White, rotation: 0f,
+            origin: Vector2.Zero, scale, effects: SpriteEffects.None, layerDepth: 1f);
   }
 
 #pragma warning disable IDE0051 // Remove "unused" private members. (This is used by SetFieldValue.)
