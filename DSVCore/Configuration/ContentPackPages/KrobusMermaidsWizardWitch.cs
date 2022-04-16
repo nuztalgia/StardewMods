@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
@@ -12,6 +14,10 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
       }
 
+      internal override Rectangle? GetSpriteRect() {
+        return new Rectangle(0, 0, 16, 24); // He's a smol boi.
+      }
+
       protected override string GetPreviewImagePath(string imageDirectory, string _) {
         return $"Krobus/{imageDirectory}/Krobus_1_Snow";
       }
@@ -22,6 +28,14 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
 
       internal override void RegisterTokens() {
         TokenRegistry.AddEnumToken<MermaidRandomization>("Mermaids", () => this.Randomization);
+      }
+
+      internal override Rectangle? GetPortraitRect() {
+        return null; // No portrait available for Mermaids.
+      }
+
+      internal override Rectangle? GetSpriteRect() {
+        return null; // TODO: Add sprite(s) for Mermaids.
       }
     }
 
@@ -56,6 +70,14 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
 
       internal override void RegisterTokens() {
         this.RegisterVariantToken<SimpleVariant>(() => this.Variant);
+      }
+
+      internal override Rectangle? GetPortraitRect() {
+        return null; // No portrait available for Witch.
+      }
+
+      internal override Rectangle? GetSpriteRect() {
+        return null; // TODO: Add sprite(s) for Witch.
       }
     }
   }

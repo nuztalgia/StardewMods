@@ -111,15 +111,16 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     this.AddPage(contentPack.Name, contentPack.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPack.GetAllSections()) {
-      ImagePreviews.InitializeCharacter(
-          contentPack.GetModContentHelper(), character.Name, character.GetPreviewImagePath);
+      ImagePreviews.InitializeCharacter(character.Name,
+          Globals.ContentHelper.Load<Texture2D>, contentPack.GetModContentHelper().Load<Texture2D>, 
+          character.GetPreviewImagePath, character.GetPortraitRect(), character.GetSpriteRect());
 
       this.AddSectionTitle(character.GetDisplayName())
           .AddSectionOptions(character)
           .AddComplexOption(
               name: " =  " + I18n.Option_Preview(),
               tooltip: string.Format(I18n.Tooltip_Preview(), character.Name),
-              height: ImagePreviews.PreviewHeight + ImagePreviews.PreviewMargin,
+              height: ImagePreviews.GetHeight(character.Name),
               drawAction: (sb, position) => ImagePreviews.Draw(character.Name, sb, position));
     }
   }

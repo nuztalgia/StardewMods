@@ -1,81 +1,92 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Nuztalgia.StardewMods.Common;
-using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class ImagePreviews {
 
-  internal delegate string GetImage(string imageDirectory, Dictionary<string, object?> properties);
+  internal delegate Texture2D? LoadImage(string imageLocation);
+  internal delegate string GetModImagePath(
+      string imageDirectory, IDictionary<string, object?> ephemeralProperties);
 
   private sealed class CharacterPreview {
-    private readonly string CharacterName;
-    private readonly IModContentHelper ModContent;
-    private readonly GetImage GetPreviewImagePath;
+    private readonly LoadImage LoadModdedImage;
+    private readonly LoadImage LoadUnmoddedImage;
     private readonly Dictionary<string, object?> EphemeralProperties = new();
 
-    internal Texture2D? CurrentPortrait { get; private set; }
-    internal Texture2D? CurrentSprite { get; private set; }
+    internal Rectangle? PortraitRect { get; private init; }
+    internal Rectangle? SpriteRect { get; private init; }
+
+    private Texture2D? CurrentPortrait;
+    private Texture2D? CurrentSprite;
 
     internal CharacterPreview(
-        string characterName, IModContentHelper modContent, GetImage getPreviewImagePath) {
-      this.CharacterName = characterName;
-      this.ModContent = modContent;
-      this.GetPreviewImagePath = getPreviewImagePath;
+        string characterName, LoadImage loadGameImage, LoadImage loadModImage, 
+        GetModImagePath getModImagePath, Rectangle? portraitRect, Rectangle? spriteRect) {
+      this.PortraitRect = portraitRect;
+      this.SpriteRect = spriteRect;
+
+      this.LoadModdedImage = (imageDirectory) => {
+        string imagePath = getModImagePath(imageDirectory, this.EphemeralProperties);
+        return (!string.IsNullOrEmpty(imagePath) && !imagePath.Contains("Off"))
+               ? TryLoadImage(loadModImage, imagePath, $"Invalid preview image path: '{imagePath}'")
+               : null;
+      };
+
+      this.LoadUnmoddedImage = (imageDirectory) => {
+        return TryLoadImage(loadGameImage, $"{imageDirectory}/{characterName}",
+                            $"No preview image available in {imageDirectory} for {characterName}.");
+      };
+
+      static Texture2D? TryLoadImage(LoadImage loadImage, string imagePath, string errorText) {
+        try {
+          return loadImage(imagePath);
+        } catch (ContentLoadException) {
+          Log.Error(errorText);
+          return null;
+        }
+      }
     }
 
     internal void UpdateEphemeralProperty(string propertyKey, object? propertyValue) {
       this.EphemeralProperties[propertyKey] = propertyValue;
-      this.CurrentPortrait = this.GetImageTexture(PortraitDirectory);
-      this.CurrentSprite = this.GetImageTexture(SpriteDirectory);
+
+      if (this.PortraitRect is not null) {
+        this.CurrentPortrait = TryLoadImageFromDirectory("Portraits");
+      }
+      if (this.SpriteRect is not null) {
+        this.CurrentSprite = TryLoadImageFromDirectory("Characters");
+      }
+
+      Texture2D? TryLoadImageFromDirectory(string imageDirectory) {
+        return this.LoadModdedImage(imageDirectory) ?? this.LoadUnmoddedImage(imageDirectory);
+      }
     }
 
     internal void DrawPreview(SpriteBatch sb, Vector2 position) {
-      if (this.CurrentPortrait is not null) {
-        sb.Draw(this.CurrentPortrait, position, PortraitBounds, PortraitScale);
-        position.X += (PortraitWidth * PortraitScale) + PreviewMargin;
-        position.Y += SpriteHeight;
+      position.Y += StandardMargin;
+
+      if ((this.PortraitRect is Rectangle portraitRect) && (this.CurrentPortrait is not null)) {
+        sb.Draw(this.CurrentPortrait, position, portraitRect, PortraitScale);
+        position.X += (portraitRect.Width * PortraitScale) + (StandardMargin * 2);
+        position.Y += portraitRect.Height * PortraitScale;
       }
 
-      if (this.CurrentSprite is not null) {
-        sb.Draw(this.CurrentSprite, position, SpriteBounds, SpriteScale);
+      if ((this.SpriteRect is Rectangle spriteRect) && (this.CurrentSprite is not null)) {
+        position.Y -= spriteRect.Height * SpriteScale;
+        sb.Draw(this.CurrentSprite, position, spriteRect, SpriteScale);
       }
-    }
-
-    private Texture2D? GetImageTexture(string imageDirectory) {
-      string imagePath = this.GetPreviewImagePath(imageDirectory, this.EphemeralProperties);
-      if (!string.IsNullOrEmpty(imagePath)) {
-        try {
-          return imagePath.Contains("Off")
-                 ? Globals.ContentHelper.Load<Texture2D>($"{imageDirectory}/{this.CharacterName}")
-                 : this.ModContent.Load<Texture2D>(imagePath);
-        } catch (ContentLoadException) {
-          Log.Error($"Invalid preview image path: '{imagePath}'");
-        }
-      }
-      Log.Trace($"No preview image available in '{imageDirectory}' for {this.CharacterName}.");
-      return null;
     }
   }
 
-  internal const int PreviewHeight = PortraitHeight * PortraitScale;
-  internal const int PreviewMargin = 16;
-
-  private const string PortraitDirectory = "Portraits";
-  private const int PortraitWidth = 64;
-  private const int PortraitHeight = 64;
   private const int PortraitScale = 3;
-
-  private const string SpriteDirectory = "Characters";
-  private const int SpriteWidth = 16;
-  private const int SpriteHeight = 32;
   private const int SpriteScale = 5;
-
-  private static readonly Rectangle PortraitBounds = new(0, 0, PortraitWidth, PortraitHeight);
-  private static readonly Rectangle SpriteBounds = new(0, 0, SpriteWidth, SpriteHeight);
+  private const int StandardMargin = 16;
+  private const int MinimumHeight = StandardMargin * 4;
 
   private static readonly Dictionary<string, CharacterPreview> CharacterPreviews = new();
 
@@ -84,10 +95,19 @@ internal static class ImagePreviews {
   };
 
   internal static void InitializeCharacter(
-      IModContentHelper modContent, string characterName, GetImage getPreviewImagePath) {
+      string characterName, LoadImage loadGameImage, LoadImage loadModImage, 
+      GetModImagePath getModImagePath, Rectangle? portraitRect, Rectangle? spriteRect) {
     Log.Verbose($"Initializing GMCM character section preview for {characterName}.");
-    CharacterPreview characterPreview = new(characterName, modContent, getPreviewImagePath);
+    CharacterPreview characterPreview =
+        new(characterName, loadGameImage, loadModImage, getModImagePath, portraitRect, spriteRect);
     CharacterPreviews.Add(characterName, characterPreview);
+  }
+
+  internal static int GetHeight(string characterName) {
+    CharacterPreviews.TryGetValue(characterName, out CharacterPreview? character);
+    int portraitHeight = (character?.PortraitRect?.Height * PortraitScale) ?? 0;
+    int spriteHeight = (character?.SpriteRect?.Height * SpriteScale) ?? 0;
+    return StandardMargin + Math.Max(MinimumHeight, Math.Max(portraitHeight, spriteHeight));
   }
 
   internal static void SetFieldValue(string fieldId, object? propertyValue) {

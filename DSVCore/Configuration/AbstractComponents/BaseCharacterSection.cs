@@ -2,16 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Microsoft.Xna.Framework;
 using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseCharacterSection : BaseMenuSection {
-
-  private const string VariantPropertyName = "Variant";
-  private const string VariantTokenName = VariantPropertyName;
-  private const string ImmersionPropertyName = "Immersion";
-  private const string ImmersionTokenName = "LightweightConfig";
 
   internal enum StandardVariant {
     Modded,
@@ -30,6 +26,14 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     Light
   }
 
+  private const string VariantPropertyName = "Variant";
+  private const string VariantTokenName = "Variant"; // Redefined for semantics and futureproofness.
+  private const string ImmersionPropertyName = "Immersion";
+  private const string ImmersionTokenName = "LightweightConfig";
+
+  private static readonly Rectangle StandardPortraitRect = new(0, 0, 64, 64);
+  private static readonly Rectangle StandardSpriteRect = new(0, 0, 16, 32);
+
   // Subclasses should override this method if they have any non-standard tokens.
   internal override void RegisterTokens() {
     if (this.TryGetTokenProperty(VariantPropertyName, out PropertyInfo? variantProperty)) {
@@ -46,6 +50,14 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   internal override bool IsAvailable() {
     // This is only checked if the character's content pack is loaded, so they're always available.
     return true;
+  }
+
+  internal virtual Rectangle? GetPortraitRect() {
+    return StandardPortraitRect;
+  }
+
+  internal virtual Rectangle? GetSpriteRect() {
+    return StandardSpriteRect;
   }
 
   internal virtual string GetPreviewImagePath(
