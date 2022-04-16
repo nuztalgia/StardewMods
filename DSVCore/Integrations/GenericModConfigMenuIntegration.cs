@@ -176,9 +176,9 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
         fieldId: fieldId,
         name: () => name,
         tooltip: () => tooltip,
-        getValue: () => section.GetCurrentValueDisplayName(property),
-        setValue: valueDisplayName => section.SetValueByDisplayName(property, valueDisplayName),
-        allowedValues: section.GetAllValueDisplayNames(property).ToArray()
+        getValue: () => property.GetValueDisplayName(section),
+        setValue: valueDisplayName => property.SetValueByDisplayName(section, valueDisplayName),
+        allowedValues: ValueNameLookup.GetAllValueDisplayNames(property).ToArray()
     );
     return this;
   }
