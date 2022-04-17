@@ -44,8 +44,8 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
         this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
       }
 
-      protected override string GetPreviewImagePath(string imageDirectory, string _) {
-        return $"Linus/{imageDirectory}/Default/Linus_Spring_1_Sun";
+      protected override string GetModImagePath(string imageDirectory, string _) {
+        return $"Linus/{imageDirectory}/Default/Linus_Spring_1_Sun.png";
       }
     }
   }

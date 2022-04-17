@@ -20,7 +20,7 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
         return HasElahoMod("ShaneGeorgianWeddingSuit") ? 6 : 5;
       }
 
-      protected override string GetPreviewImagePath(string imageDirectory, string variant) {
+      protected override string GetModImagePath(string imageDirectory, string variant) {
         string outfitPath = (this.SelfCare == ShaneSelfCare.Messy)
                             ? "Messy/Shane_Fall_1_Sun"
                             : "Neat/Shane_Fall_2_Sun";

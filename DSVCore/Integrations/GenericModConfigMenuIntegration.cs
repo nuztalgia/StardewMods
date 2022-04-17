@@ -113,7 +113,8 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
     foreach (BaseCharacterSection character in contentPack.GetAllSections()) {
       ImagePreviews.InitializeCharacter(character.Name,
           Globals.ContentHelper.Load<Texture2D>, contentPack.GetModContentHelper().Load<Texture2D>, 
-          character.GetPreviewImagePath, character.GetPortraitRect(), character.GetSpriteRect());
+          character.GetModImagePath, character.GetGameImagePath,
+          character.GetPortraitRectDelegate(), character.GetSpriteRectDelegate());
 
       this.AddSectionTitle(character.GetDisplayName())
           .AddSectionOptions(character)

@@ -52,29 +52,33 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     return true;
   }
 
-  internal virtual Rectangle? GetPortraitRect() {
-    return StandardPortraitRect;
+  internal virtual ImagePreviews.GetImageRect? GetPortraitRectDelegate() {
+    return _ => StandardPortraitRect;
   }
 
-  internal virtual Rectangle? GetSpriteRect() {
-    return StandardSpriteRect;
+  internal virtual ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+    return _ => StandardSpriteRect;
   }
 
-  internal virtual string GetPreviewImagePath(
+  internal virtual string GetGameImagePath(string imageDirectory) {
+    return $"{imageDirectory}/{this.Name}";
+  }
+
+  internal virtual string GetModImagePath(
       string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
-    bool hasProperty = ephemeralProperties.TryGetValue(VariantPropertyName, out object? value);
-    return (hasProperty && (value?.ToString() is string variant))
-           ? this.GetPreviewImagePath(imageDirectory, variant)
+    ephemeralProperties.TryGetValue(VariantPropertyName, out object? value);
+    return ((value?.ToString() is string variant) && (variant != "Off"))
+           ? this.GetModImagePath(imageDirectory, variant)
            : string.Empty;
   }
 
-  protected virtual string GetPreviewImagePath(string imageDirectory, string variant) {
+  protected virtual string GetModImagePath(string imageDirectory, string variant) {
     string outfit = this.GetPreviewOutfit(out bool hasDefaultDirectory);
     string customDirectory = hasDefaultDirectory ? "Default/" : string.Empty;
     return $"{this.Name}/{imageDirectory}/{customDirectory}{variant}/{this.Name}_{outfit}.png";
   }
 
-  // Subclasses should implement this properly if they rely on GetPreviewPortraitPath() calling it.
+  // Subclasses should implement this properly if they expect it to be called by the above method.
   protected virtual string GetPreviewOutfit(out bool hasDefaultDirectory) {
     hasDefaultDirectory = false;
     return string.Empty;

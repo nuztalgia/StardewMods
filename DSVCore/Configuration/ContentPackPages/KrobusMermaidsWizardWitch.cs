@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -6,6 +7,8 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
 
   internal static class Sections {
     internal sealed class Krobus : BaseCharacterSection {
+      private static readonly Rectangle SpriteRect = new(0, 0, 16, 24);  // He's a smol boi.
+
       public SimpleVariant Variant { get; set; } = SimpleVariant.Modded;
       public SimpleImmersion Immersion { get; set; } = SimpleImmersion.Full;
 
@@ -14,12 +17,12 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
       }
 
-      internal override Rectangle? GetSpriteRect() {
-        return new Rectangle(0, 0, 16, 24); // He's a smol boi.
+      internal override ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+        return _ => SpriteRect;
       }
 
-      protected override string GetPreviewImagePath(string imageDirectory, string _) {
-        return $"Krobus/{imageDirectory}/Krobus_1_Snow";
+      protected override string GetModImagePath(string imageDirectory, string _) {
+        return $"Krobus/{imageDirectory}/Krobus_1_Snow.png";
       }
     }
 
@@ -30,12 +33,12 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         TokenRegistry.AddEnumToken<MermaidRandomization>("Mermaids", () => this.Randomization);
       }
 
-      internal override Rectangle? GetPortraitRect() {
-        return null; // No portrait available for Mermaids.
+      internal override ImagePreviews.GetImageRect? GetPortraitRectDelegate() {
+        return null; // No portrait available for the Mermaids.
       }
 
-      internal override Rectangle? GetSpriteRect() {
-        return null; // TODO: Add sprite(s) for Mermaids.
+      internal override ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+        return null; // TODO: Add sprite(s) for the Mermaids.
       }
     }
 
@@ -66,18 +69,30 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
     }
 
     internal sealed class Witch : BaseCharacterSection {
+      private static readonly Rectangle GameSpriteRect = new(276, 1885, 35, 30);
+      private static readonly Rectangle ModSpriteRect =
+          new(0, 0, GameSpriteRect.Width, GameSpriteRect.Height);
+
       public SimpleVariant Variant { get; set; } = SimpleVariant.Off;
 
       internal override void RegisterTokens() {
         this.RegisterVariantToken<SimpleVariant>(() => this.Variant);
       }
 
-      internal override Rectangle? GetPortraitRect() {
-        return null; // No portrait available for Witch.
+      internal override ImagePreviews.GetImageRect? GetPortraitRectDelegate() {
+        return null; // No portrait available for the Witch.
       }
 
-      internal override Rectangle? GetSpriteRect() {
-        return null; // TODO: Add sprite(s) for Witch.
+      internal override ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+        return source => (source == ContentSource.GameContent) ? GameSpriteRect : ModSpriteRect;
+      }
+
+      internal override string GetGameImagePath(string _) {
+        return "LooseSprites/Cursors";
+      }
+
+      protected override string GetModImagePath(string _, string __) {
+        return "Witch/CursorsWitch.png";
       }
     }
   }
