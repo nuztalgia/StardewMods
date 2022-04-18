@@ -31,8 +31,8 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   private const string ImmersionPropertyName = "Immersion";
   private const string ImmersionTokenName = "LightweightConfig";
 
-  private static readonly Rectangle StandardPortraitRect = new(0, 0, 64, 64);
-  private static readonly Rectangle StandardSpriteRect = new(0, 0, 16, 32);
+  private static readonly Rectangle[][] StandardPortraitRect = Wrap(new Rectangle(0, 0, 64, 64));
+  private static readonly Rectangle[][] StandardSpriteRect = Wrap(new Rectangle(0, 0, 16, 32));
 
   // Subclasses should override this method if they have any non-standard tokens.
   internal override void RegisterTokens() {
@@ -52,24 +52,24 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     return true;
   }
 
-  internal virtual ImagePreviews.GetImageRect? GetPortraitRectDelegate() {
+  internal virtual ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
     return _ => StandardPortraitRect;
   }
 
-  internal virtual ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+  internal virtual ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
     return _ => StandardSpriteRect;
   }
 
-  internal virtual string GetGameImagePath(string imageDirectory) {
-    return $"{imageDirectory}/{this.Name}";
+  internal virtual string[][] GetGameImagePaths(string imageDirectory) {
+    return Wrap($"{imageDirectory}/{this.Name}");
   }
 
-  internal virtual string GetModImagePath(
+  internal virtual string[][] GetModImagePaths(
       string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
     ephemeralProperties.TryGetValue(VariantPropertyName, out object? value);
     return ((value?.ToString() is string variant) && (variant != "Off"))
-           ? this.GetModImagePath(imageDirectory, variant)
-           : string.Empty;
+           ? Wrap(this.GetModImagePath(imageDirectory, variant))
+           : Wrap<string>();
   }
 
   protected virtual string GetModImagePath(string imageDirectory, string variant) {
@@ -137,6 +137,10 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
                 $"Will not register custom token named '{this.Name}{propertyName}'.");
       return false;
     }
+  }
+
+  protected static T[][] Wrap<T>(params T[] items) {
+    return new T[][] { items };
   }
 }
 

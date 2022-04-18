@@ -40,12 +40,12 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
             valueIfTrue: "Vanilla", valueIfFalse: "Off");
       }
 
-      internal override string GetModImagePath(
+      internal override string[][] GetModImagePaths(
           string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
         var getValue = ephemeralProperties.TryGetValue;
         return (getValue(nameof(this.SeasonalOutfits), out object? value) && (value is true))
-               ? $"Morris/{imageDirectory}/Morris_Fall_1_Base.png"
-               : string.Empty;
+               ? Wrap($"Morris/{imageDirectory}/Morris_Fall_1_Base.png")
+               : Wrap<string>();
       }
     }
   }

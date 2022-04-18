@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,65 +11,60 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class ImagePreviews {
 
-  internal delegate Texture2D? LoadImage(string imageLocation);
-  internal delegate Rectangle GetImageRect(ContentSource source);
+  internal delegate Texture2D? LoadImage(string imagePath);
+  internal delegate Texture2D[][] LoadImages(string imageDirectory);
 
-  internal delegate string GetGameImagePath(string imageDirectory);
-  internal delegate string GetModImagePath(
+  internal delegate string[][] GetGameImagePaths(string imageDirectory);
+  internal delegate string[][] GetModImagePaths(
       string imageDirectory, IDictionary<string, object?> ephemeralProperties);
 
+  internal delegate Rectangle[][] GetImageRects(ContentSource source);
+
   private sealed class CharacterPreview {
-    private readonly LoadImage LoadModImage;
-    private readonly LoadImage LoadGameImage;
+    private readonly LoadImages LoadModImages;
+    private readonly LoadImages LoadGameImages;
     private readonly Dictionary<string, object?> EphemeralProperties = new();
 
-    internal GetImageRect? GetPortraitRect { get; private init; }
-    internal GetImageRect? GetSpriteRect { get; private init; }
+    internal GetImageRects? GetPortraitRects { get; private init; }
+    internal GetImageRects? GetSpriteRects { get; private init; }
     internal ContentSource CurrentSource { get; private set; } = ContentSource.GameContent;
 
-    private Texture2D? CurrentPortrait;
-    private Texture2D? CurrentSprite;
+    private Texture2D[][]? CurrentPortraits;
+    private Texture2D[][]? CurrentSprites;
 
     internal CharacterPreview(
         LoadImage loadGameImage, LoadImage loadModImage, 
-        GetModImagePath getModImagePath, GetGameImagePath getGameImagePath,
-        GetImageRect? getPortraitRect, GetImageRect? getSpriteRect) {
-      this.GetPortraitRect = getPortraitRect;
-      this.GetSpriteRect = getSpriteRect;
+        GetModImagePaths getModImagePaths, GetGameImagePaths getGameImagePaths,
+        GetImageRects? getPortraitRects, GetImageRects? getSpriteRects) {
+      this.GetPortraitRects = getPortraitRects;
+      this.GetSpriteRects = getSpriteRects;
 
-      this.LoadModImage = (imageDirectory) => {
+      this.LoadModImages = (imageDirectory) => {
         this.CurrentSource = ContentSource.ModFolder;
-        string imagePath = getModImagePath(imageDirectory, this.EphemeralProperties);
-        return string.IsNullOrEmpty(imagePath) ? null : TryLoadImage(loadModImage, imagePath);
+        return TryLoadImages(
+            loadModImage, getModImagePaths(imageDirectory, this.EphemeralProperties));
       };
 
-      this.LoadGameImage = (imageDirectory) => {
+      this.LoadGameImages = (imageDirectory) => {
         this.CurrentSource = ContentSource.GameContent;
-        return TryLoadImage(loadGameImage, getGameImagePath(imageDirectory));
+        return TryLoadImages(loadGameImage, getGameImagePaths(imageDirectory));
       };
-
-      static Texture2D? TryLoadImage(LoadImage loadImage, string imagePath) {
-        try {
-          return loadImage(imagePath);
-        } catch (ContentLoadException) {
-          Log.Error($"Invalid preview image path: '{imagePath}'");
-          return null;
-        }
-      }
     }
 
     internal void UpdateEphemeralProperty(string propertyKey, object? propertyValue) {
       this.EphemeralProperties[propertyKey] = propertyValue;
 
-      if (this.GetPortraitRect is not null) {
-        this.CurrentPortrait = TryLoadImageFromDirectory("Portraits");
-      }
-      if (this.GetSpriteRect is not null) {
-        this.CurrentSprite = TryLoadImageFromDirectory("Characters");
+      if (this.GetPortraitRects is not null) {
+        this.CurrentPortraits = TryLoadImagesFromDirectory("Portraits");
       }
 
-      Texture2D? TryLoadImageFromDirectory(string imageDirectory) {
-        return this.LoadModImage(imageDirectory) ?? this.LoadGameImage(imageDirectory);
+      if (this.GetSpriteRects is not null) {
+        this.CurrentSprites = TryLoadImagesFromDirectory("Characters");
+      }
+
+      Texture2D[][] TryLoadImagesFromDirectory(string imageDirectory) {
+        var modImages = this.LoadModImages(imageDirectory);
+        return modImages.First().Any() ? modImages : this.LoadGameImages(imageDirectory);
       }
     }
 
@@ -76,29 +72,32 @@ internal static class ImagePreviews {
       position.Y += StandardMargin;
 
       bool portraitSuccess = TryDraw(
-          this.CurrentPortrait, this.GetPortraitRect, PortraitScale,
+          this.CurrentPortraits, this.GetPortraitRects, PortraitScale,
           afterDraw: (portraitRect) => {
             position.X += (portraitRect.Width * PortraitScale) + (StandardMargin * 2);
             position.Y += portraitRect.Height * PortraitScale;
           });
 
       bool spriteSuccess = TryDraw(
-          this.CurrentSprite, this.GetSpriteRect, SpriteScale,
+          this.CurrentSprites, this.GetSpriteRects, SpriteScale,
           beforeDraw: (spriteRect) => {
             if (portraitSuccess) {
               position.Y -= spriteRect.Height * SpriteScale;
             }
           });
 
-      bool TryDraw(Texture2D? image, GetImageRect? getImageRect, int scale,
+      bool TryDraw(Texture2D[][]? allImages, GetImageRects? getImageRects, int scale,
                    Action<Rectangle>? beforeDraw = null, Action<Rectangle>? afterDraw = null) {
-        if ((image is null) || (getImageRect is null)) {
+        if ((getImageRects is null) || (allImages is null) || !allImages.Any()) {
           return false;
         }
-        Rectangle rect = getImageRect(this.CurrentSource);
-        beforeDraw?.Invoke(rect);
-        sb.Draw(image, position, rect, scale);
-        afterDraw?.Invoke(rect);
+        foreach (var (rectGroup, imageGroup) in getImageRects(this.CurrentSource).Zip(allImages)) {
+          beforeDraw?.Invoke(rectGroup.First());
+          foreach (var (rect, image) in rectGroup.Zip(imageGroup)) {
+            sb.Draw(image, position, rect, scale);
+          }
+          afterDraw?.Invoke(rectGroup.Last());
+        }
         return true;
       }
     }
@@ -117,22 +116,22 @@ internal static class ImagePreviews {
 
   internal static void InitializeCharacter(string characterName,
       LoadImage loadGameImage, LoadImage loadModImage,
-      GetModImagePath getModImagePath, GetGameImagePath getGameImagePath,
-      GetImageRect? getPortraitRect, GetImageRect? getSpriteRect) {
+      GetModImagePaths getModImagePaths, GetGameImagePaths getGameImagePaths,
+      GetImageRects? getPortraitRects, GetImageRects? getSpriteRects) {
     Log.Verbose($"Initializing GMCM character section preview for {characterName}.");
-    CharacterPreview characterPreview = new(loadGameImage, loadModImage, getModImagePath,
-                                            getGameImagePath, getPortraitRect, getSpriteRect);
+    CharacterPreview characterPreview = new(loadGameImage, loadModImage, getModImagePaths,
+                                            getGameImagePaths, getPortraitRects, getSpriteRects);
     CharacterPreviews.Add(characterName, characterPreview);
   }
 
   internal static int GetHeight(string characterName) {
     int actualHeight = CharacterPreviews.TryGetValue(characterName, out CharacterPreview? character)
-                       ? Math.Max(GetHeight(character.GetPortraitRect, PortraitScale),
-                                  GetHeight(character.GetSpriteRect, SpriteScale)) : 0;
+                       ? Math.Max(GetHeight(character.GetPortraitRects, PortraitScale),
+                                  GetHeight(character.GetSpriteRects, SpriteScale)) : 0;
     return Math.Max(actualHeight, MinimumHeight) + StandardMargin;
 
-    int GetHeight(GetImageRect? getImageRect, int scale) {
-      return (getImageRect?.Invoke(character.CurrentSource).Height * scale) ?? 0;
+    int GetHeight(GetImageRects? getImageRects, int scale) {
+      return (getImageRects?.Invoke(character.CurrentSource).First().First().Height * scale) ?? 0;
     }
   }
 
@@ -148,6 +147,25 @@ internal static class ImagePreviews {
   internal static void Draw(string characterName, SpriteBatch sb, Vector2 position) {
     CharacterPreviews.TryGetValue(characterName, out CharacterPreview? character);
     character?.DrawPreview(sb, position);
+  }
+
+  private static Texture2D[][] TryLoadImages(LoadImage loadImage, string[][] allImagePaths) {
+    return allImagePaths
+        .Select(imagePathGroup => imagePathGroup
+            .Select(imagePath => TryLoadImage(loadImage, imagePath))
+            .OfType<Texture2D>().ToArray())
+        .ToArray();
+  }
+
+  private static Texture2D? TryLoadImage(LoadImage loadImage, string imagePath) {
+    if (!string.IsNullOrEmpty(imagePath)) {
+      try {
+        return loadImage(imagePath);
+      } catch (ContentLoadException) {
+        Log.Error($"Invalid preview image path: '{imagePath}'");
+      }
+    }
+    return null;
   }
 
   // Extension method for SpriteBatch. Uses default values for irrelevant/unused parameters.

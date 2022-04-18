@@ -7,7 +7,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
 
   internal static class Sections {
     internal sealed class Krobus : BaseCharacterSection {
-      private static readonly Rectangle SpriteRect = new(0, 0, 16, 24);  // He's a smol boi.
+      private static readonly Rectangle[][] SpriteRect = Wrap(new Rectangle(0, 0, 16, 24));
 
       public SimpleVariant Variant { get; set; } = SimpleVariant.Modded;
       public SimpleImmersion Immersion { get; set; } = SimpleImmersion.Full;
@@ -17,7 +17,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         this.RegisterImmersionToken<SimpleImmersion>(() => this.Immersion);
       }
 
-      internal override ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+      internal override ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
         return _ => SpriteRect;
       }
 
@@ -33,11 +33,11 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         TokenRegistry.AddEnumToken<MermaidRandomization>("Mermaids", () => this.Randomization);
       }
 
-      internal override ImagePreviews.GetImageRect? GetPortraitRectDelegate() {
+      internal override ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
         return null; // No portrait available for the Mermaids.
       }
 
-      internal override ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+      internal override ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
         return null; // TODO: Add sprite(s) for the Mermaids.
       }
     }
@@ -69,9 +69,8 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
     }
 
     internal sealed class Witch : BaseCharacterSection {
-      private static readonly Rectangle GameSpriteRect = new(276, 1885, 35, 30);
-      private static readonly Rectangle ModSpriteRect =
-          new(0, 0, GameSpriteRect.Width, GameSpriteRect.Height);
+      private static readonly Rectangle[][] GameSpriteRect = Wrap(new Rectangle(276, 1885, 35, 30));
+      private static readonly Rectangle[][] ModSpriteRect = Wrap(new Rectangle(0, 0, 35, 30));
 
       public SimpleVariant Variant { get; set; } = SimpleVariant.Off;
 
@@ -79,16 +78,16 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         this.RegisterVariantToken<SimpleVariant>(() => this.Variant);
       }
 
-      internal override ImagePreviews.GetImageRect? GetPortraitRectDelegate() {
+      internal override ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
         return null; // No portrait available for the Witch.
       }
 
-      internal override ImagePreviews.GetImageRect? GetSpriteRectDelegate() {
+      internal override ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
         return source => (source == ContentSource.GameContent) ? GameSpriteRect : ModSpriteRect;
       }
 
-      internal override string GetGameImagePath(string _) {
-        return "LooseSprites/Cursors";
+      internal override string[][] GetGameImagePaths(string _) {
+        return Wrap("LooseSprites/Cursors");
       }
 
       protected override string GetModImagePath(string _, string __) {
