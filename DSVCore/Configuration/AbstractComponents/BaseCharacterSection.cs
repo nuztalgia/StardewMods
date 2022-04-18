@@ -52,6 +52,10 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     return true;
   }
 
+  internal virtual string GetPreviewTooltip() {
+    return this.FormatCharacterString(I18n.Tooltip_Preview_General);
+  }
+
   internal virtual ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
     return _ => StandardPortraitRect;
   }

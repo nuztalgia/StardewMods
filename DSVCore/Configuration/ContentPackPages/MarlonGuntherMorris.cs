@@ -12,6 +12,10 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
         this.RegisterVariantToken<StandardVariant>(() => this.Variant);
       }
 
+      internal override string GetPreviewTooltip() {
+        return this.FormatCharacterString(I18n.Tooltip_Preview_Singular);
+      }
+
       protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
         hasDefaultDirectory = true;
         return "Summer_1_Base";
@@ -23,6 +27,10 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
 
       internal override void RegisterTokens() {
         this.RegisterVariantToken<StandardVariant>(() => this.Variant);
+      }
+
+      internal override string GetPreviewTooltip() {
+        return this.FormatCharacterString(I18n.Tooltip_Preview_Singular);
       }
 
       protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
@@ -38,6 +46,10 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
         TokenRegistry.AddBoolToken(
             "MorrisVariant", () => this.SeasonalOutfits,
             valueIfTrue: "Vanilla", valueIfFalse: "Off");
+      }
+
+      internal override string GetPreviewTooltip() {
+        return this.FormatCharacterString(I18n.Tooltip_Preview_Singular);
       }
 
       internal override string[][] GetModImagePaths(

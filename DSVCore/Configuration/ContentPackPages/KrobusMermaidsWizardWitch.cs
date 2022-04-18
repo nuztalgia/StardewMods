@@ -58,6 +58,10 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         TokenRegistry.AddEnumToken<MermaidRandomization>("Mermaids", () => this.Randomization);
       }
 
+      internal override string GetPreviewTooltip() {
+        return this.FormatCharacterString(I18n.Tooltip_Preview_Specific);
+      }
+
       internal override ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
         return _ => ModSpriteRects; // These are more like sprites, but should use portrait scaling.
       }
@@ -121,6 +125,10 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         TokenRegistry.AddEnumToken<WizardMarriageMod>("WizardMarriageMod", () => this.MarriageMod);
       }
 
+      internal override string GetPreviewTooltip() {
+        return this.FormatCharacterString(I18n.Tooltip_Preview_Specific);
+      }
+
       protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
         hasDefaultDirectory = true;
         return "Spring_1";
@@ -135,6 +143,10 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
 
       internal override void RegisterTokens() {
         this.RegisterVariantToken<SimpleVariant>(() => this.Variant);
+      }
+
+      internal override string GetPreviewTooltip() {
+        return this.FormatCharacterString(I18n.Tooltip_Preview_Specific);
       }
 
       internal override ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {

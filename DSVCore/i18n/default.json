@@ -93,7 +93,13 @@
   "tooltip.immersion.standard": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features, a lightweight selection to reduce lag, or an ultra-lightweight selection.",
   "tooltip.immersion.simple": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features or a lightweight selection to reduce lag.",
   "tooltip.wedding-outfit": "Selects which wedding outfit {0} will wear when getting married. See the DSV website for images and details. Can only be used if Immersion is NOT set to \"Ultralight\".",
-  "tooltip.preview": "Some of the choices you make will update this image to reflect what {0} will look like if you save your changes. Try it out!",
+
+  // Tooltip displayed in previews for most named characters.
+  "tooltip.preview.general": "Some of the choices you make will update this image to reflect what {0} will look like if you save your changes. Try it out!",
+  // Tooltip displayed in previews for most characters with only one config option.
+  "tooltip.preview.singular": "Your selection will update this image to reflect what {0} will look like if you save your changes. Try it out!",
+  // Tooltip displayed in previews for the Wizard, the Mermaids, and the Witch.
+  "tooltip.preview.specific": "Your choices will update this image to reflect what the {0} will look like if you save your changes. Try it out!",
 
   // Tooltips displayed on the "Abigail, Caroline & Pierre" content pack page.
   "tooltip.abigail.variant": "The DSV version of Abigail is mixed Chinese-Filipino; her mother Caroline is Filipino, and her father Pierre is Chinese. Both her vanilla and modded variants can be either plus-sized or straight-sized.",

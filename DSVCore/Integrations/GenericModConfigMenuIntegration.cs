@@ -120,7 +120,7 @@ internal class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConf
           .AddSectionOptions(character)
           .AddComplexOption(
               name: " =  " + I18n.Option_Preview(),
-              tooltip: string.Format(I18n.Tooltip_Preview(), character.Name),
+              tooltip: character.GetPreviewTooltip(),
               height: ImagePreviews.GetHeight(character.Name),
               drawAction: (sb, position) => ImagePreviews.Draw(character.Name, sb, position));
     }

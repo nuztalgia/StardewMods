@@ -110,7 +110,7 @@ internal static class ImagePreviews {
   private const int PortraitScale = 3;
   private const int SpriteScale = 5;
   private const int StandardMargin = 16;
-  private const int MinimumHeight = StandardMargin * 4;
+  private const int MinimumHeight = 128;
 
   private static readonly Dictionary<string, CharacterPreview> CharacterPreviews = new();
 
