@@ -70,35 +70,39 @@ internal static class ImagePreviews {
 
     internal void DrawPreview(SpriteBatch sb, Vector2 position) {
       position.Y += StandardMargin;
+      bool baselineAdjusted = false;
 
-      bool portraitSuccess = TryDraw(
-          this.CurrentPortraits, this.GetPortraitRects, PortraitScale,
-          afterDraw: (portraitRect) => {
-            position.X += (portraitRect.Width * PortraitScale) + (StandardMargin * 2);
-            position.Y += portraitRect.Height * PortraitScale;
-          });
+      TryDraw(this.CurrentPortraits, this.GetPortraitRects, PortraitScale);
+      TryDraw(this.CurrentSprites, this.GetSpriteRects, SpriteScale);
 
-      bool spriteSuccess = TryDraw(
-          this.CurrentSprites, this.GetSpriteRects, SpriteScale,
-          beforeDraw: (spriteRect) => {
-            if (portraitSuccess) {
-              position.Y -= spriteRect.Height * SpriteScale;
-            }
-          });
-
-      bool TryDraw(Texture2D[][]? allImages, GetImageRects? getImageRects, int scale,
-                   Action<Rectangle>? beforeDraw = null, Action<Rectangle>? afterDraw = null) {
-        if ((getImageRects is null) || (allImages is null) || !allImages.Any()) {
-          return false;
+      void TryDraw(Texture2D[][]? allImages, GetImageRects? getImageRects, int scale) {
+        if ((getImageRects is null) || (allImages is null)
+            || (!allImages.Any()) || (!allImages.First().Any())) {
+          return;
         }
+
         foreach (var (rectGroup, imageGroup) in getImageRects(this.CurrentSource).Zip(allImages)) {
-          beforeDraw?.Invoke(rectGroup.First());
-          foreach (var (rect, image) in rectGroup.Zip(imageGroup)) {
-            sb.Draw(image, position, rect, scale);
+          if ((rectGroup.Length != 1) && (rectGroup.Length != imageGroup.Length)) {
+            Log.Error($"Mismatch: {rectGroup.Length} rectangles and {imageGroup.Length} images.");
+          } else {
+            Rectangle mainRect = rectGroup.First();
+            position.Y -= baselineAdjusted ? (mainRect.Height * scale) : 0;
+
+            if (rectGroup.Length == 1) {
+              foreach (Texture2D image in imageGroup) {
+                sb.Draw(image, position, mainRect, scale);
+              }
+            } else if (rectGroup.Length == imageGroup.Length) {
+              foreach ((Rectangle rect, Texture2D image) in rectGroup.Zip(imageGroup)) {
+                sb.Draw(image, position, rect, scale);
+              }
+            }
+
+            position.X += (mainRect.Width * scale) + (StandardMargin * 2);
+            position.Y += mainRect.Height * scale;
+            baselineAdjusted = true;
           }
-          afterDraw?.Invoke(rectGroup.Last());
         }
-        return true;
       }
     }
   }
@@ -111,7 +115,7 @@ internal static class ImagePreviews {
   private static readonly Dictionary<string, CharacterPreview> CharacterPreviews = new();
 
   private static readonly HashSet<string> AllowedEphemeralProperties = new() {
-    "Variant", "SeasonalOutfits",
+    "Variant", "Randomization", "SeasonalOutfits",
   };
 
   internal static void InitializeCharacter(string characterName,
