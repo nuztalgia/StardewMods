@@ -1,47 +1,23 @@
-using System;
 using System.Collections.Generic;
-using Nuztalgia.StardewMods.Common;
 using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class Globals {
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value. Reviewed.
-  internal static IManifest Manifest { get; private set; }
-  internal static IModRegistry ModRegistry { get; private set; }
-  internal static IGameContentHelper ContentHelper { get; private set; }
-  internal static ModConfig Config { get; private set; }
-#pragma warning restore CS8618
+  internal static IModRegistry ModRegistry { get; private set; } = default!;
 
-  private readonly static Dictionary<string, string?> I18nCache = new();
+  private readonly static Dictionary<string, string> I18nCache = new();
 
-  internal static void Initialize(IManifest manifest, IModHelper modHelper) {
-    Manifest = manifest;
-    ModRegistry = modHelper.ModRegistry;
-    ContentHelper = modHelper.GameContent;
-    Config = modHelper.ReadConfig<ModConfig>();
+  internal static void Init(IModRegistry modRegistry) {
+    ModRegistry = modRegistry;
   }
 
-  internal static void UpdateActiveConfig(object caller, ModConfig newConfig) {
-    if (caller is GenericModConfigMenuIntegration) {
-      // Ensure that this is only set from classes that we expect to set it.
-      Config = newConfig;
-    } else {
-      string callerName = caller.GetType().Name;
-      Log.Error($"Failed to update mod config (missing permisson for class '{callerName}').");
+  internal static string GetI18nString(string name) {
+    if (!I18nCache.ContainsKey(name)
+        && (typeof(I18n.Keys).GetField(name)?.GetValue(null) is string key)) {
+      I18nCache[name] = I18n.GetByKey(key);
     }
-  }
-
-  internal static string? GetI18nString(string name) {
-    if (I18nCache.TryGetValue(name, out string? value)) {
-      return value;
-    }
-
-    Type type = typeof(I18n.Keys);
-    value = (type.GetField(name)?.GetValue(null) is string key) ? I18n.GetByKey(key) : null;
-
-    I18nCache.Add(name, value);
-    return value;
+    return I18nCache[name];
   }
 }

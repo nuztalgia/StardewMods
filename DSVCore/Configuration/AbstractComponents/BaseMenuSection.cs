@@ -6,32 +6,29 @@ namespace Nuztalgia.StardewMods.DSVCore;
 internal abstract class BaseMenuSection : BaseMenuComponent {
 
   internal readonly record struct OptionItem(
-    PropertyInfo Property,
-    string UniqueId,
-    string Name,
-    string Tooltip,
-    object? Value
+      PropertyInfo Property,
+      string UniqueId,
+      string Name,
+      string Tooltip,
+      object? Value
   );
 
   internal IEnumerable<OptionItem> GetOptions() {
     foreach (PropertyInfo property in this.GetType().GetProperties()) {
       string uniqueId = $"{this.Name}_{property.Name}";
       yield return new OptionItem(
-        Property: property,
-        UniqueId: uniqueId,
-        Name: this.GetOptionName(property) ?? property.Name,
-        Tooltip: this.GetTooltip(property) ?? uniqueId,
-        Value: property.GetValue(this)
+          Property: property,
+          UniqueId: uniqueId,
+          Name: this.GetOptionName(property) ?? property.Name,
+          Tooltip: this.GetTooltip(property) ?? uniqueId,
+          Value: property.GetValue(this)
       );
     }
   }
 
-  internal virtual int GetMinValue(PropertyInfo property) {
-    return int.MinValue; // Subclasses should implement this properly if they expect to use it.
-  }
-
-  internal virtual int GetMaxValue(PropertyInfo property) {
-    return int.MaxValue; // Subclasses should implement this properly if they expect to use it.
+  // Subclasses should implement this method properly if they expect to use it.
+  internal virtual (int min, int max) GetValueRange(PropertyInfo property) {
+    return (min: int.MinValue, max: int.MaxValue);
   }
 
   protected virtual string? GetOptionName(PropertyInfo property) {

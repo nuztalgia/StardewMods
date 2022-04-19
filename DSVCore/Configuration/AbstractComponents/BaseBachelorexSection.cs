@@ -14,27 +14,22 @@ internal abstract class BaseBachelorexSection : BaseCharacterSection {
 
     // TODO: Properly validate the WeddingOutfit token for every bachelorex.
     if (this.TryGetTokenProperty(WeddingOutfitPropertyName, out PropertyInfo? property)) {
-      TokenRegistry.AddIntToken(this.Name + property.Name, () => (int) property.GetValue(this)!,
-                                this.GetMinValue(property), this.GetMaxValue(property));
+      (int min, int max) = this.GetValueRange(property);
+      TokenRegistry.AddIntToken(
+          this.Name + property.Name, () => (int) property.GetValue(this)!, min, max);
     }
   }
 
-  internal override int GetMinValue(PropertyInfo property) {
-    return (property.Name == WeddingOutfitPropertyName)
-            ? 1 // The wedding outfts for all characters are indexed starting at 1.
-            : base.GetMinValue(property);
-  }
-
-  internal override int GetMaxValue(PropertyInfo property) {
-    return (property.Name == WeddingOutfitPropertyName)
-            ? this.GetNumberOfWeddingOutfits()
-            : base.GetMaxValue(property);
+  internal override (int min, int max) GetValueRange(PropertyInfo property) {
+    return (property.Name == WeddingOutfitPropertyName) 
+        ? (min: 1, max: this.GetNumberOfWeddingOutfits()) // Outfts are indexed starting at 1.
+        : base.GetValueRange(property);
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
     return (property.Name == WeddingOutfitPropertyName)
-            ? this.FormatCharacterString(I18n.Tooltip_WeddingOutfit)
-            : base.GetTooltip(property);
+        ? this.FormatCharacterString(I18n.Tooltip_WeddingOutfit)
+        : base.GetTooltip(property);
   }
 
   protected abstract int GetNumberOfWeddingOutfits();
