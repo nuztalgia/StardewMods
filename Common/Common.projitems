@@ -6,10 +6,15 @@
     <SharedGUID>d01808bc-bf83-4861-882b-7e792c3559e1</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Common</Import_RootNamespace>
+    <Import_RootNamespace>Nuztalgia.StardewMods.Common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\ContentPatcherIntegration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\IContentPatcherApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GenericModConfigMenu\GenericModConfigMenuIntegration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GenericModConfigMenu\IGenericModConfigMenuApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseIntegration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BaseMod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
   </ItemGroup>
 </Project>

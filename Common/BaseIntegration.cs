@@ -4,11 +4,11 @@ namespace Nuztalgia.StardewMods.Common;
 
 internal abstract class BaseIntegration<TInterface> where TInterface : class {
 
-  protected string ModId { get; }
-  protected TInterface? Api { get; }
+  protected TInterface Api { get; private set; }
+  protected IManifest Manifest { get; private set; }
 
-  protected BaseIntegration(IModRegistry modRegistry, string modId) {
-    this.ModId = modId;
-    this.Api = modRegistry.GetApi<TInterface>(modId);
+  protected BaseIntegration(TInterface api, IManifest manifest) {
+    this.Api = api;
+    this.Manifest = manifest;
   }
 }
