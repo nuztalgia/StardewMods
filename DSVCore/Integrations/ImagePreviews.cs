@@ -162,7 +162,7 @@ internal static class ImagePreviews {
   }
 
   private static Texture2D? TryLoadImage(LoadImage loadImage, string imagePath) {
-    if (!string.IsNullOrEmpty(imagePath)) {
+    if (!imagePath.IsEmpty()) {
       try {
         return loadImage(imagePath);
       } catch (ContentLoadException) {

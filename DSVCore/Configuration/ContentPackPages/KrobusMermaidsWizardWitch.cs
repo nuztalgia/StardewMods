@@ -37,18 +37,18 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
           CopyForAllVariants(new Rectangle[] { new(28, 0, 25, 35), new(0, 0, 25, 35) });
 
       private static readonly string[] RandomUppers = new[] {
-          string.Format(ModImagePath, 'C', "Top1"), string.Format(ModImagePath, 'C', "Top2"),
-          string.Format(ModImagePath, 'C', "Top3"), string.Format(ModImagePath, 'C', "Top4")
+          ModImagePath.Format('C', "Top1"), ModImagePath.Format('C', "Top2"),
+          ModImagePath.Format('C', "Top3"), ModImagePath.Format('C', "Top4")
       };
       private static readonly string[] RandomLowers = new[] {
-          string.Format(ModImagePath, 'E', "Tail1"), string.Format(ModImagePath, 'E', "Tail2"),
-          string.Format(ModImagePath, 'E', "Tail3"), string.Format(ModImagePath, 'E', "Tail4")
+          ModImagePath.Format('E', "Tail1"), ModImagePath.Format('E', "Tail2"),
+          ModImagePath.Format('E', "Tail3"), ModImagePath.Format('E', "Tail4")
       };
 
       private static readonly string[] VanillaUppers =
-          CopyForAllVariants(string.Format(ModImagePath, 'C', "Top1"));
+          CopyForAllVariants(ModImagePath.Format('C', "Top1"));
       private static readonly string[] VanillaLowers =
-          CopyForAllVariants(string.Format(ModImagePath, 'E', "Tail1"));
+          CopyForAllVariants(ModImagePath.Format('E', "Tail1"));
 
       private static readonly Random Randomizer = new();
 

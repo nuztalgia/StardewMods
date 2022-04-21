@@ -103,9 +103,7 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu.AddPage(contentPackPage.Name, contentPackPage.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
-      string displayName = character.GetDisplayName();
-      this.ConfigMenu.AddSectionTitle( // Make sure the section title is capitalized.
-          string.Concat(displayName[0].ToString().ToUpper(), displayName.AsSpan(1)));
+      this.ConfigMenu.AddSectionTitle(character.GetDisplayName().CapitalizeFirstChar());
 
       ImagePreviews.InitializeCharacter(
           character.Name,

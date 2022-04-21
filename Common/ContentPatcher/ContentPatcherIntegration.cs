@@ -62,8 +62,8 @@ internal sealed class ContentPatcherIntegration : BaseIntegration<IContentPatche
   }
 
   private void RegisterToken(string tokenName, Func<IEnumerable<string>> getTokenValue) {
-    if (string.IsNullOrEmpty(tokenName)) {
-      Log.Error($"Cannot register token with a null/empty name.");
+    if (tokenName.IsEmpty()) {
+      Log.Error($"Cannot register a token with an empty name.");
     } else {
       this.Api.RegisterToken(this.Manifest, tokenName, getTokenValue);
     }

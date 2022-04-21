@@ -111,6 +111,6 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   }
 
   private string FormatCharacterDisplayString(string? displayString) {
-    return string.Format(displayString ?? string.Empty, this.GetDisplayName());
+    return (displayString ?? string.Empty).Format(this.GetDisplayName());
   }
 }

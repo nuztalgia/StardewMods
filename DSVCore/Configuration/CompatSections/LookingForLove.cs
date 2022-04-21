@@ -41,10 +41,10 @@ internal sealed class LookingForLove : BaseCompatSection {
   }
 
   protected override string? GetOptionName(PropertyInfo property) {
-    return string.Format(I18n.Option_LookingForLove_DateableNpc(), property.Name);
+    return I18n.Option_LookingForLove_DateableNpc().Format(property.Name);
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
-    return string.Format(I18n.Tooltip_LookingForLove_DateableNpc(), property.Name);
+    return I18n.Tooltip_LookingForLove_DateableNpc().Format(property.Name);
   }
 }

@@ -47,10 +47,10 @@ internal sealed class PlatonicPAF : BaseCompatSection {
   }
 
   protected override string? GetOptionName(PropertyInfo property) {
-    return string.Format(I18n.Option_PlatonicPartnersAndFriendships_PlatonicNpc(), property.Name);
+    return I18n.Option_PlatonicPartnersAndFriendships_PlatonicNpc().Format(property.Name);
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
-    return string.Format(I18n.Tooltip_PlatonicPartnersAndFriendships_PlatonicNpc(), property.Name);
+    return I18n.Tooltip_PlatonicPartnersAndFriendships_PlatonicNpc().Format(property.Name);
   }
 }
