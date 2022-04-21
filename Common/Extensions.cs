@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.Common;
 
@@ -14,5 +16,21 @@ internal static class StringExtensions {
 
   internal static string CapitalizeFirstChar(this string s) {
     return s.IsEmpty() ? string.Empty : string.Concat(s[0].ToString().ToUpper(), s.AsSpan(1));
+  }
+}
+
+internal static class ModRegistryExtensions {
+
+  // Inspired by:  "This is really bad. Pathos don't kill me."  - kittycatcasey
+  internal static bool TryFetchMod<T>(
+      this IModRegistry modRegistry, string modId, [NotNullWhen(true)] out T? mod) {
+    string modType = typeof(T).Name switch {
+      nameof(IMod) => "Mod",
+      nameof(IContentPack) => "ContentPack",
+      _ => throw new ArgumentException($"Unsupported type for mod registry: '{typeof(T).Name}'."),
+    };
+    IModInfo? modInfo = modRegistry.Get(modId);
+    mod = (modInfo?.GetType().GetProperty(modType)?.GetValue(modInfo) is T value) ? value : default;
+    return mod is not null;
   }
 }

@@ -1,5 +1,6 @@
 using System;
 using StardewModdingAPI;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -13,10 +14,9 @@ internal abstract class BaseContentPackPage : BaseMenuPage {
   internal BaseContentPackPage() {
     this.ContentPackId = $"{RootModId}.{this.Name}";
     this.ModContentHelper = new Lazy<IModContentHelper>(() => {
-      // "This is really bad. Pathos don't kill me."  - kittycatcasey
-      IModInfo modInfo = Globals.ModRegistry.Get(this.ContentPackId);
-      object? questionableObject = modInfo.GetType().GetProperty("ContentPack")?.GetValue(modInfo);
-      return ((IContentPack) questionableObject!).ModContent;
+      return Globals.ModRegistry.TryFetchMod(this.ContentPackId, out IContentPack? contentPackMod)
+          ? contentPackMod.ModContent
+          : throw new InvalidOperationException($"Couldn't get content helper for '{this.Name}'.");
     });
   }
 
