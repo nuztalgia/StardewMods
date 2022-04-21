@@ -74,11 +74,11 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
         : Wrap<string>();
   }
 
-  internal virtual ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
+  internal virtual ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
     return _ => StandardPortraitRect;
   }
 
-  internal virtual ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
+  internal virtual ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
     return _ => StandardSpriteRect;
   }
 

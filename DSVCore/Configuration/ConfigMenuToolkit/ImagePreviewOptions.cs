@@ -9,7 +9,7 @@ using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
-internal static class ImagePreviews {
+internal static class ImagePreviewOptions {
 
   internal delegate Texture2D? LoadImage(string imagePath);
   internal delegate Texture2D[][] LoadImages(string imageDirectory);

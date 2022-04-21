@@ -22,7 +22,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         return $"Krobus/{imageDirectory}/Krobus_1_Snow.png";
       }
 
-      internal override ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
+      internal override ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
         return _ => SpriteRect;
       }
     }
@@ -72,11 +72,11 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         };
       }
 
-      internal override ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
+      internal override ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
         return _ => ModSpriteRects; // These are more like sprites, but should use portrait scaling.
       }
 
-      internal override ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
+      internal override ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
         return null; // See comment above.
       }
 
@@ -156,11 +156,11 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         return Wrap("LooseSprites/Cursors");
       }
 
-      internal override ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
+      internal override ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
         return null; // No portrait available for the Witch.
       }
 
-      internal override ImagePreviews.GetImageRects? GetSpriteRectsDelegate() {
+      internal override ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
         return source => (source == ContentSource.GameContent) ? GameSpriteRect : ModSpriteRect;
       }
     }

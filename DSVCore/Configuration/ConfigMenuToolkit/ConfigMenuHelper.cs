@@ -35,7 +35,7 @@ internal sealed class ConfigMenuHelper {
 
     this.ConfigMenu.OnFieldChanged((string fieldId, object newValue) => {
       Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
-      ImagePreviews.SetFieldValue(fieldId, newValue);
+      ImagePreviewOptions.SetFieldValue(fieldId, newValue);
     });
   }
 
@@ -105,7 +105,7 @@ internal sealed class ConfigMenuHelper {
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
       this.ConfigMenu.AddSectionTitle(character.GetDisplayName().CapitalizeFirstChar());
 
-      ImagePreviews.InitializeCharacter(
+      ImagePreviewOptions.InitializeCharacter(
           character.Name,
           this.GameContentHelper.Load<Texture2D>,
           contentPackPage.GetModContentHelper().Load<Texture2D>, 
@@ -118,9 +118,9 @@ internal sealed class ConfigMenuHelper {
           .AddComplexOption(
               name: " =  " + I18n.Option_Preview(),
               tooltip: character.GetPreviewTooltip(),
-              height: ImagePreviews.GetHeight(character.Name),
+              height: ImagePreviewOptions.GetHeight(character.Name),
               drawAction: (spriteBatch, position) =>
-                  ImagePreviews.Draw(character.Name, spriteBatch, position));
+                  ImagePreviewOptions.Draw(character.Name, spriteBatch, position));
     }
   }
 
@@ -135,7 +135,7 @@ internal sealed class ConfigMenuHelper {
 
     foreach (BaseMenuSection.OptionItem item in sectionOptionItems) {
       string displayName = " >  " + item.Name;
-      ImagePreviews.SetFieldValue(item.UniqueId, item.Value);
+      ImagePreviewOptions.SetFieldValue(item.UniqueId, item.Value);
 
       switch (item.Value) {
         case Enum: {
