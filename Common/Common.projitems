@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GenericModConfigMenu\IGenericModConfigMenuApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseIntegration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseMod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
   </ItemGroup>
 </Project>

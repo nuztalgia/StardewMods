@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>DSVCore</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.5.0</Version>
     <RootNamespace>Nuztalgia.StardewMods.DSVCore</RootNamespace>
     <TargetFramework>net5.0</TargetFramework>
 
@@ -14,6 +14,7 @@
   <Import Project="..\common.targets" />
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
   </ItemGroup>
 
