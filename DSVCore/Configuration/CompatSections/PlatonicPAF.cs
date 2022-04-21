@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using Nuztalgia.StardewMods.Common;
 
@@ -24,26 +25,26 @@ internal sealed class PlatonicPAF : BaseCompatSection {
 
   internal PlatonicPAF() : base(ModId, ModName) { }
 
-  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
-    if (this.IsAvailable()) {
-      // TODO: See if we can get this token directly from PlatonicPaF's own mod config.
-      contentPatcher.RegisterCompositeToken(TokenName, new() {
-        ["Abigail"] = () => this.Abigail,
-        ["Alex"] = () => this.Alex,
-        ["Elliott"] = () => this.Elliott,
-        ["Emily"] = () => this.Emily,
-        ["Haley"] = () => this.Haley,
-        ["Harvey"] = () => this.Harvey,
-        ["Leah"] = () => this.Leah,
-        ["Maru"] = () => this.Maru,
-        ["Penny"] = () => this.Penny,
-        ["Sam"] = () => this.Sam,
-        ["Sebastian"] = () => this.Sebastian,
-        ["Shane"] = () => this.Shane
-      });
-    } else {
-      RegisterDummyTokens(contentPatcher, TokenName);
-    }
+  protected override void RegisterAllTokens(ContentPatcherIntegration contentPatcher) {
+    // TODO: See if we can get this token directly from PlatonicPaF's own mod config.
+    contentPatcher.RegisterCompositeToken(TokenName, new() {
+      ["Abigail"] = () => this.Abigail,
+      ["Alex"] = () => this.Alex,
+      ["Elliott"] = () => this.Elliott,
+      ["Emily"] = () => this.Emily,
+      ["Haley"] = () => this.Haley,
+      ["Harvey"] = () => this.Harvey,
+      ["Leah"] = () => this.Leah,
+      ["Maru"] = () => this.Maru,
+      ["Penny"] = () => this.Penny,
+      ["Sam"] = () => this.Sam,
+      ["Sebastian"] = () => this.Sebastian,
+      ["Shane"] = () => this.Shane
+    });
+  }
+
+  protected override IEnumerable<string> GetTokenNames() {
+    yield return TokenName;
   }
 
   protected override string? GetOptionName(PropertyInfo property) {

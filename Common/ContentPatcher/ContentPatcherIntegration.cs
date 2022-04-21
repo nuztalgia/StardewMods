@@ -61,6 +61,11 @@ internal sealed class ContentPatcherIntegration : BaseIntegration<IContentPatche
     });
   }
 
+  internal void RegisterStringConstantToken(string tokenName, string tokenValue) {
+    Log.Verbose($"Registering string constant token '{tokenName}' with value '{tokenValue}'.");
+    this.RegisterToken(tokenName, () => new[] { tokenValue });
+  }
+
   private void RegisterToken(string tokenName, Func<IEnumerable<string>> getTokenValue) {
     if (tokenName.IsEmpty()) {
       Log.Error($"Cannot register a token with an empty name.");

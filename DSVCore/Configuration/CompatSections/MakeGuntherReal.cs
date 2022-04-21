@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
@@ -12,11 +13,11 @@ internal sealed class MakeGuntherReal : BaseCompatSection {
 
   internal MakeGuntherReal() : base(ModId, ModName) { }
 
-  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
-    if (this.IsAvailable()) {
-      contentPatcher.RegisterBoolToken(TokenName, () => this.AlternateCecily);
-    } else {
-      RegisterDummyTokens(contentPatcher, TokenName);
-    }
+  protected override void RegisterAllTokens(ContentPatcherIntegration contentPatcher) {
+    contentPatcher.RegisterBoolToken(TokenName, () => this.AlternateCecily);
+  }
+
+  protected override IEnumerable<string> GetTokenNames() {
+    yield return TokenName;
   }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using Nuztalgia.StardewMods.Common;
 
@@ -13,11 +14,21 @@ internal abstract class BaseCompatSection : BaseMenuSection {
     this.ModName = modName;
   }
 
-  internal override string GetDisplayName() {
+  internal override sealed void RegisterTokens(ContentPatcherIntegration contentPatcher) {
+    if (this.IsAvailable()) {
+      this.RegisterAllTokens(contentPatcher);
+    } else {
+      foreach (string tokenName in this.GetTokenNames()) {
+        contentPatcher.RegisterStringConstantToken(tokenName, string.Empty);
+      }
+    }
+  }
+
+  internal override sealed string GetDisplayName() {
     return this.ModName;
   }
 
-  internal override bool IsAvailable() {
+  internal override sealed bool IsAvailable() {
     return Globals.ModRegistry.IsLoaded(this.ModId);
   }
 
@@ -25,10 +36,7 @@ internal abstract class BaseCompatSection : BaseMenuSection {
     return Globals.GetI18nString($"Option_{this.Name}_{property.Name}");
   }
 
-  protected static void RegisterDummyTokens(
-      ContentPatcherIntegration contentPatcher, params string[] tokenNames) {
-    foreach (string tokenName in tokenNames) {
-      contentPatcher.RegisterCompositeToken(tokenName, new());
-    }
-  }
+  protected abstract void RegisterAllTokens(ContentPatcherIntegration contentPatcher);
+
+  protected abstract IEnumerable<string> GetTokenNames();
 }

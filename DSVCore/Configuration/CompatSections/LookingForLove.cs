@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using Nuztalgia.StardewMods.Common;
 
@@ -21,23 +22,23 @@ internal sealed class LookingForLove : BaseCompatSection {
 
   internal LookingForLove() : base(ModId, ModName) { }
 
-  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
-    if (this.IsAvailable()) {
-      // TODO: See if we can get this token directly from LookingForLove's own mod config.
-      contentPatcher.RegisterCompositeToken(TokenName, new() {
-        ["Clint"] = () => this.Clint,
-        ["Gus"] = () => this.Gus,
-        ["Lewis"] = () => this.Lewis,
-        ["Linus"] = () => this.Linus,
-        ["Marnie"] = () => this.Marnie,
-        ["Pam"] = () => this.Pam,
-        ["Sandy"] = () => this.Sandy,
-        ["Willy"] = () => this.Willy,
-        ["Wizard"] = () => this.Wizard
-      });
-    } else {
-      RegisterDummyTokens(contentPatcher, TokenName);
-    }
+  protected override void RegisterAllTokens(ContentPatcherIntegration contentPatcher) {
+    // TODO: See if we can get this token directly from LookingForLove's own mod config.
+    contentPatcher.RegisterCompositeToken(TokenName, new() {
+      ["Clint"] = () => this.Clint,
+      ["Gus"] = () => this.Gus,
+      ["Lewis"] = () => this.Lewis,
+      ["Linus"] = () => this.Linus,
+      ["Marnie"] = () => this.Marnie,
+      ["Pam"] = () => this.Pam,
+      ["Sandy"] = () => this.Sandy,
+      ["Willy"] = () => this.Willy,
+      ["Wizard"] = () => this.Wizard
+    });
+  }
+
+  protected override IEnumerable<string> GetTokenNames() {
+    yield return TokenName;
   }
 
   protected override string? GetOptionName(PropertyInfo property) {
