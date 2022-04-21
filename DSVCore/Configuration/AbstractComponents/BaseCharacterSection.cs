@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Nuztalgia.StardewMods.Common;
 
@@ -9,51 +9,69 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseCharacterSection : BaseMenuSection {
 
-  internal enum StandardVariant {
-    Modded,
-    Vanilla,
-    Off
+  // A subclass of BaseCharacterSection used by the majority of supported characters.
+  internal abstract class Villager<TVariant> : BaseCharacterSection,
+      IHasVariant<TVariant>, IHasImmersion<StandardImmersion> where TVariant : Enum {
+
+    // If a character doesn't have a variant named "Vanilla", then they should override this property.
+    public virtual TVariant Variant { get; set; } = (TVariant)
+        (Enum.TryParse(typeof(TVariant), "Vanilla", out object? value) ? value : default(TVariant))!;
+
+    public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+
+    public abstract string GetPreviewOutfit();
   }
 
-  internal enum StandardImmersion {
-    Full,
-    Light,
-    Ultralight
-  }
+  // A subclass of Villager used by characters that are marriageable in the base game.
+  // ("Bachelorex" is a gender-neutral term for "Bachelor" or "Bachelorette".)
+  internal abstract class Bachelorex<TVariant> : Villager<TVariant>,
+      IHasWeddingOutfit where TVariant : Enum {
 
-  internal enum SimpleImmersion {
-    Full,
-    Light
-  }
+    public int WeddingOutfit { get; set; } = IHasWeddingOutfit.FirstWeddingOutfit;
 
-  private const string VariantPropertyName = "Variant";
-  private const string VariantTokenName = "Variant"; // Redefined for semantics and futureproofness.
-  private const string ImmersionPropertyName = "Immersion";
-  private const string ImmersionTokenName = "LightweightConfig";
+    // TODO: Properly (dynamically?) validate the return value of this method for every bachelorex.
+    public abstract int GetNumberOfWeddingOutfits();
+  }
 
   private static readonly Rectangle[][] StandardPortraitRect = Wrap(new Rectangle(0, 0, 64, 64));
   private static readonly Rectangle[][] StandardSpriteRect = Wrap(new Rectangle(0, 0, 16, 32));
 
-  // Subclasses should override this method if they have any non-standard tokens.
-  internal override void RegisterTokens() {
-    if (this.TryGetTokenProperty(VariantPropertyName, out PropertyInfo? variantProperty)) {
-      this.RegisterVariantToken<StandardVariant>(() => variantProperty.GetValue(this));
-    }
-    this.TryRegisterStandardImmersionTokenUsingReflection();
+  internal override sealed void RegisterTokens(ContentPatcherIntegration contentPatcher) {
+    (this as IHasVariant)?.RegisterVariantToken(this.Name, contentPatcher);
+    (this as IHasImmersion)?.RegisterImmersionToken(this.Name, contentPatcher);
+    (this as IHasWeddingOutfit)?.RegisterWeddingOutfitToken(this.Name, contentPatcher);
+    this.RegisterExtraTokens(contentPatcher);
   }
 
-  internal override string GetDisplayName() {
-    // To keep things simple, all characters are defined in classes that match their actual names.
-    return this.Name;
+  internal override sealed string GetDisplayName() {
+    return (this as IHasCustomDisplayName)?.GetDisplayName() ?? this.Name;
   }
 
-  internal override bool IsAvailable() {
+  internal override sealed bool IsAvailable() {
     // This is only checked if the character's content pack is loaded, so they're always available.
     return true;
   }
 
-  internal virtual string GetPreviewTooltip() {
-    return this.FormatCharacterString(I18n.Tooltip_Preview_General);
+  internal override sealed (int min, int max) GetValueRange(PropertyInfo property) {
+    return (property.Name == nameof(IHasWeddingOutfit.WeddingOutfit))
+        ? (this as IHasWeddingOutfit)?.GetWeddingOutfitValueRange()
+            ?? throw new ArgumentException($"WeddingOutfit property is not valid for {this.Name}.")
+        : base.GetValueRange(property);
+  }
+
+  internal virtual string[][] GetGameImagePaths(string imageDirectory) {
+    return Wrap($"{imageDirectory}/{this.Name}");
+  }
+
+  internal virtual string[][] GetModImagePaths(
+      string imageDirectory, IDictionary<string, object?> ephemeralTraits) {
+    return ((this is IHasCustomModImagePath or IHasVariant)
+            && ephemeralTraits.TryGetValue(nameof(IHasVariant<Enum>.Variant), out object? value)
+            && (value?.ToString() is string variant) && (variant != nameof(StandardVariant.Off)))
+        ? Wrap((this as IHasCustomModImagePath)?.GetModImagePath(imageDirectory)
+            ?? this.GetModImagePath(
+                imageDirectory, variant, (this as IHasVariant)!.GetPreviewOutfit()))
+        : Wrap<string>();
   }
 
   internal virtual ImagePreviews.GetImageRects? GetPortraitRectsDelegate() {
@@ -64,105 +82,35 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     return _ => StandardSpriteRect;
   }
 
-  internal virtual string[][] GetGameImagePaths(string imageDirectory) {
-    return Wrap($"{imageDirectory}/{this.Name}");
+  internal string GetPreviewTooltip() {
+    return this.FormatCharacterDisplayString(
+        (this as IHasCustomPreviewTooltip)?.GetPreviewTooltip() ?? I18n.Tooltip_Preview_General());
   }
 
-  internal virtual string[][] GetModImagePaths(
-      string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
-    ephemeralProperties.TryGetValue(VariantPropertyName, out object? value);
-    return ((value?.ToString() is string variant) && (variant != "Off"))
-           ? Wrap(this.GetModImagePath(imageDirectory, variant))
-           : Wrap<string>();
+  protected override sealed string? GetTooltip(PropertyInfo property) {
+    return this.FormatCharacterDisplayString(property.PropertyType.Name switch {
+      nameof(StandardImmersion) => I18n.Tooltip_Immersion_Standard(),
+      nameof(SimpleImmersion) => I18n.Tooltip_Immersion_Simple(),
+      _ => (property.Name == nameof(IHasWeddingOutfit.WeddingOutfit))
+          ? I18n.Tooltip_WeddingOutfit()
+          : base.GetTooltip(property)
+    });
   }
 
-  protected virtual string GetModImagePath(string imageDirectory, string variant) {
-    string outfit = this.GetPreviewOutfit(out bool hasDefaultDirectory);
-    string customDirectory = hasDefaultDirectory ? "Default/" : string.Empty;
-    return $"{this.Name}/{imageDirectory}/{customDirectory}{variant}/{this.Name}_{outfit}.png";
-  }
-
-  // Subclasses should implement this properly if they expect it to be called by the above method.
-  protected virtual string GetPreviewOutfit(out bool hasDefaultDirectory) {
-    hasDefaultDirectory = false;
-    return string.Empty;
-  }
-
-  protected override string? GetTooltip(PropertyInfo property) {
-    return property.PropertyType.Name switch {
-      nameof(StandardImmersion) => this.FormatCharacterString(I18n.Tooltip_Immersion_Standard),
-      nameof(SimpleImmersion) => this.FormatCharacterString(I18n.Tooltip_Immersion_Simple),
-      _ => base.GetTooltip(property)
-    };
-  }
-
-  protected string FormatCharacterString(Func<string> getString) {
-    return string.Format(getString(), this.GetDisplayName());
-  }
-
-  protected void RegisterAutoNamedBoolToken(string tokenName, Func<bool> getValue) {
-    TokenRegistry.AddBoolToken(this.Name + tokenName, getValue, autoValueString: tokenName);
-  }
-
-  protected void RegisterVariantToken<T>(Func<object?> getValue) where T : Enum {
-    string enumName = typeof(T).Name;
-    if (enumName.EndsWith(VariantPropertyName)) {
-      TokenRegistry.AddEnumToken<T>(this.Name + VariantTokenName, getValue);
-    } else {
-      Log.Error($"Enum named '{enumName}' doesn't end with '{VariantPropertyName}'. That's " +
-                $"confusing. Will not register '{VariantTokenName}' token for '{this.Name}'.");
-    }
-  }
-
-  protected void RegisterImmersionToken<T>(Func<object?> getValue) where T : Enum {
-    Type enumType = typeof(T);
-    if ((enumType == typeof(StandardImmersion)) || (enumType == typeof(SimpleImmersion))) {
-      TokenRegistry.AddEnumToken<T>(this.Name + ImmersionTokenName, getValue);
-    } else {
-      Log.Error($"Enum named '{enumType.Name}' is not a valid immersion type. " +
-                $"Will not register '{ImmersionTokenName}' token for '{this.Name}'.");
-    }
-  }
-
-  // Use the above method instead of this one when possible, because reflection is slow.
-  protected void TryRegisterStandardImmersionTokenUsingReflection() {
-    if (this.TryGetTokenProperty(ImmersionPropertyName, out PropertyInfo? property)) {
-      this.RegisterImmersionToken<StandardImmersion>(() => property.GetValue(this));
-    }
-  }
-
-  protected bool TryGetTokenProperty(
-      string propertyName, [NotNullWhen(true)] out PropertyInfo? property) {
-    property = this.GetType().GetProperty(propertyName);
-    if (property is not null) {
-      return true;
-    } else {
-      Log.Error($"Class named '{this.Name}' does not have a property named '{propertyName}'. " +
-                $"Will not register custom token named '{this.Name}{propertyName}'.");
-      return false;
-    }
-  }
+  // Subclasses should override this method if they have any additional character-specific tokens.
+  protected virtual void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) { }
 
   protected static T[][] Wrap<T>(params T[] items) {
     return new T[][] { items };
   }
-}
 
-// Extension methods for the enums defined at the top of BaseCharacterSection (above).
-internal static class CharacterEnumExtensions {
-  internal static bool IsModded(this BaseCharacterSection.StandardVariant variant) {
-    return variant != BaseCharacterSection.StandardVariant.Modded;
+  private string GetModImagePath(string imageDirectory, string variant, string outfit) {
+    StringBuilder path = new($"{this.Name}/{imageDirectory}/");
+    path.Append((this as IHasCustomModImageDirectory)?.GetDirectory(variant) ?? variant);
+    return path.Append($"/{this.Name}_{outfit}.png").ToString();
   }
 
-  internal static bool IsNotUltralight(this BaseCharacterSection.StandardImmersion immersion) {
-    return immersion != BaseCharacterSection.StandardImmersion.Ultralight;
-  }
-
-  internal static bool IsFull(this BaseCharacterSection.StandardImmersion immersion) {
-    return immersion == BaseCharacterSection.StandardImmersion.Full;
-  }
-
-  internal static bool IsFull(this BaseCharacterSection.SimpleImmersion immersion) {
-    return immersion == BaseCharacterSection.SimpleImmersion.Full;
+  private string FormatCharacterDisplayString(string? displayString) {
+    return string.Format(displayString ?? string.Empty, this.GetDisplayName());
   }
 }

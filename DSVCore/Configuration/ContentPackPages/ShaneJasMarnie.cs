@@ -1,60 +1,51 @@
+using Nuztalgia.StardewMods.Common;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class ShaneJasMarnie : BaseContentPackPage {
 
   internal static class Sections {
-    internal sealed class Shane : BaseBachelorexSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public int WeddingOutfit { get; set; } = 1;
+    internal sealed class Shane : BaseCharacterSection.Bachelorex<StandardVariant>,
+        IHasCustomModImageDirectory {
       public ShaneSelfCare SelfCare { get; set; } = ShaneSelfCare.Dynamic;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
-        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
+      public override string GetPreviewOutfit() {
+        return $"Fall_{((this.SelfCare == ShaneSelfCare.Messy) ? 1 : 2)}_Sun";
+      }
+
+      public override int GetNumberOfWeddingOutfits() {
+        return this.HasElahoOutfit("ShaneGeorgianWeddingSuit") ? 6 : 5;
+      }
+
+      string IHasCustomModImageDirectory.GetDirectory(string variant) {
+        return $"{variant}/{((this.SelfCare == ShaneSelfCare.Messy) ? "Messy" : "Neat")}";
+      }
+
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
         // TODO: Determine what should happen if Immersion is Ultralight and SelfCare is Dynamic.
-        TokenRegistry.AddEnumToken<ShaneSelfCare>("ShaneSelfCare", () => this.SelfCare);
-      }
-
-      protected override int GetNumberOfWeddingOutfits() {
-        return HasElahoMod("ShaneGeorgianWeddingSuit") ? 6 : 5;
-      }
-
-      protected override string GetModImagePath(string imageDirectory, string variant) {
-        string outfitPath = (this.SelfCare == ShaneSelfCare.Messy)
-                            ? "Messy/Shane_Fall_1_Sun"
-                            : "Neat/Shane_Fall_2_Sun";
-        return $"Shane/{imageDirectory}/{variant}/{outfitPath}.png";
+        contentPatcher.RegisterEnumToken("ShaneSelfCare", () => this.SelfCare);
       }
     }
 
-    internal sealed class Jas : BaseCharacterSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
+    internal sealed class Jas : BaseCharacterSection.Villager<StandardVariant> {
+      public override string GetPreviewOutfit() {
         return "Fall_1_Base";
       }
     }
 
-    internal sealed class Marnie : BaseCharacterSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+    internal sealed class Marnie : BaseCharacterSection.Villager<StandardVariant>,
+        IHasCustomModImageDirectory {
       public bool SpriteSmile { get; set; } = true;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
-        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
-        TokenRegistry.AddBoolToken(
+      public override string GetPreviewOutfit() {
+        return "Spring_1_Sun";
+      }
+
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+        contentPatcher.RegisterBoolToken(
             "MarnieCharacterSmile",
             () => (this.Variant is StandardVariant.Vanilla) && this.SpriteSmile,
             autoValueString: "Smile");
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = true;
-        return "Spring_1_Sun";
       }
     }
   }

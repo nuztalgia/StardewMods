@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using ContentPatcher;
 using StardewModdingAPI;
 
@@ -13,9 +14,58 @@ internal sealed class ContentPatcherIntegration : BaseIntegration<IContentPatche
   private ContentPatcherIntegration(IContentPatcherAPI api, IManifest manifest)
       : base(api, manifest) { }
 
-  internal void RegisterToken(string tokenName, Func<IEnumerable<string>> getTokenValue) {
-    string currentValue = string.Join(", ", getTokenValue());
-    Log.Verbose($"Registering Token: {tokenName,-28}|  Current Value: '{currentValue}'");
-    this.Api.RegisterToken(this.Manifest, tokenName, getTokenValue);
+  internal void RegisterBoolToken(
+      string tokenName,
+      Func<bool> getValue,
+      string? valueIfTrue = null,
+      string? valueIfFalse = null,
+      string? autoValueString = null) {
+
+    if (!string.IsNullOrEmpty(autoValueString)) {
+      (valueIfTrue, valueIfFalse) = (autoValueString, "No" + autoValueString);
+    } else if (string.IsNullOrEmpty(valueIfTrue) || string.IsNullOrEmpty(valueIfFalse)) {
+      (valueIfTrue, valueIfFalse) = (true.ToString(), false.ToString());
+    }
+
+    Log.Verbose(
+        $"Registering token '{tokenName}' with values '{valueIfTrue}' or '{valueIfFalse}'.");
+    this.RegisterToken(tokenName, () => new[] { getValue() ? valueIfTrue : valueIfFalse });
+  }
+
+  internal void RegisterIntToken(
+      string tokenName,
+      Func<int> getValue,
+      int minValue = int.MinValue,
+      int maxValue = int.MaxValue) {
+
+    Log.Verbose($"Registering token '{tokenName}' with values between {minValue} and {maxValue}.");
+    this.RegisterToken(
+        tokenName, () => new[] { Math.Clamp(getValue(), minValue, maxValue).ToString() });
+  }
+
+  internal void RegisterEnumToken<T>(string tokenName, Func<T?> getValue) where T : Enum {
+    Log.Verbose(
+        $"Registering token '{tokenName}' with one of the following possible values: " +
+        $"'{string.Join(", ", typeof(T).GetEnumNames())}'.");
+    this.RegisterToken(
+        tokenName, () => new[] { (getValue() is T value) ? value.ToString() : string.Empty });
+  }
+
+  internal void RegisterCompositeToken(string tokenName, Dictionary<string, Func<bool>> entries) {
+    Log.Verbose(
+        $"Registering token '{tokenName}' with zero, one, or multiple of the following " +
+        $"possible values: '{string.Join(", ", entries.Keys)}'.");
+    this.RegisterToken(tokenName, () => {
+      IEnumerable<string> values = entries.Where(entry => entry.Value()).Select(entry => entry.Key);
+      return values.Any() ? values : new[] { string.Empty };
+    });
+  }
+
+  private void RegisterToken(string tokenName, Func<IEnumerable<string>> getTokenValue) {
+    if (string.IsNullOrEmpty(tokenName)) {
+      Log.Error($"Cannot register token with a null/empty name.");
+    } else {
+      this.Api.RegisterToken(this.Manifest, tokenName, getTokenValue);
+    }
   }
 }

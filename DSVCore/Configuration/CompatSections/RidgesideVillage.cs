@@ -1,3 +1,5 @@
+using Nuztalgia.StardewMods.Common;
+
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
 internal sealed class RidgesideVillage : BaseCompatSection {
@@ -26,13 +28,13 @@ internal sealed class RidgesideVillage : BaseCompatSection {
 
   internal RidgesideVillage() : base(ModId, ModName) { }
 
-  internal override void RegisterTokens() {
+  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
     if (this.IsAvailable()) {
-      TokenRegistry.AddEnumToken<OnlyModdedVariant>(BertTokenName, () => this.BertVariant);
-      TokenRegistry.AddEnumToken<TrinnieCustomVariant>(TrinnieTokenName, () => this.TrinnieVariant);
-      TokenRegistry.AddEnumToken<OnlyModdedVariant>(LennyTokenName, () => this.LennyVariant);
+      contentPatcher.RegisterEnumToken(BertTokenName, () => this.BertVariant);
+      contentPatcher.RegisterEnumToken(TrinnieTokenName, () => this.TrinnieVariant);
+      contentPatcher.RegisterEnumToken(LennyTokenName, () => this.LennyVariant);
     } else {
-      RegisterDummyTokens(BertTokenName, TrinnieTokenName, LennyTokenName);
+      RegisterDummyTokens(contentPatcher, BertTokenName, TrinnieTokenName, LennyTokenName);
     }
   }
 }

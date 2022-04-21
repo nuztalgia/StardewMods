@@ -1,75 +1,59 @@
+using Nuztalgia.StardewMods.Common;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class SamVincentJodiKent : BaseContentPackPage {
 
   internal static class Sections {
-    internal sealed class Sam : BaseBachelorexSection {
-      public SamVariant Variant { get; set; } = SamVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public int WeddingOutfit { get; set; } = 1;
+    internal sealed class Sam : BaseCharacterSection.Bachelorex<SamVariant> {
       public bool Binder { get; set; } = true;
       public SamEyeColor EyeColor { get; set; } = SamEyeColor.Default;
       public bool Beard { get; set; } = false;
       public bool Stubble { get; set; } = false;
       public bool Piercings { get; set; } = false;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<SamVariant>(() => this.Variant);
-        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
-        this.RegisterAutoNamedBoolToken("Binder", () => this.Binder);
-        TokenRegistry.AddEnumToken<SamEyeColor>("SamEyes",
+      public override string GetPreviewOutfit() {
+        return "Fall_1_Base";
+      }
+
+      public override int GetNumberOfWeddingOutfits() {
+        return this.HasElahoOutfit("NorwegianWeddingSuit") ? 4 : 3;
+      }
+
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+        contentPatcher.RegisterAutoNamedBoolToken<Sam>("Binder", () => this.Binder);
+        contentPatcher.RegisterEnumToken(
+            "SamEyes",
             () => this.Immersion.IsNotUltralight() ? this.EyeColor : SamEyeColor.Default);
-        TokenRegistry.AddCompositeToken("SamExtras", new() {
+        contentPatcher.RegisterCompositeToken("SamExtras", new() {
           ["Beard"] = () => this.Immersion.IsNotUltralight() && this.Beard,
           ["Stubble"] = () => this.Immersion.IsNotUltralight() && this.Stubble,
           ["Piercings"] = () => this.Immersion.IsNotUltralight() && this.Piercings
         });
       }
-
-      protected override int GetNumberOfWeddingOutfits() {
-        return HasElahoMod("SamNorwegianWeddingSuit") ? 4 : 3;
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
-        return "Fall_1_Base";
-      }
     }
 
-    internal sealed class Vincent : BaseCharacterSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
+    internal sealed class Vincent : BaseCharacterSection.Villager<StandardVariant> {
+      public override string GetPreviewOutfit() {
         return "Summer_1_Base";
       }
     }
 
-    internal sealed class Jodi : BaseCharacterSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+    internal sealed class Jodi : BaseCharacterSection.Villager<StandardVariant> {
       public bool GiftTastesChange { get; set; } = true;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
-        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
-        TokenRegistry.AddBoolToken(
-            "JodiGiftTastesChange", () => this.Variant.IsModded() && this.GiftTastesChange);
+      public override string GetPreviewOutfit() {
+        return "Summer_2_Rain";
       }
 
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
-        return "Summer_2_Rain";
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+        contentPatcher.RegisterBoolToken(
+            "JodiGiftTastesChange", () => this.Variant.IsModded() && this.GiftTastesChange);
       }
     }
 
-    internal sealed class Kent : BaseCharacterSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
+    internal sealed class Kent : BaseCharacterSection.Villager<StandardVariant> {
+      public override string GetPreviewOutfit() {
         return "Fall_1_Rain";
       }
     }

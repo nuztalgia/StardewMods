@@ -1,63 +1,48 @@
 using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class MarlonGuntherMorris : BaseContentPackPage {
 
   internal static class Sections {
-    internal sealed class Marlon : BaseCharacterSection {
+    internal sealed class Marlon : BaseCharacterSection,
+        IHasVariant<StandardVariant>, IHasCustomModImageDirectory, IHasCustomPreviewTooltip {
+
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
-      }
-
-      internal override string GetPreviewTooltip() {
-        return this.FormatCharacterString(I18n.Tooltip_Preview_Singular);
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = true;
+      public string GetPreviewOutfit() {
         return "Summer_1_Base";
       }
     }
 
-    internal sealed class Gunther : BaseCharacterSection {
+    internal sealed class Gunther : BaseCharacterSection,
+        IHasVariant<StandardVariant>, IHasCustomModImageDirectory, IHasCustomPreviewTooltip {
+
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
-      }
-
-      internal override string GetPreviewTooltip() {
-        return this.FormatCharacterString(I18n.Tooltip_Preview_Singular);
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = true;
+      public string GetPreviewOutfit() {
         return "Fall_1_Base";
       }
     }
 
-    internal sealed class Morris : BaseCharacterSection {
+    internal sealed class Morris : BaseCharacterSection, IHasCustomPreviewTooltip {
       public bool SeasonalOutfits { get; set; } = true;
-
-      internal override void RegisterTokens() {
-        TokenRegistry.AddBoolToken(
-            "MorrisVariant", () => this.SeasonalOutfits,
-            valueIfTrue: "Vanilla", valueIfFalse: "Off");
-      }
-
-      internal override string GetPreviewTooltip() {
-        return this.FormatCharacterString(I18n.Tooltip_Preview_Singular);
-      }
 
       internal override string[][] GetModImagePaths(
           string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
         var getValue = ephemeralProperties.TryGetValue;
         return (getValue(nameof(this.SeasonalOutfits), out object? value) && (value is true))
-               ? Wrap($"Morris/{imageDirectory}/Morris_Fall_1_Base.png")
-               : Wrap<string>();
+            ? Wrap($"Morris/{imageDirectory}/Morris_Fall_1_Base.png")
+            : Wrap<string>();
+      }
+
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+        contentPatcher.RegisterBoolToken(
+            "MorrisVariant",
+            () => this.SeasonalOutfits,
+            valueIfTrue: nameof(StandardVariant.Vanilla),
+            valueIfFalse: nameof(StandardVariant.Off));
       }
     }
   }

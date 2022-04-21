@@ -1,4 +1,5 @@
 using System.Reflection;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
@@ -20,10 +21,10 @@ internal sealed class LookingForLove : BaseCompatSection {
 
   internal LookingForLove() : base(ModId, ModName) { }
 
-  internal override void RegisterTokens() {
+  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
     if (this.IsAvailable()) {
       // TODO: See if we can get this token directly from LookingForLove's own mod config.
-      TokenRegistry.AddCompositeToken(TokenName, new() {
+      contentPatcher.RegisterCompositeToken(TokenName, new() {
         ["Clint"] = () => this.Clint,
         ["Gus"] = () => this.Gus,
         ["Lewis"] = () => this.Lewis,
@@ -35,7 +36,7 @@ internal sealed class LookingForLove : BaseCompatSection {
         ["Wizard"] = () => this.Wizard
       });
     } else {
-      RegisterDummyTokens(TokenName);
+      RegisterDummyTokens(contentPatcher, TokenName);
     }
   }
 

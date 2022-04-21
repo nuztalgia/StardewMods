@@ -1,51 +1,38 @@
+using Nuztalgia.StardewMods.Common;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class WillyClintLinus : BaseContentPackPage {
 
   internal static class Sections {
-    internal sealed class Willy : BaseCharacterSection {
-      public WillyVariant Variant { get; set; } = WillyVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<WillyVariant>(() => this.Variant);
-        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = true;
+    internal sealed class Willy : BaseCharacterSection.Villager<WillyVariant>,
+        IHasCustomModImageDirectory {
+      public override string GetPreviewOutfit() {
         return "Spring_1_Base";
       }
     }
 
-    internal sealed class Clint : BaseCharacterSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+    internal sealed class Clint : BaseCharacterSection.Villager<StandardVariant>,
+        IHasCustomModImageDirectory {
       public bool Scar { get; set; } = false;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<StandardVariant>(() => this.Variant);
-        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
-        this.RegisterAutoNamedBoolToken("Scar", () => this.Scar);
+      public override string GetPreviewOutfit() {
+        return "Winter_2_Base";
       }
 
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = true;
-        return "Winter_2_Base";
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+        contentPatcher.RegisterAutoNamedBoolToken<Clint>("Scar", () => this.Scar);
       }
     }
 
-    internal sealed class Linus : BaseCharacterSection {
-      public LinusVariant Variant { get; set; } = LinusVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<LinusVariant>(() => this.Variant);
-        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
+    internal sealed class Linus : BaseCharacterSection.Villager<LinusVariant>,
+        IHasCustomModImageDirectory {
+      public override string GetPreviewOutfit() {
+        return "Spring_1_Sun";
       }
 
-      protected override string GetModImagePath(string imageDirectory, string _) {
-        return $"Linus/{imageDirectory}/Default/Linus_Spring_1_Sun.png";
+      string IHasCustomModImageDirectory.GetDirectory(string _) {
+        return "Default";
       }
     }
   }

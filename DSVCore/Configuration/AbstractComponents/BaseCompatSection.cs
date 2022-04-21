@@ -1,4 +1,5 @@
 using System.Reflection;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -24,9 +25,10 @@ internal abstract class BaseCompatSection : BaseMenuSection {
     return Globals.GetI18nString($"Option_{this.Name}_{property.Name}");
   }
 
-  protected static void RegisterDummyTokens(params string[] tokenNames) {
+  protected static void RegisterDummyTokens(
+      ContentPatcherIntegration contentPatcher, params string[] tokenNames) {
     foreach (string tokenName in tokenNames) {
-      TokenRegistry.AddCompositeToken(tokenName, new());
+      contentPatcher.RegisterCompositeToken(tokenName, new());
     }
   }
 }

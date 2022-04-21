@@ -1,4 +1,5 @@
 using System.Reflection;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -14,11 +15,11 @@ internal sealed class CoreOptionsSection : BaseMenuSection {
   public bool MermaidPendants { get; set; } = true;
   public bool MaternitySprites { get; set; } = false;
 
-  internal override void RegisterTokens() {
+  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
     // TODO: Shift more of the computation for the Pyjamas token from the content packs to this mod.
-    TokenRegistry.AddEnumToken<PyjamaHabits>("Pyjamas", () => this.Pyjamas);
-    TokenRegistry.AddBoolToken("MermaidPendants", () => this.MermaidPendants);
-    TokenRegistry.AddBoolToken("MaternitySprites", () => this.MaternitySprites);
+    contentPatcher.RegisterEnumToken("Pyjamas", () => this.Pyjamas);
+    contentPatcher.RegisterBoolToken("MermaidPendants", () => this.MermaidPendants);
+    contentPatcher.RegisterBoolToken("MaternitySprites", () => this.MaternitySprites);
   }
 
   internal override string GetDisplayName() {

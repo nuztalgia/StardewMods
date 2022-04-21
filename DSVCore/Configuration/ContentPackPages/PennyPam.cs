@@ -3,32 +3,19 @@ namespace Nuztalgia.StardewMods.DSVCore.Pages;
 internal sealed class PennyPam : BaseContentPackPage {
 
   internal static class Sections {
-    internal sealed class Penny : BaseBachelorexSection {
-      public PennyVariant Variant { get; set; } = PennyVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public int WeddingOutfit { get; set; } = 1;
-
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<PennyVariant>(() => this.Variant);
-        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
-      }
-
-      protected override int GetNumberOfWeddingOutfits() {
-        return HasElahoMod("PennyIrishWeddingDress") ? 6 : 5;
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
+    internal sealed class Penny : BaseCharacterSection.Bachelorex<PennyVariant> {
+      public override string GetPreviewOutfit() {
         return "Spring_1_Sun";
+      }
+
+      public override int GetNumberOfWeddingOutfits() {
+        return this.HasElahoOutfit("IrishWeddingDress") ? 6 : 5;
       }
     }
 
-    internal sealed class Pam : BaseCharacterSection {
-      public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = true;
+    internal sealed class Pam : BaseCharacterSection.Villager<StandardVariant>,
+        IHasCustomModImageDirectory {
+      public override string GetPreviewOutfit() {
         return "Summer_1_Sun";
       }
     }

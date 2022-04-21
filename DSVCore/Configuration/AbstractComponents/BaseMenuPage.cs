@@ -11,15 +11,16 @@ internal abstract class BaseMenuPage : BaseMenuComponent {
       if (property.GetValue(this) is BaseMenuSection section) {
         yield return section;
       } else {
-        Log.Error($"Invalid type '{property.PropertyType}' for property " +
-                  $"'{property.Name}' on page '{this.GetDisplayName()}'.");
+        Log.Error(
+            $"Invalid type '{property.PropertyType}' for property " +
+            $"'{property.Name}' on page '{this.GetDisplayName()}'.");
       }
     }
   }
 
-  internal override void RegisterTokens() {
+  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
     foreach (BaseMenuSection section in this.GetAllSections()) {
-      section.RegisterTokens();
+      section.RegisterTokens(contentPatcher);
     }
   }
 }

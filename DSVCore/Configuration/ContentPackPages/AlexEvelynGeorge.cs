@@ -1,61 +1,44 @@
+using Nuztalgia.StardewMods.Common;
+
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class AlexEvelynGeorge : BaseContentPackPage {
 
   internal static class Sections {
-    internal sealed class Alex : BaseBachelorexSection {
-      public FamilyVariant Variant { get; set; } = FamilyVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-      public int WeddingOutfit { get; set; } = 1;
+    internal sealed class Alex : BaseCharacterSection.Bachelorex<FamilyVariant> {
       public bool Tattoos { get; set; } = true;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<FamilyVariant>(() => this.Variant);
-        base.RegisterTokens(); // Register Immersion and WeddingOutfit tokens.
-        this.RegisterAutoNamedBoolToken(
-            "Tattoos", () => (this.Variant is FamilyVariant.Samoan) && this.Tattoos);
-      }
-
-      protected override int GetNumberOfWeddingOutfits() {
-        return HasElahoMod("AlexJewishWeddingSuit") ? 6 : 5;
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
+      public override string GetPreviewOutfit() {
         return "Fall_1_Base";
+      }
+
+      public override int GetNumberOfWeddingOutfits() {
+        return this.HasElahoOutfit("JewishWeddingSuit") ? 6 : 5;
+      }
+
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+        contentPatcher.RegisterAutoNamedBoolToken<Alex>(
+            "Tattoos", () => (this.Variant is FamilyVariant.Samoan) && this.Tattoos);
       }
     }
 
-    internal sealed class Evelyn : BaseCharacterSection {
-      public FamilyVariant Variant { get; set; } = FamilyVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
-
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<FamilyVariant>(() => this.Variant);
-        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
-      }
-
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
+    internal sealed class Evelyn : BaseCharacterSection.Villager<FamilyVariant> {
+      public override string GetPreviewOutfit() {
         return "Summer_1_Base";
       }
     }
 
-    internal sealed class George : BaseCharacterSection {
-      public FamilyVariant Variant { get; set; } = FamilyVariant.Vanilla;
-      public StandardImmersion Immersion { get; set; } = StandardImmersion.Full;
+    internal sealed class George : BaseCharacterSection.Villager<FamilyVariant> {
       public GeorgeBeard Beard { get; set; } = GeorgeBeard.Dynamic;
 
-      internal override void RegisterTokens() {
-        this.RegisterVariantToken<FamilyVariant>(() => this.Variant);
-        this.RegisterImmersionToken<StandardImmersion>(() => this.Immersion);
-        TokenRegistry.AddEnumToken<GeorgeBeard>("GeorgeBeard",
-            () => this.Immersion.IsNotUltralight() ? this.Beard : GeorgeBeard.NoBeard);
+      public override string GetPreviewOutfit() {
+        return "Fall_1_Rain";
       }
 
-      protected override string GetPreviewOutfit(out bool hasDefaultDirectory) {
-        hasDefaultDirectory = false;
-        return "Fall_1_Rain";
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+        contentPatcher.RegisterEnumToken(
+            "GeorgeBeard",
+            () => this.Immersion.IsNotUltralight() ? this.Beard : GeorgeBeard.NoBeard);
       }
     }
   }

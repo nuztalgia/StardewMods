@@ -1,4 +1,5 @@
 using System.Reflection;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
@@ -23,10 +24,10 @@ internal sealed class PlatonicPAF : BaseCompatSection {
 
   internal PlatonicPAF() : base(ModId, ModName) { }
 
-  internal override void RegisterTokens() {
+  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
     if (this.IsAvailable()) {
       // TODO: See if we can get this token directly from PlatonicPaF's own mod config.
-      TokenRegistry.AddCompositeToken(TokenName, new() {
+      contentPatcher.RegisterCompositeToken(TokenName, new() {
         ["Abigail"] = () => this.Abigail,
         ["Alex"] = () => this.Alex,
         ["Elliott"] = () => this.Elliott,
@@ -41,7 +42,7 @@ internal sealed class PlatonicPAF : BaseCompatSection {
         ["Shane"] = () => this.Shane
       });
     } else {
-      RegisterDummyTokens(TokenName);
+      RegisterDummyTokens(contentPatcher, TokenName);
     }
   }
 

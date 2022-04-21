@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nuztalgia.StardewMods.Common;
@@ -28,16 +27,13 @@ internal class ModEntry : BaseMod {
             .OfType<BaseMenuPage>();
 
     foreach (BaseMenuPage menuPage in allMenuPages) {
-      menuPage.RegisterTokens();
-    }
-
-    foreach (KeyValuePair<string, Func<IEnumerable<string>>> token in TokenRegistry.GetData()) {
-      cpIntegration.RegisterToken(token.Key, token.Value);
+      menuPage.RegisterTokens(cpIntegration);
     }
 
     if (!this.TryIntegrateWithGMCM(out GenericModConfigMenuIntegration? gmcmIntegration)) {
-      Log.Warn("Could not retrieve the Generic Mod Config Menu API. " +
-               "A lot of the functionality of this mod will be disabled.");
+      Log.Warn(
+          "Could not retrieve the Generic Mod Config Menu API. " +
+          "A lot of the functionality of this mod will be disabled.");
       return;
     }
 

@@ -93,13 +93,13 @@
   "tooltip.immersion.standard": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features, a lightweight selection to reduce lag, or an ultra-lightweight selection.",
   "tooltip.immersion.simple": "Chooses whether {0} will have the full range of Diverse Stardew Valley's features or a lightweight selection to reduce lag.",
   "tooltip.wedding-outfit": "Selects which wedding outfit {0} will wear when getting married. See the DSV website for images and details. Can only be used if Immersion is NOT set to \"Ultralight\".",
-
-  // Tooltip displayed in previews for most named characters.
   "tooltip.preview.general": "Some of the choices you make will update this image to reflect what {0} will look like if you save your changes. Try it out!",
-  // Tooltip displayed in previews for most characters with only one config option.
   "tooltip.preview.singular": "Your selection will update this image to reflect what {0} will look like if you save your changes. Try it out!",
-  // Tooltip displayed in previews for the Wizard, the Mermaids, and the Witch.
-  "tooltip.preview.specific": "Your choices will update this image to reflect what the {0} will look like if you save your changes. Try it out!",
+
+  // Qualified names of specific characters that might be different in other languages.
+  "character.wizard": "the Wizard",
+  "character.mermaids": "the Mermaids",
+  "character.witch": "the Witch",
 
   // Tooltips displayed on the "Abigail, Caroline & Pierre" content pack page.
   "tooltip.abigail.variant": "The DSV version of Abigail is mixed Chinese-Filipino; her mother Caroline is Filipino, and her father Pierre is Chinese. Both her vanilla and modded variants can be either plus-sized or straight-sized.",
@@ -132,7 +132,7 @@
 
   // Tooltips displayed on the "Krobus, Mermaids, Wizard & Witch" content pack page.
   "tooltip.krobus.variant": "The DSV version of Krobus wears various pieces of human attire.",
-  "tooltip.mermaids.randomization": "Chooses whether mermaids will have a random variety of skintones for their human half (\"Randomize Upper\"), a random variety of marine animal tails for their fish half (\"Randomize Lower\"), or both (\"Randomize Both\"). If \"Light\" is selected, they will use a pre-selected mix of human halves and fish tails. This choice applies to all the mermaids in the game.",
+  "tooltip.mermaids.randomization": "Chooses whether the Mermaids will have a random variety of skintones for their human half (\"Randomize Upper\"), a random variety of marine animal tails for their fish half (\"Randomize Lower\"), or both (\"Randomize Both\"). If \"Light\" is selected, they will use a pre-selected mix of human halves and fish tails. This choice applies to all the Mermaids in the game.",
   "tooltip.wizard.variant": "The DSV version of Wizard Rasmodius is Chinese. Note: DSV's version of the Wizard is incompatible with Stardew Valley Expanded. If you use SVE, this option must be set to \"Off\".",
   "tooltip.wizard.hat-junimos": "Chooses whether the Wizard has a chance to have a randomly-colored Junimo familiar sitting on his hat on any given day. Can be combined with the other choices. Only applies to his portraits. Can only be used if Immersion is set to \"Full\".",
   "tooltip.wizard.shoulder-junimos": "Chooses whether the Wizard has a chance to have a seasonally-themed Junimo familiar sitting on his shoulder on any given day. Can be combined with the other choices. Only applies to his portraits. Can only be used if Immersion is set to \"Full\".",

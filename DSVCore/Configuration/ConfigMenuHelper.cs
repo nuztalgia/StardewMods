@@ -103,7 +103,9 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu.AddPage(contentPackPage.Name, contentPackPage.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
-      this.ConfigMenu.AddSectionTitle(character.GetDisplayName());
+      string displayName = character.GetDisplayName();
+      this.ConfigMenu.AddSectionTitle( // Make sure the section title is capitalized.
+          string.Concat(displayName[0].ToString().ToUpper(), displayName.AsSpan(1)));
 
       ImagePreviews.InitializeCharacter(
           character.Name,
@@ -125,7 +127,15 @@ internal sealed class ConfigMenuHelper {
   }
 
   private GenericModConfigMenuIntegration AddSectionOptions(BaseMenuSection section) {
-    foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
+    IEnumerable<BaseMenuSection.OptionItem> sectionOptionItems =
+        section.GetOptions().OrderBy(item => item.Property.Name switch {
+          "Variant" => 1,
+          "Immersion" => 2,
+          "WeddingOutfit" => 3,
+          _ => 69 // Other options are in the order in which they're defined in their section class.
+        });
+
+    foreach (BaseMenuSection.OptionItem item in sectionOptionItems) {
       string displayName = " >  " + item.Name;
       ImagePreviews.SetFieldValue(item.UniqueId, item.Value);
 
