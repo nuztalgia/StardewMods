@@ -9,14 +9,14 @@
     <Import_RootNamespace>Nuztalgia.StardewMods.Common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\ContentPatcherIntegration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\IContentPatcherApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GenericModConfigMenu\GenericModConfigMenuIntegration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GenericModConfigMenu\IGenericModConfigMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)External\IContentPatcherApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)External\IGenericModConfigMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ContentPatcherIntegration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\GenericModConfigMenuIntegration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ModRegistry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseIntegration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseMod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ModRegistry.cs" />
   </ItemGroup>
 </Project>
