@@ -38,6 +38,11 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     return this;
   }
 
+  internal GenericModConfigMenuIntegration AddParagraph(string text) {
+    this.AddParagraph(() => text);
+    return this;
+  }
+
   internal GenericModConfigMenuIntegration AddParagraph(Func<string> text) {
     this.Api.AddParagraph(this.Manifest, text);
     return this;

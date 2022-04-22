@@ -14,6 +14,16 @@ internal sealed class ContentPatcherIntegration : BaseIntegration<IContentPatche
   private ContentPatcherIntegration(IContentPatcherAPI api, IManifest manifest)
       : base(api, manifest) { }
 
+  internal void RegisterConstantToken(string tokenName, string tokenValue) {
+    Log.Verbose($"Registering token '{tokenName}' with constant value '{tokenValue}'.");
+    this.RegisterToken(tokenName, () => new[] { tokenValue });
+  }
+
+  internal void RegisterStringToken(string tokenName, Func<string> getValue) {
+    Log.Verbose($"Registering token '{tokenName}' with any possible string value.");
+    this.RegisterToken(tokenName, () => new[] { getValue() });
+  }
+
   internal void RegisterBoolToken(
       string tokenName,
       Func<bool> getValue,
@@ -54,16 +64,11 @@ internal sealed class ContentPatcherIntegration : BaseIntegration<IContentPatche
   internal void RegisterCompositeToken(string tokenName, Dictionary<string, Func<bool>> entries) {
     Log.Verbose(
         $"Registering token '{tokenName}' with zero, one, or multiple of the following " +
-        $"possible values: '{string.Join(", ", entries.Keys)}'.");
+        $"possible values: '{entries.Keys.CommaJoin()}'.");
     this.RegisterToken(tokenName, () => {
       IEnumerable<string> values = entries.Where(entry => entry.Value()).Select(entry => entry.Key);
       return values.Any() ? values : new[] { string.Empty };
     });
-  }
-
-  internal void RegisterStringConstantToken(string tokenName, string tokenValue) {
-    Log.Verbose($"Registering string constant token '{tokenName}' with value '{tokenValue}'.");
-    this.RegisterToken(tokenName, () => new[] { tokenValue });
   }
 
   private void RegisterToken(string tokenName, Func<IEnumerable<string>> getTokenValue) {

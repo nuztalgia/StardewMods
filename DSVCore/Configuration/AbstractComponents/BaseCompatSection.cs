@@ -6,8 +6,8 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseCompatSection : BaseMenuSection {
 
-  private readonly string ModId;
-  private readonly string ModName;
+  protected readonly string ModId;
+  protected readonly string ModName;
 
   protected BaseCompatSection(string modId, string modName) {
     this.ModId = modId;
@@ -19,7 +19,7 @@ internal abstract class BaseCompatSection : BaseMenuSection {
       this.RegisterAllTokens(contentPatcher);
     } else {
       foreach (string tokenName in this.GetTokenNames()) {
-        contentPatcher.RegisterStringConstantToken(tokenName, string.Empty);
+        contentPatcher.RegisterConstantToken(tokenName, string.Empty);
       }
     }
   }
