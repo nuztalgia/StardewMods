@@ -32,6 +32,15 @@ internal abstract class BaseCompatSection : BaseMenuSection {
     return Globals.ModRegistry.IsLoaded(this.ModId);
   }
 
+  internal string GetInfoText() {
+    return Globals.GetI18nString($"Info_{this.Name}");
+  }
+
+  // Subclasses should override this method if they sync any config options with external mods.
+  internal virtual IEnumerable<string>? GetSyncedItems() {
+    return null;
+  }
+
   protected override string? GetOptionName(PropertyInfo property) {
     return Globals.GetI18nString($"Option_{this.Name}_{property.Name}");
   }

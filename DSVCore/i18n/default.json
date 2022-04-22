@@ -67,17 +67,22 @@
   "option.sprite-smile": "Sprite Smile",
   "option.stubble": "Stubble",
 
-  // Basic option labels and tooltips for compatibility with FQC & other mods.
+  // Info text, option labels, and tooltips for compatibility with FQC & other mods.
+  "info.flower-queens-crown": "This DSV add-on pack gives you more control over who will wear the Flower Queen's crown each year.",
   "option.flower-queens-crown.flower-queen": "Flower Queen",
   "tooltip.flower-queens-crown.flower-queen": "Gives other NPCs a chance to be the Flower Queen during the Flower Dance. If \"Random\" is selected, one person will be chosen each year. If \"Everyone\" is selected, all eligible townspeople will wear Flower Queen crowns. Note: Some extra dialogue lines are not available if \"Everyone\" is selected.",
   "option.flower-queens-crown.townspeople-only": "Townspeople Only",
   "tooltip.flower-queens-crown.townspeople-only": "Allows custom NPCs to be Flower Queen candidates as well. Enable this option if you only want the Pelican Town marriage candidates and children to be eligible.",
+  "info.ridgeside-village": "DSV is compatible by default with Ridgeside Village, and all characters will wear appropriate clothing at RSV’s festivals and wedding receptions. Additionally, the following options allow you to configure certain RSV characters to match the DSV versions of their family members.",
   "option.ridgeside-village.bert-variant": "Bert Variant",
   "tooltip.ridgeside-village.bert-variant": "Adds compatible portraits and sprites for RSV's Bert, so that he is Filipino to match his cousin Caroline's modded DSV variant.",
   "option.ridgeside-village.trinnie-variant": "Trinnie Variant",
   "tooltip.ridgeside-village.trinnie-variant": "Adds compatible portraits and sprites for RSV's Trinnie, so that she is mixed Filipino-German to match her aunt Caroline's modded DSV variant. She has a black-haired version and a green-haired version.",
   "option.ridgeside-village.lenny-variant": "Lenny Variant",
   "tooltip.ridgeside-village.lenny-variant": "Adds compatible portraits and sprites for RSV's Lenny, so that she is Black to match her brother Lewis's modded DSV variant.",
+  "info.platonic-p-a-f": "DSV automatically syncs with your configuration choices in Platonic Partners and Friendships. As a result, the following characters will have the blush removed from their love portraits and will have a unique platonic outfit for PPAF’s commitment ceremony.",
+  "info.looking-for-love": "DSV automatically syncs with your configuration choices in Looking for Love. As a result, the following characters will use LfL-compatible portraits and seasonal outfits, while still respecting the DSV options that you've selected for them.",
+  "info.make-gunther-real": "DSV is compatible by default with Make Gunther Real. Additionally, the following option allows you to configure Gunther's daughter Cecily to use an alternate art style that matches the DSV version you've selected for her father.",
   "option.make-gunther-real.alternate-cecily": "Alternate Cecily",
   "tooltip.make-gunther-real.alternate-cecily": "Toggles whether Gunther's daughter Cecily will use alternate sprites and portraits that match DSV's Gunther. Set this to false if you prefer Cecily's original art.",
 

@@ -74,7 +74,7 @@ internal sealed class ConfigMenuHelper {
 
   private void SetUpCoreAndCompatPage(CoreAndCompatPage coreAndCompatPage) {
     BaseMenuSection coreOptions = coreAndCompatPage.CoreOptions;
-    IEnumerable<BaseMenuSection> compatSections = coreAndCompatPage.GetAvailableCompatSections();
+    IEnumerable<BaseCompatSection> compatSections = coreAndCompatPage.GetAvailableCompatSections();
 
     this.ConfigMenu
         .AddPage(coreAndCompatPage.Name, coreAndCompatPage.GetDisplayName())
@@ -84,10 +84,17 @@ internal sealed class ConfigMenuHelper {
     this.AddSectionOptions(coreOptions)
         .AddSpacing();
 
-    foreach (BaseMenuSection section in compatSections) {
-      this.ConfigMenu.AddSectionTitle(section.GetDisplayName());
-      this.AddSectionOptions(section)
-          .AddSpacing();
+    foreach (BaseCompatSection section in compatSections) {
+      this.ConfigMenu
+          .AddSectionTitle(section.GetDisplayName())
+          .AddParagraph(section.GetInfoText());
+
+      if (section.GetSyncedItems() is not null) {
+        // TODO: Implement auto-syncing compat sections and properly add them here.
+      } else {
+        this.AddSectionOptions(section)
+            .AddSpacing();
+      }
     }
 
     // Show the placeholder if there are no compat mods or if the only one is Flower Queen's Crown.
