@@ -1,4 +1,4 @@
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -16,7 +16,7 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
         return this.HasElahoOutfit("UkrainianWeddingDress") ? 7 : 6;
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Emily>(
             "Tattoos", () => this.Immersion.IsFull() && this.Tattoos);
       }
@@ -35,7 +35,7 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
         return this.HasElahoOutfit("RussianWeddingDress") ? 7 : 6;
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterCompositeToken("HaleyAccessories", new() {
           ["Cuffs"] = () => (this.Variant is FamilyVariant.Black) && this.HairCuffs,
           ["Piercings"] = () => this.Immersion.IsNotUltralight() && this.Piercings,
@@ -55,7 +55,7 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
         return "Winter_2_Base";
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterBoolToken(
             "SandyGiftTastesChange", () => this.Variant.IsModded() && this.GiftTastesChange);
       }

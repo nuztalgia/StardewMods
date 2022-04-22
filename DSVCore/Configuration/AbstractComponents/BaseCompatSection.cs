@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 using Nuztalgia.StardewMods.Common.ModRegistry;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -15,7 +15,7 @@ internal abstract class BaseCompatSection : BaseMenuSection {
     this.ModName = modName;
   }
 
-  internal override sealed void RegisterTokens(ContentPatcherIntegration contentPatcher) {
+  internal override sealed void RegisterTokens(Integration contentPatcher) {
     if (this.IsAvailable()) {
       this.RegisterAllTokens(contentPatcher);
     } else {
@@ -46,7 +46,7 @@ internal abstract class BaseCompatSection : BaseMenuSection {
     return Globals.GetI18nString($"Option_{this.Name}_{property.Name}");
   }
 
-  protected abstract void RegisterAllTokens(ContentPatcherIntegration contentPatcher);
+  protected abstract void RegisterAllTokens(Integration contentPatcher);
 
   protected abstract IEnumerable<string> GetTokenNames();
 }

@@ -1,4 +1,4 @@
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -16,7 +16,7 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
         return this.HasElahoOutfit("JewishWeddingSuit") ? 6 : 5;
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Alex>(
             "Tattoos", () => (this.Variant is FamilyVariant.Samoan) && this.Tattoos);
       }
@@ -35,7 +35,7 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
         return "Fall_1_Rain";
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterEnumToken(
             "GeorgeBeard",
             () => this.Immersion.IsNotUltralight() ? this.Beard : GeorgeBeard.NoBeard);

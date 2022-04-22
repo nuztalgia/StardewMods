@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -80,7 +81,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         return null; // See comment above.
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterEnumToken("Mermaids", () => this.Randomization);
       }
 
@@ -124,7 +125,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         return "Spring_1";
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterCompositeToken("WizardFamiliars", new() {
           ["HatJunimos"] = () => this.Immersion.IsFull() && this.HatJunimos,
           ["ShoulderJunimos"] = () => this.Immersion.IsFull() && this.ShoulderJunimos,

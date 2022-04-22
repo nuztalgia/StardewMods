@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
@@ -29,7 +29,7 @@ internal sealed class RidgesideVillage : BaseCompatSection {
 
   internal RidgesideVillage() : base(ModId, ModName) { }
 
-  protected override void RegisterAllTokens(ContentPatcherIntegration contentPatcher) {
+  protected override void RegisterAllTokens(Integration contentPatcher) {
     contentPatcher.RegisterEnumToken(BertTokenName, () => this.BertVariant);
     contentPatcher.RegisterEnumToken(TrinnieTokenName, () => this.TrinnieVariant);
     contentPatcher.RegisterEnumToken(LennyTokenName, () => this.LennyVariant);

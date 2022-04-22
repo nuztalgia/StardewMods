@@ -6,59 +6,58 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 
-namespace Nuztalgia.StardewMods.Common;
+namespace Nuztalgia.StardewMods.Common.GenericModConfigMenu;
 
-internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConfigMenuApi> {
+internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
 
   [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification =
       "This class is only instantiated in BaseMod, which uses reflection to get this constructor.")]
-  private GenericModConfigMenuIntegration(IGenericModConfigMenuApi api, IManifest manifest)
-      : base(api, manifest) { }
+  private Integration(IGenericModConfigMenuApi api, IManifest manifest) : base(api, manifest) { }
 
-  internal GenericModConfigMenuIntegration Register(Action resetAction, Action saveAction) {
+  internal Integration Register(Action resetAction, Action saveAction) {
     this.Api.Register(this.Manifest, resetAction, saveAction);
     return this;
   }
 
-  internal GenericModConfigMenuIntegration OnFieldChanged(Action<string, object> onFieldChanged) {
+  internal Integration OnFieldChanged(Action<string, object> onFieldChanged) {
     this.Api.OnFieldChanged(this.Manifest, onFieldChanged);
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddSpacing() {
+  internal Integration AddSpacing() {
     return this.AddSectionTitle(string.Empty);
   }
 
-  internal GenericModConfigMenuIntegration AddSectionTitle(string text) {
+  internal Integration AddSectionTitle(string text) {
     return this.AddSectionTitle(() => text);
   }
 
-  internal GenericModConfigMenuIntegration AddSectionTitle(Func<string> text) {
+  internal Integration AddSectionTitle(Func<string> text) {
     this.Api.AddSectionTitle(this.Manifest, text);
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddParagraph(string text) {
+  internal Integration AddParagraph(string text) {
     this.AddParagraph(() => text);
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddParagraph(Func<string> text) {
+  internal Integration AddParagraph(Func<string> text) {
     this.Api.AddParagraph(this.Manifest, text);
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddPage(string pageId, string pageTitle) {
+  internal Integration AddPage(string pageId, string pageTitle) {
     this.Api.AddPage(this.Manifest, pageId, () => pageTitle);
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddPageLink(string pageId, string text) {
+  internal Integration AddPageLink(string pageId, string text) {
     this.Api.AddPageLink(this.Manifest, pageId, () => text);
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddEnumOption(
+  internal Integration AddEnumOption(
       object container, PropertyInfo property, string name,
       Func<string, string>? formatAllowedValue, string? tooltip = null, string? fieldId = null) {
     this.Api.AddTextOption(
@@ -74,7 +73,7 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddBoolOption(
+  internal Integration AddBoolOption(
       object container, PropertyInfo property, string name,
       string? tooltip = null, string? fieldId = null) {
     this.Api.AddBoolOption(
@@ -88,7 +87,7 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddIntOption(
+  internal Integration AddIntOption(
       object container, PropertyInfo property, string name, 
       int? min = null, int? max = null, string? tooltip = null, string? fieldId = null) {
     this.Api.AddNumberOption(
@@ -104,7 +103,7 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     return this;
   }
 
-  internal GenericModConfigMenuIntegration AddComplexOption(
+  internal Integration AddComplexOption(
       string name, int height, Action<SpriteBatch, Vector2> drawAction,
       string? tooltip = null, string? fieldId = null) {
     this.Api.AddComplexOption(

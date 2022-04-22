@@ -1,4 +1,4 @@
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -17,7 +17,7 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
         return this.HasElahoOutfit("HungarianWeddingSuit") ? 5 : 4;
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterBoolToken(
             "HarveyGiftTastesChange",
             () => (this.Variant is HarveyVariant.ModdedSikh) && this.GiftTastesChange);

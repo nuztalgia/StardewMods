@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 using Nuztalgia.StardewMods.Common.ModRegistry;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -41,7 +42,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   private static readonly Rectangle[][] StandardPortraitRect = Wrap(new Rectangle(0, 0, 64, 64));
   private static readonly Rectangle[][] StandardSpriteRect = Wrap(new Rectangle(0, 0, 16, 32));
 
-  internal override sealed void RegisterTokens(ContentPatcherIntegration contentPatcher) {
+  internal override sealed void RegisterTokens(Integration contentPatcher) {
     (this as IHasVariant)?.RegisterVariantToken(this.Name, contentPatcher);
     (this as IHasImmersion)?.RegisterImmersionToken(this.Name, contentPatcher);
     (this as IHasWeddingOutfit)?.RegisterWeddingOutfitToken(this.Name, contentPatcher);
@@ -103,7 +104,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   }
 
   // Subclasses should override this method if they have any additional character-specific tokens.
-  protected virtual void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) { }
+  protected virtual void RegisterExtraTokens(Integration contentPatcher) { }
 
   protected static T[][] Wrap<T>(params T[] items) {
     return new T[][] { items };

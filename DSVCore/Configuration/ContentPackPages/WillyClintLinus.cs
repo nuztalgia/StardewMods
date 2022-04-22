@@ -1,4 +1,4 @@
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -20,7 +20,7 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
         return "Winter_2_Base";
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Clint>("Scar", () => this.Scar);
       }
     }

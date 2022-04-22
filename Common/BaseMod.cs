@@ -27,16 +27,16 @@ internal abstract class BaseMod : Mod {
   protected virtual void OnGameLaunched() { }
 
   protected bool TryIntegrateWithCP(
-      [NotNullWhen(true)] out ContentPatcherIntegration? integration) {
+      [NotNullWhen(true)] out ContentPatcher.Integration? integration) {
     Log.Trace("Initializing Content Patcher integration.");
-    return this.TryIntegrate<IContentPatcherAPI, ContentPatcherIntegration>(
+    return this.TryIntegrate<IContentPatcherAPI, ContentPatcher.Integration>(
         "Pathoschild.ContentPatcher", out integration);
   }
 
   protected bool TryIntegrateWithGMCM(
-      [NotNullWhen(true)] out GenericModConfigMenuIntegration? integration) {
+      [NotNullWhen(true)] out GenericModConfigMenu.Integration? integration) {
     Log.Trace("Initializing Generic Mod Config Menu integration.");
-    return this.TryIntegrate<IGenericModConfigMenuApi, GenericModConfigMenuIntegration>(
+    return this.TryIntegrate<IGenericModConfigMenuApi, GenericModConfigMenu.Integration>(
         "spacechase0.GenericModConfigMenu", out integration);
   }
 

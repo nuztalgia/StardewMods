@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
@@ -20,7 +20,7 @@ internal sealed class FlowerQueensCrown : BaseCompatSection {
 
   internal FlowerQueensCrown() : base(ModId, ModName) { }
 
-  protected override void RegisterAllTokens(ContentPatcherIntegration contentPatcher) {
+  protected override void RegisterAllTokens(Integration contentPatcher) {
     contentPatcher.RegisterEnumToken(FlowerQueenTokenName, () => this.FlowerQueen);
     contentPatcher.RegisterBoolToken(TownspeopleTokenName, () => this.TownspeopleOnly);
   }

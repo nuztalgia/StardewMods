@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -18,7 +19,7 @@ internal abstract class BaseMenuPage : BaseMenuComponent {
     }
   }
 
-  internal override void RegisterTokens(ContentPatcherIntegration contentPatcher) {
+  internal override void RegisterTokens(Integration contentPatcher) {
     foreach (BaseMenuSection section in this.GetAllSections()) {
       section.RegisterTokens(contentPatcher);
     }

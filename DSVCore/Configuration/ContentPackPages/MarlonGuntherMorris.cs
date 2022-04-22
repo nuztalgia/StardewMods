@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -37,7 +37,7 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
             : Wrap<string>();
       }
 
-      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
+      protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterBoolToken(
             "MorrisVariant",
             () => this.SeasonalOutfits,

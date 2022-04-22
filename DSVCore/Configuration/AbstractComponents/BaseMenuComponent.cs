@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -21,7 +21,7 @@ internal abstract class BaseMenuComponent {
     return JsonConvert.SerializeObject(this, JsonSettings);
   }
 
-  internal abstract void RegisterTokens(ContentPatcherIntegration contentPatcher);
+  internal abstract void RegisterTokens(Integration contentPatcher);
 
   internal abstract string GetDisplayName();
 

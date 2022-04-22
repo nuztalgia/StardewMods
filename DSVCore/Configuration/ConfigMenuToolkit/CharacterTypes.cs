@@ -1,5 +1,6 @@
 using System;
 using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -41,7 +42,7 @@ internal interface IHasCustomModImageDirectory {
 }
 
 internal interface IHasVariant {
-  void RegisterVariantToken(string name, ContentPatcherIntegration contentPatcher);
+  void RegisterVariantToken(string name, Integration contentPatcher);
 
   string GetPreviewOutfit() {
     throw new NotImplementedException("Character did not specify a preview outfit.");
@@ -51,8 +52,7 @@ internal interface IHasVariant {
 internal interface IHasVariant<TVariant> : IHasVariant where TVariant : Enum {
   abstract TVariant Variant { get; set; }
 
-  void IHasVariant.RegisterVariantToken(
-      string characterName, ContentPatcherIntegration contentPatcher) {
+  void IHasVariant.RegisterVariantToken(string characterName, Integration contentPatcher) {
     if (this.Variant.GetType().Name.EndsWith(nameof(this.Variant))) {
       contentPatcher.RegisterEnumToken(characterName + "Variant", () => this.Variant);
     } else {
@@ -64,14 +64,13 @@ internal interface IHasVariant<TVariant> : IHasVariant where TVariant : Enum {
 }
 
 internal interface IHasImmersion {
-  void RegisterImmersionToken(string name, ContentPatcherIntegration contentPatcher);
+  void RegisterImmersionToken(string name, Integration contentPatcher);
 }
 
 internal interface IHasImmersion<TImmersion> : IHasImmersion where TImmersion : Enum {
   abstract TImmersion Immersion { get; set; }
 
-  void IHasImmersion.RegisterImmersionToken(
-      string characterName, ContentPatcherIntegration contentPatcher) {
+  void IHasImmersion.RegisterImmersionToken(string characterName, Integration contentPatcher) {
     if (this.Immersion is StandardImmersion or SimpleImmersion) {
       contentPatcher.RegisterEnumToken(characterName + "LightweightConfig", () => this.Immersion);
     } else {
@@ -87,7 +86,7 @@ internal interface IHasWeddingOutfit {
 
   public int WeddingOutfit { get; set; }
 
-  void RegisterWeddingOutfitToken(string characterName, ContentPatcherIntegration contentPatcher) {
+  void RegisterWeddingOutfitToken(string characterName, Integration contentPatcher) {
     contentPatcher.RegisterIntToken(
         characterName + "WeddingOutfit",
         () => this.WeddingOutfit,
@@ -120,9 +119,9 @@ internal static class CharacterTypeExtensions {
     return immersion == SimpleImmersion.Full;
   }
 
-  // Extension method for ContentPatcherIntegration to handle character bools with a naming pattern.
+  // Extension method for ContentPatcher Integration to handle character bools with a naming scheme.
   internal static void RegisterAutoNamedBoolToken<TCharacter>(
-      this ContentPatcherIntegration contentPatcher, string tokenName, Func<bool> getValue)
+      this Integration contentPatcher, string tokenName, Func<bool> getValue)
           where TCharacter : BaseCharacterSection {
     contentPatcher.RegisterBoolToken(
         typeof(TCharacter).Name + tokenName, getValue, autoValueString: tokenName);

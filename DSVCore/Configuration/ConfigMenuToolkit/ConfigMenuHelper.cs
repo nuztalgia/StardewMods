@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.GenericModConfigMenu;
 using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal sealed class ConfigMenuHelper {
 
-  private readonly GenericModConfigMenuIntegration ConfigMenu;
+  private readonly Integration ConfigMenu;
   private readonly IGameContentHelper GameContentHelper;
 
   private readonly Func<string, string> FormatValue =
       value => Globals.GetI18nString($"Value_{value}") ?? value;
 
-  internal ConfigMenuHelper(
-      GenericModConfigMenuIntegration gmcmIntegration, IGameContentHelper gameContentHelper) {
-    this.ConfigMenu = gmcmIntegration;
+  internal ConfigMenuHelper(Integration genModConfigMenu, IGameContentHelper gameContentHelper) {
+    this.ConfigMenu = genModConfigMenu;
     this.GameContentHelper = gameContentHelper;
   }
 
@@ -131,7 +131,7 @@ internal sealed class ConfigMenuHelper {
     }
   }
 
-  private GenericModConfigMenuIntegration AddSectionOptions(BaseMenuSection section) {
+  private Integration AddSectionOptions(BaseMenuSection section) {
     IEnumerable<BaseMenuSection.OptionItem> sectionOptionItems =
         section.GetOptions().OrderBy(item => item.Property.Name switch {
           "Variant" => 1,
