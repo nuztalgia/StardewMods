@@ -12,6 +12,10 @@ internal abstract class BaseMod : Mod {
 
   public override sealed void Entry(IModHelper helper) {
     Log.Initialize(this.Monitor);
+
+    // I heard you like ModRegistry, so I put a ModRegistry in your ModRegistry...
+    ModRegistry.ModRegistry.Initialize(helper.ModRegistry);
+
     this.OnModEntry();
 
     helper.Events.GameLoop.GameLaunched +=

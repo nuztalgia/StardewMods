@@ -9,7 +9,6 @@ internal class ModEntry : BaseMod {
   private ModConfig ModConfig = new();
 
   protected override void OnModEntry() {
-    Globals.Init(this.Helper.ModRegistry);
     I18n.Init(this.Helper.Translation);
   }
 

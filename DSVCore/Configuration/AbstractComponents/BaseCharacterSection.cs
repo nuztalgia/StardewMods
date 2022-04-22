@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Nuztalgia.StardewMods.Common;
+using Nuztalgia.StardewMods.Common.ModRegistry;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -31,6 +32,10 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
 
     // TODO: Properly (dynamically?) validate the return value of this method for every bachelorex.
     public abstract int GetNumberOfWeddingOutfits();
+
+    protected bool HasElahoOutfit(string outfitName) {
+      return ModRegistry.IsLoaded($"Elaho.{this.Name}{outfitName}");
+    }
   }
 
   private static readonly Rectangle[][] StandardPortraitRect = Wrap(new Rectangle(0, 0, 64, 64));

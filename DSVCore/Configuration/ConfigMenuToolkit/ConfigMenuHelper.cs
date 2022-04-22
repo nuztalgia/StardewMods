@@ -115,7 +115,7 @@ internal sealed class ConfigMenuHelper {
       ImagePreviewOptions.InitializeCharacter(
           character.Name,
           this.GameContentHelper.Load<Texture2D>,
-          contentPackPage.GetModContentHelper().Load<Texture2D>, 
+          contentPackPage.GetImageLoader(), 
           character.GetModImagePaths,
           character.GetGameImagePaths,
           character.GetPortraitRectsDelegate(),

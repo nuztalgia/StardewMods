@@ -120,11 +120,7 @@ internal static class CharacterTypeExtensions {
     return immersion == SimpleImmersion.Full;
   }
 
-  internal static bool HasElahoOutfit<TCharacter>(this TCharacter character, string modName)
-      where TCharacter : BaseCharacterSection, IHasWeddingOutfit {
-    return Globals.ModRegistry.IsLoaded($"Elaho.{character.Name}{modName}");
-  }
-
+  // Extension method for ContentPatcherIntegration to handle character bools with a naming pattern.
   internal static void RegisterAutoNamedBoolToken<TCharacter>(
       this ContentPatcherIntegration contentPatcher, string tokenName, Func<bool> getValue)
           where TCharacter : BaseCharacterSection {

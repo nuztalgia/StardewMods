@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.Common;
 
@@ -28,25 +26,5 @@ internal static class IEnumerableExtensions {
 
   internal static string CommaJoin(this IEnumerable<object> items) {
     return string.Join(", ", items);
-  }
-}
-
-internal static class ModRegistryExtensions {
-
-  // Inspired by:  "This is really bad. Pathos don't kill me."  - kittycatcasey
-  internal static bool TryFetchMod<T>(
-      this IModRegistry modRegistry,
-      string modId,
-      [NotNullWhen(true)] out T? mod) {
-
-    string modType = typeof(T).Name switch {
-      nameof(IMod) => "Mod",
-      nameof(IContentPack) => "ContentPack",
-      _ => throw new ArgumentException($"Unsupported type for mod registry: '{typeof(T).Name}'."),
-    };
-
-    IModInfo? modInfo = modRegistry.Get(modId);
-    mod = (modInfo?.GetType().GetProperty(modType)?.GetValue(modInfo) is T value) ? value : default;
-    return mod is not null;
   }
 }
