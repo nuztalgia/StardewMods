@@ -9,17 +9,19 @@ internal abstract class BaseCompatSection : BaseMenuSection {
 
   protected readonly string ModId;
   protected readonly string ModName;
+  protected readonly IEnumerable<string> TokenNames;
 
-  protected BaseCompatSection(string modId, string modName) {
+  protected BaseCompatSection(string modId, string modName, IEnumerable<string> tokenNames) {
     this.ModId = modId;
     this.ModName = modName;
+    this.TokenNames = tokenNames;
   }
 
   internal override sealed void RegisterTokens(Integration contentPatcher) {
     if (this.IsAvailable()) {
-      this.RegisterAllTokens(contentPatcher);
+      this.RegisterCompatTokens(contentPatcher);
     } else {
-      foreach (string tokenName in this.GetTokenNames()) {
+      foreach (string tokenName in this.TokenNames) {
         contentPatcher.RegisterConstantToken(tokenName, string.Empty);
       }
     }
@@ -37,16 +39,9 @@ internal abstract class BaseCompatSection : BaseMenuSection {
     return Globals.GetI18nString($"Info_{this.Name}");
   }
 
-  // Subclasses should override this method if they sync any config options with external mods.
-  internal virtual IEnumerable<string>? GetSyncedItems() {
-    return null;
-  }
-
-  protected override string? GetOptionName(PropertyInfo property) {
+  protected override sealed string? GetOptionName(PropertyInfo property) {
     return Globals.GetI18nString($"Option_{this.Name}_{property.Name}");
   }
 
-  protected abstract void RegisterAllTokens(Integration contentPatcher);
-
-  protected abstract IEnumerable<string> GetTokenNames();
+  protected abstract void RegisterCompatTokens(Integration contentPatcher);
 }

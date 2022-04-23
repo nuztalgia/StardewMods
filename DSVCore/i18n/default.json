@@ -67,12 +67,14 @@
   "option.sprite-smile": "Sprite Smile",
   "option.stubble": "Stubble",
 
-  // Info text, option labels, and tooltips for compatibility with FQC & other mods.
+  // Info text, option labels, and tooltips for Flower Queen's Crown (DSV add-on pack).
   "info.flower-queens-crown": "This DSV add-on pack gives you more control over who will wear the Flower Queen's crown each year.",
   "option.flower-queens-crown.flower-queen": "Flower Queen",
   "tooltip.flower-queens-crown.flower-queen": "Gives other NPCs a chance to be the Flower Queen during the Flower Dance. If \"Random\" is selected, one person will be chosen each year. If \"Everyone\" is selected, all eligible townspeople will wear Flower Queen crowns. Note: Some extra dialogue lines are not available if \"Everyone\" is selected.",
   "option.flower-queens-crown.townspeople-only": "Townspeople Only",
   "tooltip.flower-queens-crown.townspeople-only": "Allows custom NPCs to be Flower Queen candidates as well. Enable this option if you only want the Pelican Town marriage candidates and children to be eligible.",
+
+  // Info text, option labels, and tooltips for compatibility with Ridgeside Village.
   "info.ridgeside-village": "DSV is compatible by default with Ridgeside Village, and all characters will wear appropriate clothing at RSV’s festivals and wedding receptions. Additionally, the following options allow you to configure certain RSV characters to match the DSV versions of their family members.",
   "option.ridgeside-village.bert-variant": "Bert Variant",
   "tooltip.ridgeside-village.bert-variant": "Adds compatible portraits and sprites for RSV's Bert, so that he is Filipino to match his cousin Caroline's modded DSV variant.",
@@ -80,18 +82,23 @@
   "tooltip.ridgeside-village.trinnie-variant": "Adds compatible portraits and sprites for RSV's Trinnie, so that she is mixed Filipino-German to match her aunt Caroline's modded DSV variant. She has a black-haired version and a green-haired version.",
   "option.ridgeside-village.lenny-variant": "Lenny Variant",
   "tooltip.ridgeside-village.lenny-variant": "Adds compatible portraits and sprites for RSV's Lenny, so that she is Black to match her brother Lewis's modded DSV variant.",
-  "info.platonic-p-a-f": "DSV automatically syncs with your configuration choices in Platonic Partners and Friendships. As a result, the following characters will have the blush removed from their love portraits and will have a unique platonic outfit for PPAF’s commitment ceremony.",
-  "info.looking-for-love": "DSV automatically syncs with your configuration choices in Looking for Love. As a result, the following characters will use LfL-compatible portraits and seasonal outfits, while still respecting the DSV options that you've selected for them.",
+
+  // Info text, option labels, and tooltips for compatibility with Make Gunther Real.
   "info.make-gunther-real": "DSV is compatible by default with Make Gunther Real. Additionally, the following option allows you to configure Gunther's daughter Cecily to use an alternate art style that matches the DSV version you've selected for her father.",
   "option.make-gunther-real.alternate-cecily": "Alternate Cecily",
   "tooltip.make-gunther-real.alternate-cecily": "Toggles whether Gunther's daughter Cecily will use alternate sprites and portraits that match DSV's Gunther. Set this to false if you prefer Cecily's original art.",
 
-  // Character-specific option labels and tooltips for compatibility with other mods.
-  // The sequence "{0}" will be replaced by a specific character's name.
-  "option.platonic-partners-and-friendships.platonic-npc": "Platonic: {0}",
-  "tooltip.platonic-partners-and-friendships.platonic-npc": "Make sure this option is turned on if you have {0} set to \"Platonic\" in Platonic Partners and Friendships.",
-  "option.looking-for-love.dateable-npc": "Dateable: {0}",
-  "tooltip.looking-for-love.dateable-npc": "Make sure this option is turned on if you have {0} set to \"Dateable\" in Looking for Love.",
+  // Info text and labels for compatibility with PPaF and LfL, which are auto-synced.
+  // The sequence "{0}" will be replaced by the name of the mod in question.
+  "info.platonic-p-a-f": "DSV automatically syncs with your configuration choices in Platonic Partners and Friendships. As a result, the following characters will have the blush removed from their love portraits and will have a unique platonic outfit for PPAF’s commitment ceremony.",
+  "info.looking-for-love": "DSV automatically syncs with your configuration choices in Looking for Love. As a result, the following characters will use LfL-compatible portraits and seasonal outfits, while still respecting the DSV options that you've selected for them.",
+  "compat.synced.none": "None.",
+  "compat.synced.error": "Oops! We weren't able to fetch your settings. This should fix itself if/when you relaunch the game.",
+
+  // Qualified names of specific characters that might be different in other languages.
+  "character.wizard": "the Wizard",
+  "character.mermaids": "the Mermaids",
+  "character.witch": "the Witch",
 
   // Tooltips displayed multiple times throughout the content pack menu pages.
   // The sequence "{0}" will be replaced by a specific character's name.
@@ -100,11 +107,6 @@
   "tooltip.wedding-outfit": "Selects which wedding outfit {0} will wear when getting married. See the DSV website for images and details. Can only be used if Immersion is NOT set to \"Ultralight\".",
   "tooltip.preview.general": "Some of the choices you make will update this image to reflect what {0} will look like if you save your changes. Try it out!",
   "tooltip.preview.singular": "Your selection will update this image to reflect what {0} will look like if you save your changes. Try it out!",
-
-  // Qualified names of specific characters that might be different in other languages.
-  "character.wizard": "the Wizard",
-  "character.mermaids": "the Mermaids",
-  "character.witch": "the Witch",
 
   // Tooltips displayed on the "Abigail, Caroline & Pierre" content pack page.
   "tooltip.abigail.variant": "The DSV version of Abigail is mixed Chinese-Filipino; her mother Caroline is Filipino, and her father Pierre is Chinese. Both her vanilla and modded variants can be either plus-sized or straight-sized.",

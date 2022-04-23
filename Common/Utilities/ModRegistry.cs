@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 
@@ -26,6 +27,10 @@ internal static class ModRegistry {
     return LoadExternalAsset<IContentPack, Texture2D>(modId, assetPath);
   }
 
+  internal static Dictionary<string, string>? LoadConfigFromContentPack(string modId) {
+    return LoadExternalAsset<IContentPack, Dictionary<string, string>>(modId, "config.json");
+  }
+
   private static TAsset? LoadExternalAsset<TMod, TAsset>(string modId, string assetPath)
       where TAsset : notnull {
     if (!ContentHelperCache.ContainsKey(modId)) {
@@ -33,9 +38,15 @@ internal static class ModRegistry {
       ContentHelperCache[modId] =
           (mod as IContentPack)?.ModContent ?? (mod as IMod)?.Helper.ModContent;
     }
-    return (ContentHelperCache[modId] is IModContentHelper contentHelper)
-        ? contentHelper.Load<TAsset>(assetPath)
-        : default;
+
+    if (ContentHelperCache[modId] is IModContentHelper contentHelper) {
+      try {
+        return contentHelper.Load<TAsset>(assetPath);
+      } catch (ContentLoadException) {
+        Log.Debug($"Couldn't load '{typeof(TAsset)}' asset '{assetPath}' from mod '{modId}'.");
+      }
+    }
+    return default;
   }
 
   // Inspired by:  "This is really bad. Pathos don't kill me."  - kittycatcasey

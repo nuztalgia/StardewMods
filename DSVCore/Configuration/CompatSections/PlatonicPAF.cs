@@ -1,57 +1,11 @@
-using System.Collections.Generic;
-using System.Reflection;
-using Nuztalgia.StardewMods.Common;
-
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
-internal sealed class PlatonicPAF : BaseCompatSection {
+internal sealed class PlatonicPAF : BaseSyncedCompatSection {
 
-  private const string ModId = "Amaranthacyan.PlatonicPartnersandFriendships";
-  private const string ModName = "Platonic Partners and Friendships";
-  private const string TokenName = "PlatonicNPCs";
-
-  public bool Abigail { get; set; } = true;
-  public bool Alex { get; set; } = true;
-  public bool Elliott { get; set; } = true;
-  public bool Emily { get; set; } = true;
-  public bool Haley { get; set; } = true;
-  public bool Harvey { get; set; } = true;
-  public bool Leah { get; set; } = true;
-  public bool Maru { get; set; } = true;
-  public bool Penny { get; set; } = true;
-  public bool Sam { get; set; } = true;
-  public bool Sebastian { get; set; } = true;
-  public bool Shane { get; set; } = true;
-
-  internal PlatonicPAF() : base(ModId, ModName) { }
-
-  protected override void RegisterAllTokens(ContentPatcherIntegration contentPatcher) {
-    // TODO: See if we can get this token directly from PlatonicPaF's own mod config.
-    contentPatcher.RegisterCompositeToken(TokenName, new() {
-      ["Abigail"] = () => this.Abigail,
-      ["Alex"] = () => this.Alex,
-      ["Elliott"] = () => this.Elliott,
-      ["Emily"] = () => this.Emily,
-      ["Haley"] = () => this.Haley,
-      ["Harvey"] = () => this.Harvey,
-      ["Leah"] = () => this.Leah,
-      ["Maru"] = () => this.Maru,
-      ["Penny"] = () => this.Penny,
-      ["Sam"] = () => this.Sam,
-      ["Sebastian"] = () => this.Sebastian,
-      ["Shane"] = () => this.Shane
-    });
-  }
-
-  protected override IEnumerable<string> GetTokenNames() {
-    yield return TokenName;
-  }
-
-  protected override string? GetOptionName(PropertyInfo property) {
-    return I18n.Option_PlatonicPartnersAndFriendships_PlatonicNpc().Format(property.Name);
-  }
-
-  protected override string? GetTooltip(PropertyInfo property) {
-    return I18n.Tooltip_PlatonicPartnersAndFriendships_PlatonicNpc().Format(property.Name);
-  }
+  internal PlatonicPAF() : base(
+      modId: "Amaranthacyan.PlatonicPartnersandFriendships",
+      modName: "Platonic Partners and Friendships",
+      tokenName: "PlatonicNPCs",
+      configKey: "PlatonicNPCs"
+  ) { }
 }

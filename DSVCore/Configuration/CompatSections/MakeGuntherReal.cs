@@ -1,23 +1,20 @@
-using System.Collections.Generic;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
 internal sealed class MakeGuntherReal : BaseCompatSection {
 
-  private const string ModId = "Wolf.Gun";
-  private const string ModName = "Make Gunther Real";
   private const string TokenName = "AlternateCecily";
 
   public bool AlternateCecily { get; set; } = true;
 
-  internal MakeGuntherReal() : base(ModId, ModName) { }
+  internal MakeGuntherReal() : base(
+      modId: "Wolf.Gun",
+      modName: "Make Gunther Real",
+      tokenNames: new string[] { TokenName }
+  ) { }
 
-  protected override void RegisterAllTokens(Integration contentPatcher) {
+  protected override void RegisterCompatTokens(Integration contentPatcher) {
     contentPatcher.RegisterBoolToken(TokenName, () => this.AlternateCecily);
-  }
-
-  protected override IEnumerable<string> GetTokenNames() {
-    yield return TokenName;
   }
 }
