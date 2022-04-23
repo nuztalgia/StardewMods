@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -25,6 +27,15 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
             "HarveyCharacterMustache",
             () => (this.Variant is HarveyVariant.Vanilla) && this.SpriteMustache,
             autoValueString: "Mustache");
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if ((variant == nameof(StandardVariant.Vanilla))
+            && (imageDirectory == ImagePreviewOptions.SpritesDirectory)
+            && ephemeralProperties.IsTrueValue(nameof(this.SpriteMustache))) {
+          yield return "Harvey/Characters/Harvey_MustacheOverlay.png";
+        }
       }
     }
 

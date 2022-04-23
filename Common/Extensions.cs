@@ -69,6 +69,10 @@ internal static class IDictionaryExtensions {
   internal static bool IsTrueValue<K, V>(this IDictionary<K, V> items, K key) {
     return items.TryGetValue(key, out V? value) && (value is true);
   }
+
+  internal static bool IsFalseValue<K, V>(this IDictionary<K, V> items, K key) {
+    return items.TryGetValue(key, out V? value) && (value is false);
+  }
 }
 
 internal static class SpriteBatchExtensions {

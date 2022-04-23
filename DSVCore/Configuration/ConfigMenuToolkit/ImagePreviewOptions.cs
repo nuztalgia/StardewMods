@@ -147,7 +147,8 @@ internal static class ImagePreviewOptions {
 
   private static readonly ImmutableHashSet<string> SupportedEphemeralProperties = new string[] {
     "Variant", "Randomization", "SeasonalOutfits",
-    "HatJunimos", "ShoulderJunimos", "SpiritCreatures"
+    "HatJunimos", "ShoulderJunimos", "SpiritCreatures",
+    "Scar", "SpriteMustache", "SpriteSmile", "Tattoos"
   }.ToImmutableHashSet();
 
   internal static void InitializeCharacter(string characterName,

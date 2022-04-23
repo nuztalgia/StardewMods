@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -9,7 +11,7 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       public bool Tattoos { get; set; } = true;
 
       public override string GetPreviewOutfit() {
-        return "Spring_1_Sun";
+        return "Summer_3_Base";
       }
 
       public override int GetNumberOfWeddingOutfits() {
@@ -19,6 +21,13 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Emily>(
             "Tattoos", () => this.Immersion.IsFull() && this.Tattoos);
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if (ephemeralProperties.IsTrueValue(nameof(this.Tattoos))) {
+          yield return $"Emily/{imageDirectory}/Tattoos/Emily_{this.GetPreviewOutfit()}.png";
+        }
       }
     }
 

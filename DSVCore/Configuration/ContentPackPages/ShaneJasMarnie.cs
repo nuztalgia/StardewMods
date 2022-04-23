@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -46,6 +48,15 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
             "MarnieCharacterSmile",
             () => (this.Variant is StandardVariant.Vanilla) && this.SpriteSmile,
             autoValueString: "Smile");
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if ((variant == nameof(StandardVariant.Vanilla))
+            && (imageDirectory == ImagePreviewOptions.SpritesDirectory)
+            && ephemeralProperties.IsFalseValue(nameof(this.SpriteSmile))) {
+          yield return "Marnie/Characters/Marnie_NoSmileOverlay_Default.png";
+        }
       }
     }
   }

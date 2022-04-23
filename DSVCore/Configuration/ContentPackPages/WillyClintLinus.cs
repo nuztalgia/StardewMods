@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -22,6 +24,13 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
 
       protected override void RegisterExtraTokens(Integration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Clint>("Scar", () => this.Scar);
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if (ephemeralProperties.IsTrueValue(nameof(this.Scar))) {
+          yield return $"Clint/{imageDirectory}/Default/Clint_Scar.png";
+        }
       }
     }
 
