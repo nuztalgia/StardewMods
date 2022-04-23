@@ -58,41 +58,58 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
   }
 
   internal Integration AddEnumOption(
-      object container, PropertyInfo property, string name,
-      Func<string, string>? formatAllowedValue, string? tooltip = null, string? fieldId = null) {
+      object container,
+      PropertyInfo property,
+      string optionName,
+      Func<string, string>? formatValue = null,
+      string? tooltip = null,
+      string? fieldId = null) {
+
     this.Api.AddTextOption(
         mod: this.Manifest,
-        name: () => name,
+        name: () => optionName,
         getValue: () => property.GetValue(container)?.ToString() ?? string.Empty,
         setValue: value => property.SetValue(container, Enum.Parse(property.PropertyType, value)),
         allowedValues: Enum.GetNames(property.PropertyType),
-        formatAllowedValue: formatAllowedValue,
+        formatAllowedValue: formatValue,
         tooltip: (tooltip is null) ? null : () => tooltip,
         fieldId: fieldId
     );
+
     return this;
   }
 
   internal Integration AddBoolOption(
-      object container, PropertyInfo property, string name,
-      string? tooltip = null, string? fieldId = null) {
+      object container,
+      PropertyInfo property,
+      string optionName,
+      string? tooltip = null,
+      string? fieldId = null) {
+
     this.Api.AddBoolOption(
         mod: this.Manifest,
-        name: () => name,
+        name: () => optionName,
         getValue: () => ((bool?) property.GetValue(container)) ?? false,
         setValue: value => property.SetValue(container, value),
         tooltip: (tooltip is null) ? null : () => tooltip,
         fieldId: fieldId
     );
+
     return this;
   }
 
   internal Integration AddIntOption(
-      object container, PropertyInfo property, string name, 
-      int? min = null, int? max = null, string? tooltip = null, string? fieldId = null) {
+      object container,
+      PropertyInfo property,
+      string optionName, 
+      int? min = null,
+      int? max = null,
+      string? tooltip = null,
+      string? fieldId = null) {
+
     this.Api.AddNumberOption(
         mod: this.Manifest,
-        name: () => name,
+        name: () => optionName,
         getValue: () => ((int?) property.GetValue(container)) ?? 0,
         setValue: value => property.SetValue(container, value),
         min: min,
@@ -100,20 +117,31 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
         tooltip: (tooltip is null) ? null : () => tooltip,
         fieldId: fieldId
     );
+
     return this;
   }
 
   internal Integration AddComplexOption(
-      string name, int height, Action<SpriteBatch, Vector2> drawAction,
-      string? tooltip = null, string? fieldId = null) {
+      string optionName,
+      Func<int> getHeight,
+      Action<SpriteBatch, Vector2> drawAction,
+      Action? resetAction = null,
+      Action? saveAction = null,
+      string? tooltip = null,
+      string? fieldId = null) {
+
     this.Api.AddComplexOption(
         mod: this.Manifest,
-        name: () => name,
-        height: () => height,
+        name: () => optionName,
         draw: drawAction,
         tooltip: (tooltip is null) ? null : () => tooltip,
+        beforeMenuOpened: resetAction, // Menu "sub-pages" reset their options on page open/close.
+        beforeSave: saveAction,
+        beforeReset: resetAction,
+        height: getHeight,
         fieldId: fieldId
     );
+
     return this;
   }
 }
