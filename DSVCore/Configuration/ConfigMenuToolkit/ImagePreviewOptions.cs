@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Nuztalgia.StardewMods.Common;
 using StardewModdingAPI;
@@ -29,6 +29,7 @@ internal static class ImagePreviewOptions {
     internal GetImageRects? GetSpriteRects { get; private init; }
     internal ContentSource CurrentSource { get; private set; } = ContentSource.GameContent;
 
+    private ImmutableDictionary<string, object?>? SavedProperties;
     private Texture2D[][]? CurrentPortraits;
     private Texture2D[][]? CurrentSprites;
 
@@ -49,22 +50,37 @@ internal static class ImagePreviewOptions {
         this.CurrentSource = ContentSource.GameContent;
         return TryLoadImages(loadGameImage, getGameImagePaths(imageDirectory));
       };
+
+      static Texture2D[][] TryLoadImages(LoadImage loadImage, string[][] allImagePaths) {
+        return allImagePaths
+            .Select(imagePathGroup => imagePathGroup
+                .Select(imagePath => imagePath.IsEmpty() ? null : loadImage(imagePath))
+                .OfType<Texture2D>().ToArray())
+            .ToArray();
+      }
+    }
+
+    internal void SaveState() {
+      this.SavedProperties = this.EphemeralProperties.ToImmutableDictionary();
+      this.RefreshImages();
+    }
+
+    internal void ResetState() {
+      if (this.SavedProperties is not null) {
+        this.EphemeralProperties.Clear();
+        this.SavedProperties.ForEach((key, value) => this.EphemeralProperties.Add(key, value));
+        this.RefreshImages();
+      } else {
+        Log.Trace("Tried to reset state, but there is no saved state to fall back on. Ignoring.");
+      }
     }
 
     internal void UpdateEphemeralProperty(string propertyKey, object? propertyValue) {
       this.EphemeralProperties[propertyKey] = propertyValue;
 
-      if (this.GetPortraitRects is not null) {
-        this.CurrentPortraits = TryLoadImagesFromDirectory("Portraits");
-      }
-
-      if (this.GetSpriteRects is not null) {
-        this.CurrentSprites = TryLoadImagesFromDirectory("Characters");
-      }
-
-      Texture2D[][] TryLoadImagesFromDirectory(string imageDirectory) {
-        var modImages = this.LoadModImages(imageDirectory);
-        return modImages.First().Any() ? modImages : this.LoadGameImages(imageDirectory);
+      // Avoid loading images repeatedly and prematurely during setup. Wait for the first SaveState.
+      if (this.SavedProperties is not null) {
+        this.RefreshImages();
       }
     }
 
@@ -89,13 +105,10 @@ internal static class ImagePreviewOptions {
             position.Y -= baselineAdjusted ? (mainRect.Height * scale) : 0;
 
             if (rectGroup.Length == 1) {
-              foreach (Texture2D image in imageGroup) {
-                sb.Draw(image, position, mainRect, scale);
-              }
+              imageGroup.ForEach(image => sb.Draw(image, position, mainRect, scale));
             } else if (rectGroup.Length == imageGroup.Length) {
-              foreach ((Rectangle rect, Texture2D image) in rectGroup.Zip(imageGroup)) {
-                sb.Draw(image, position, rect, scale);
-              }
+              rectGroup.Zip(imageGroup).ForEach(
+                  (rect, image) => sb.Draw(image, position, rect, scale));
             }
 
             position.X += (mainRect.Width * scale) + (StandardMargin * 2);
@@ -103,6 +116,21 @@ internal static class ImagePreviewOptions {
             baselineAdjusted = true;
           }
         }
+      }
+    }
+
+    private void RefreshImages() {
+      if (this.GetPortraitRects is not null) {
+        this.CurrentPortraits = TryLoadImagesFromDirectory("Portraits");
+      }
+
+      if (this.GetSpriteRects is not null) {
+        this.CurrentSprites = TryLoadImagesFromDirectory("Characters");
+      }
+
+      Texture2D[][] TryLoadImagesFromDirectory(string imageDirectory) {
+        var modImages = this.LoadModImages(imageDirectory);
+        return modImages.First().Any() ? modImages : this.LoadGameImages(imageDirectory);
       }
     }
   }
@@ -123,15 +151,18 @@ internal static class ImagePreviewOptions {
       GetModImagePaths getModImagePaths, GetGameImagePaths getGameImagePaths,
       GetImageRects? getPortraitRects, GetImageRects? getSpriteRects) {
     Log.Verbose($"Initializing GMCM character section preview for {characterName}.");
-    CharacterPreview characterPreview = new(loadGameImage, loadModImage, getModImagePaths,
-                                            getGameImagePaths, getPortraitRects, getSpriteRects);
+    CharacterPreview characterPreview =
+        new(loadGameImage, loadModImage, getModImagePaths,
+            getGameImagePaths, getPortraitRects, getSpriteRects);
     CharacterPreviews.Add(characterName, characterPreview);
   }
 
   internal static int GetHeight(string characterName) {
-    int actualHeight = CharacterPreviews.TryGetValue(characterName, out CharacterPreview? character)
-                       ? Math.Max(GetHeight(character.GetPortraitRects, PortraitScale),
-                                  GetHeight(character.GetSpriteRects, SpriteScale)) : 0;
+    CharacterPreview? character = CharacterPreviews.Get(characterName);
+    int actualHeight = (character is not null)
+        ? Math.Max(GetHeight(character.GetPortraitRects, PortraitScale),
+            GetHeight(character.GetSpriteRects, SpriteScale))
+        : 0;
     return Math.Max(actualHeight, MinimumHeight) + StandardMargin;
 
     int GetHeight(GetImageRects? getImageRects, int scale) {
@@ -141,49 +172,36 @@ internal static class ImagePreviewOptions {
 
   internal static void SetFieldValue(string fieldId, object? propertyValue) {
     (string characterName, string propertyKey) = fieldId.Split('_');
-    if (AllowedEphemeralProperties.Contains(propertyKey)
-        && CharacterPreviews.TryGetValue(characterName, out CharacterPreview? character)) {
-      // TODO: All ephemeral properties should be set to their defaults when menu is opened/closed.
-      character.UpdateEphemeralProperty(propertyKey, propertyValue);
+    if (AllowedEphemeralProperties.Contains(propertyKey)) {
+      CharacterPreviews.Get(characterName)?.UpdateEphemeralProperty(propertyKey, propertyValue);
     }
   }
 
   internal static void Draw(string characterName, SpriteBatch sb, Vector2 position) {
-    CharacterPreviews.TryGetValue(characterName, out CharacterPreview? character);
-    character?.DrawPreview(sb, position);
+    CharacterPreviews.Get(characterName)?.DrawPreview(sb, position);
   }
 
-  private static Texture2D[][] TryLoadImages(LoadImage loadImage, string[][] allImagePaths) {
-    return allImagePaths
-        .Select(imagePathGroup => imagePathGroup
-            .Select(imagePath => TryLoadImage(loadImage, imagePath))
-            .OfType<Texture2D>().ToArray())
-        .ToArray();
+  internal static void SaveState(string characterName) {
+    CharacterPreviews.Get(characterName)?.SaveState();
   }
 
-  private static Texture2D? TryLoadImage(LoadImage loadImage, string imagePath) {
-    if (!imagePath.IsEmpty()) {
-      try {
-        return loadImage(imagePath);
-      } catch (ContentLoadException) {
-        Log.Error($"Invalid preview image path: '{imagePath}'");
-      }
+  internal static void ResetState(string characterName) {
+    CharacterPreviews.Get(characterName)?.ResetState();
+  }
+
+  // Extension method for Dictionary<string, CharacterPreview> to safely/concisely get a character.
+  private static CharacterPreview? Get(this Dictionary<string, CharacterPreview> dict, string key) {
+    if (!dict.TryGetValue(key, out CharacterPreview? characterPreview)) {
+      Log.Error($"Tried to get image preview for character '{key}', but they aren't in the cache.");
     }
-    return null;
-  }
-
-  // Extension method for SpriteBatch. Uses default values for irrelevant/unused parameters.
-  private static void Draw(this SpriteBatch sb,
-      Texture2D texture, Vector2 position, Rectangle sourceRect, float scale) {
-    sb.Draw(texture, position, sourceRect, color: Color.White, rotation: 0f,
-            origin: Vector2.Zero, scale, effects: SpriteEffects.None, layerDepth: 1f);
+    return characterPreview;
   }
 
 #pragma warning disable IDE0051 // Remove "unused" private members. (This is used by SetFieldValue.)
   // Extension method for string[]. Expects exactly two strings in the array.
-  private static void Deconstruct(this string[] items, out string t0, out string t1) {
-    t0 = items.Length > 0 ? items[0] : string.Empty;
-    t1 = items.Length > 1 ? items[1] : string.Empty;
+  private static void Deconstruct(this string[] items, out string first, out string second) {
+    first = items.Length > 0 ? items[0] : string.Empty;
+    second = items.Length > 1 ? items[1] : string.Empty;
   }
 #pragma warning restore IDE0051
 }
