@@ -109,16 +109,6 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       private const string ShoulderJunimosName = "ShoulderJunimos";
       private const string SpiritCreaturesName = "SpiritCreatures";
 
-      private static readonly string[] HatJunimoColors = new[] {
-        "Blue", "Cyan", "Green", "Orange", "Pink", "Purple", "Red", "Yellow"
-      };
-      private static readonly string[] ShoulderJunimoSeasons = new[] {
-        "Spring", "Summer", "Fall", "Winter"
-      };
-      private static readonly string[] SpiritCreatureSpecies = new[] {
-        "Bird", "Butterfly", "Dragon", "Dragonfly", "Flower", "Frog", "Ice", "Solar", "Void"
-      };
-
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public SimpleImmersion Immersion { get; set; } = SimpleImmersion.Full;
       public bool HatJunimos { get; set; } = false;
@@ -150,21 +140,19 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
           string pathPrefix = this.GetModImagePath(imageDirectory, variant) + WizardFamiliarsName;
 
           if (ephemeralProperties.IsTrueValue(HatJunimosName)) {
-            yield return FormatImagePath(HatJunimosName, "Hat_Junimo", HatJunimoColors);
+            yield return FormatImagePath(HatJunimosName, "Hat_Junimo", "Pink");
           }
 
           if (ephemeralProperties.IsTrueValue(ShoulderJunimosName)) {
-            yield return FormatImagePath(
-                ShoulderJunimosName, "Shoulder_Junimo", ShoulderJunimoSeasons);
+            yield return FormatImagePath(ShoulderJunimosName, "Shoulder_Junimo", "Spring");
           }
 
           if (ephemeralProperties.IsTrueValue(SpiritCreaturesName)) {
-            yield return FormatImagePath(
-                SpiritCreaturesName, "Spirit_Creature", SpiritCreatureSpecies);
+            yield return FormatImagePath(SpiritCreaturesName, "Spirit_Creature", "Solar");
           }
 
-          string FormatImagePath(string propertyName, string filePrefix, string[] fileSuffixes) {
-            return $"{pathPrefix}/{propertyName}/{filePrefix}_{fileSuffixes.GetRandom()}.png";
+          string FormatImagePath(string propertyName, string filePrefix, string fileSuffix) {
+            return $"{pathPrefix}/{propertyName}/{filePrefix}_{fileSuffix}.png";
           }
         }
       }
@@ -192,11 +180,11 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       }
 
       internal override ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
-        return null; // No portrait available for the Witch.
+        return source => (source == ContentSource.GameContent) ? GameSpriteRect : ModSpriteRect;
       }
 
       internal override ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
-        return source => (source == ContentSource.GameContent) ? GameSpriteRect : ModSpriteRect;
+        return null; // The witch only really has sprites, but should use portrait scaling (above).
       }
     }
   }
