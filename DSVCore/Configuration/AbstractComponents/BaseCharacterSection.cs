@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -56,6 +57,15 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   internal override sealed bool IsAvailable() {
     // This is only checked if the character's content pack is loaded, so they're always available.
     return true;
+  }
+
+  internal override sealed IEnumerable<OptionItem> GetOptions() {
+    return base.GetOptions().OrderBy(item => item.Property.Name switch {
+      nameof(IHasVariant<Enum>.Variant) => 1,
+      nameof(IHasImmersion<Enum>.Immersion) => 2,
+      nameof(IHasWeddingOutfit.WeddingOutfit) => 3,
+      _ => 69 // Other options will be in the order in which they're defined in their own class.
+    });
   }
 
   internal override sealed (int min, int max) GetValueRange(PropertyInfo property) {

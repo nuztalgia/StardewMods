@@ -13,7 +13,7 @@ internal abstract class BaseMenuSection : BaseMenuComponent {
       object? Value
   );
 
-  internal IEnumerable<OptionItem> GetOptions() {
+  internal virtual IEnumerable<OptionItem> GetOptions() {
     foreach (PropertyInfo property in this.GetType().GetProperties()) {
       string uniqueId = $"{this.Name}_{property.Name}";
       yield return new OptionItem(
