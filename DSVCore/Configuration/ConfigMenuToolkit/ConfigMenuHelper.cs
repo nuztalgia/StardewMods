@@ -28,10 +28,7 @@ internal sealed class ConfigMenuHelper {
 
     this.SetUpMainPage(coreAndCompatPage, installedContentPackPages, otherContentPackPages);
     this.SetUpCoreAndCompatPage(coreAndCompatPage);
-
-    foreach (BaseContentPackPage contentPackPage in installedContentPackPages) {
-      this.SetUpContentPackPage(contentPackPage);
-    }
+    installedContentPackPages.ForEach(page => this.SetUpContentPackPage(page));
 
     this.ConfigMenu.OnFieldChanged((string fieldId, object newValue) => {
       Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
@@ -117,6 +114,7 @@ internal sealed class ConfigMenuHelper {
 
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
       this.ConfigMenu.AddSectionTitle(character.GetDisplayName().CapitalizeFirstChar());
+      IEnumerable<BaseMenuSection.OptionItem> optionItems = character.GetOptions();
 
       ImagePreviewOptions.InitializeCharacter(
           character.Name,
@@ -127,29 +125,29 @@ internal sealed class ConfigMenuHelper {
           character.GetPortraitRectsDelegate(),
           character.GetSpriteRectsDelegate());
 
-      this.AddSectionOptions(character)
+      this.AddSectionOptions(character, optionItems)
           .AddComplexOption(
-              name: " =  " + I18n.Option_Preview(),
+              optionName: " =  " + I18n.Option_Preview(),
               tooltip: character.GetPreviewTooltip(),
-              height: ImagePreviewOptions.GetHeight(character.Name),
+              getHeight: () => ImagePreviewOptions.GetHeight(character.Name),
               drawAction: (spriteBatch, position) =>
-                  ImagePreviewOptions.Draw(character.Name, spriteBatch, position));
+                  ImagePreviewOptions.Draw(character.Name, spriteBatch, position),
+              resetAction: () => ImagePreviewOptions.ResetState(character.Name),
+              saveAction: () => ImagePreviewOptions.SaveState(character.Name));
+
+      optionItems.ForEach(item => ImagePreviewOptions.SetFieldValue(item.UniqueId, item.Value));
+      ImagePreviewOptions.SaveState(character.Name);
     }
   }
 
   private Integration AddSectionOptions(BaseMenuSection section) {
-    IEnumerable<BaseMenuSection.OptionItem> sectionOptionItems =
-        section.GetOptions().OrderBy(item => item.Property.Name switch {
-          "Variant" => 1,
-          "Immersion" => 2,
-          "WeddingOutfit" => 3,
-          _ => 69 // Other options are in the order in which they're defined in their section class.
-        });
+    return this.AddSectionOptions(section, section.GetOptions());
+  }
 
-    foreach (BaseMenuSection.OptionItem item in sectionOptionItems) {
+  private Integration AddSectionOptions(
+      BaseMenuSection section, IEnumerable<BaseMenuSection.OptionItem> optionItems) {
+    foreach (BaseMenuSection.OptionItem item in optionItems) {
       string displayName = " >  " + item.Name;
-      ImagePreviewOptions.SetFieldValue(item.UniqueId, item.Value);
-
       switch (item.Value) {
         case Enum: {
           this.ConfigMenu.AddEnumOption(
