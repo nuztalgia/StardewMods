@@ -121,11 +121,11 @@ internal static class ImagePreviewOptions {
 
     private void RefreshImages() {
       if (this.GetPortraitRects is not null) {
-        this.CurrentPortraits = TryLoadImagesFromDirectory("Portraits");
+        this.CurrentPortraits = TryLoadImagesFromDirectory(PortraitsDirectory);
       }
 
       if (this.GetSpriteRects is not null) {
-        this.CurrentSprites = TryLoadImagesFromDirectory("Characters");
+        this.CurrentSprites = TryLoadImagesFromDirectory(SpritesDirectory);
       }
 
       Texture2D[][] TryLoadImagesFromDirectory(string imageDirectory) {
@@ -135,6 +135,9 @@ internal static class ImagePreviewOptions {
     }
   }
 
+  internal const string PortraitsDirectory = "Portraits";
+  internal const string SpritesDirectory = "Characters";
+
   private const int PortraitScale = 3;
   private const int SpriteScale = 5;
   private const int StandardMargin = 16;
@@ -142,9 +145,10 @@ internal static class ImagePreviewOptions {
 
   private static readonly Dictionary<string, CharacterPreview> CharacterPreviews = new();
 
-  private static readonly HashSet<string> AllowedEphemeralProperties = new() {
+  private static readonly ImmutableHashSet<string> SupportedEphemeralProperties = new string[] {
     "Variant", "Randomization", "SeasonalOutfits",
-  };
+    "HatJunimos", "ShoulderJunimos", "SpiritCreatures"
+  }.ToImmutableHashSet();
 
   internal static void InitializeCharacter(string characterName,
       LoadImage loadGameImage, LoadImage loadModImage,
@@ -172,7 +176,7 @@ internal static class ImagePreviewOptions {
 
   internal static void SetFieldValue(string fieldId, object? propertyValue) {
     (string characterName, string propertyKey) = fieldId.Split('_');
-    if (AllowedEphemeralProperties.Contains(propertyKey)) {
+    if (SupportedEphemeralProperties.Contains(propertyKey)) {
       CharacterPreviews.Get(characterName)?.UpdateEphemeralProperty(propertyKey, propertyValue);
     }
   }

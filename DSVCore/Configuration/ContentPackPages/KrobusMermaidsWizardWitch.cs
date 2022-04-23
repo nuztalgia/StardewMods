@@ -51,8 +51,6 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       private static readonly string[] VanillaLowers =
           CopyForAllVariants(ModImagePath.Format('E', "Tail1"));
 
-      private static readonly Random Randomizer = new();
-
       public MermaidRandomization Randomization { get; set; } = MermaidRandomization.RandomBoth;
 
       string IHasCustomDisplayName.GetDisplayName() {
@@ -86,8 +84,8 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       }
 
       private static string[][] GenerateMermaids(bool randomUppers, bool randomLowers) {
-        string[] uppers = randomUppers ? GetShuffledArray(RandomUppers) : VanillaUppers;
-        string[] lowers = randomLowers ? GetShuffledArray(RandomLowers) : VanillaLowers;
+        string[] uppers = randomUppers ? RandomUppers.Shuffle().ToArray() : VanillaUppers;
+        string[] lowers = randomLowers ? RandomLowers.Shuffle().ToArray() : VanillaLowers;
         return Combine(lowers, uppers).ToArray(); // Uppers listed 2nd to be drawn on top of lowers.
       }
 
@@ -95,10 +93,6 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         foreach (var (first, second) in firsts.Zip(seconds)) {
           yield return new[] { first, second };
         }
-      }
-
-      private static string[] GetShuffledArray(string[] array) {
-        return array.OrderBy(item => Randomizer.Next()).ToArray();
       }
 
       private static T[] CopyForAllVariants<T>(T items) {
@@ -109,6 +103,21 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
     internal sealed class Wizard : BaseCharacterSection,
         IHasVariant<StandardVariant>, IHasImmersion<SimpleImmersion>,
         IHasCustomDisplayName, IHasCustomModImageDirectory {
+
+      private const string WizardFamiliarsName = "WizardFamiliars";
+      private const string HatJunimosName = "HatJunimos";
+      private const string ShoulderJunimosName = "ShoulderJunimos";
+      private const string SpiritCreaturesName = "SpiritCreatures";
+
+      private static readonly string[] HatJunimoColors = new[] {
+        "Blue", "Cyan", "Green", "Orange", "Pink", "Purple", "Red", "Yellow"
+      };
+      private static readonly string[] ShoulderJunimoSeasons = new[] {
+        "Spring", "Summer", "Fall", "Winter"
+      };
+      private static readonly string[] SpiritCreatureSpecies = new[] {
+        "Bird", "Butterfly", "Dragon", "Dragonfly", "Flower", "Frog", "Ice", "Solar", "Void"
+      };
 
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public SimpleImmersion Immersion { get; set; } = SimpleImmersion.Full;
@@ -126,13 +135,38 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       }
 
       protected override void RegisterExtraTokens(Integration contentPatcher) {
-        contentPatcher.RegisterCompositeToken("WizardFamiliars", new() {
-          ["HatJunimos"] = () => this.Immersion.IsFull() && this.HatJunimos,
-          ["ShoulderJunimos"] = () => this.Immersion.IsFull() && this.ShoulderJunimos,
-          ["SpiritCreatures"] = () => this.Immersion.IsFull() && this.SpiritCreatures
+        contentPatcher.RegisterCompositeToken(WizardFamiliarsName, new() {
+          [HatJunimosName] = () => this.Immersion.IsFull() && this.HatJunimos,
+          [ShoulderJunimosName] = () => this.Immersion.IsFull() && this.ShoulderJunimos,
+          [SpiritCreaturesName] = () => this.Immersion.IsFull() && this.SpiritCreatures
         });
         // TODO: Determine whether we should be smarter about the value we return for this token.
         contentPatcher.RegisterEnumToken("WizardMarriageMod", () => this.MarriageMod);
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if (imageDirectory == ImagePreviewOptions.PortraitsDirectory && ephemeralProperties.Any()) {
+          string pathPrefix = this.GetModImagePath(imageDirectory, variant) + WizardFamiliarsName;
+
+          if (ephemeralProperties.IsTrueValue(HatJunimosName)) {
+            yield return FormatImagePath(HatJunimosName, "Hat_Junimo", HatJunimoColors);
+          }
+
+          if (ephemeralProperties.IsTrueValue(ShoulderJunimosName)) {
+            yield return FormatImagePath(
+                ShoulderJunimosName, "Shoulder_Junimo", ShoulderJunimoSeasons);
+          }
+
+          if (ephemeralProperties.IsTrueValue(SpiritCreaturesName)) {
+            yield return FormatImagePath(
+                SpiritCreaturesName, "Spirit_Creature", SpiritCreatureSpecies);
+          }
+
+          string FormatImagePath(string propertyName, string filePrefix, string[] fileSuffixes) {
+            return $"{pathPrefix}/{propertyName}/{filePrefix}_{fileSuffixes.GetRandom()}.png";
+          }
+        }
       }
     }
 

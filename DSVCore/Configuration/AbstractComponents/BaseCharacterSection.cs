@@ -80,14 +80,18 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   }
 
   internal virtual string[][] GetModImagePaths(
-      string imageDirectory, IDictionary<string, object?> ephemeralTraits) {
-    return ((this is IHasCustomModImagePath or IHasVariant)
-            && ephemeralTraits.TryGetValue(nameof(IHasVariant<Enum>.Variant), out object? value)
-            && (value?.ToString() is string variant) && (variant != nameof(StandardVariant.Off)))
-        ? Wrap((this as IHasCustomModImagePath)?.GetModImagePath(imageDirectory)
-            ?? this.GetModImagePath(
-                imageDirectory, variant, (this as IHasVariant)!.GetPreviewOutfit()))
-        : Wrap<string>();
+      string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
+    if ((this is IHasCustomModImagePath or IHasVariant)
+        && ephemeralProperties.TryGetValue(nameof(IHasVariant<Enum>.Variant), out object? value)
+        && (value?.ToString() is string variant) && (variant != nameof(StandardVariant.Off))) {
+      string image = (this as IHasCustomModImagePath)?.GetModImagePath(imageDirectory)
+          ?? this.GetModImagePath(imageDirectory, variant, ((IHasVariant) this).GetPreviewOutfit());
+      IEnumerable<string> overlays =
+          this.GetImageOverlayPaths(imageDirectory, variant, ephemeralProperties);
+      return overlays.Any() ? new string[][] { overlays.Prepend(image).ToArray() } : Wrap(image);
+    } else {
+      return Wrap<string>();
+    }
   }
 
   internal virtual ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
@@ -116,14 +120,21 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   // Subclasses should override this method if they have any additional character-specific tokens.
   protected virtual void RegisterExtraTokens(Integration contentPatcher) { }
 
+  // Subclasses should override this method if they have any options that add portrait overlays.
+  protected virtual IEnumerable<string> GetImageOverlayPaths(
+      string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+    return Array.Empty<string>();
+  }
+
   protected static T[][] Wrap<T>(params T[] items) {
     return new T[][] { items };
   }
 
-  private string GetModImagePath(string imageDirectory, string variant, string outfit) {
+  protected string GetModImagePath(string imageDirectory, string variant, string? outfit = null) {
     StringBuilder path = new($"{this.Name}/{imageDirectory}/");
     path.Append((this as IHasCustomModImageDirectory)?.GetDirectory(variant) ?? variant);
-    return path.Append($"/{this.Name}_{outfit}.png").ToString();
+    path.Append((outfit is not null) ? $"/{this.Name}_{outfit}.png" : "/");
+    return path.ToString();
   }
 
   private string FormatCharacterDisplayString(string? displayString) {

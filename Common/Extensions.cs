@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,8 +27,22 @@ internal static class StringExtensions {
 
 internal static class IEnumerableExtensions {
 
-  internal static string CommaJoin(this IEnumerable<object> items) {
+  private static readonly Random Randomizer = new();
+
+  internal static string CommaJoin<T>(this IEnumerable<T> items) {
     return string.Join(", ", items);
+  }
+
+  internal static T? GetRandom<T>(this IEnumerable<T> items) {
+    return items.Count() switch {
+      0 => default,
+      1 => items.First(),
+      _ => items.ElementAt(Randomizer.Next(items.Count())),
+    };
+  }
+
+  internal static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) {
+    return items.OrderBy(item => Randomizer.Next());
   }
 
   internal static void ForEach<T>(this IEnumerable<T> items, Action<T> action) {
@@ -36,16 +51,23 @@ internal static class IEnumerableExtensions {
     }
   }
 
-  internal static void ForEach<K, V>(this IEnumerable<KeyValuePair<K, V>> items, Action<K, V> action) {
+  internal static void ForEach<T1, T2>(this IEnumerable<(T1, T2)> items, Action<T1, T2> action) {
+    foreach ((T1 first, T2 second) in items) {
+      action(first, second);
+    }
+  }
+}
+
+internal static class IDictionaryExtensions {
+
+  internal static void ForEach<K, V>(this IDictionary<K, V> items, Action<K, V> action) {
     foreach ((K key, V value) in items) {
       action(key, value);
     }
   }
 
-  internal static void ForEach<T1, T2>(this IEnumerable<(T1, T2)> items, Action<T1, T2> action) {
-    foreach ((T1 first, T2 second) in items) {
-      action(first, second);
-    }
+  internal static bool IsTrueValue<K, V>(this IDictionary<K, V> items, K key) {
+    return items.TryGetValue(key, out V? value) && (value is true);
   }
 }
 
