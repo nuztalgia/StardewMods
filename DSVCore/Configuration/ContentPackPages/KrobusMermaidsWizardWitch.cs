@@ -104,11 +104,6 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         IHasVariant<StandardVariant>, IHasImmersion<SimpleImmersion>,
         IHasCustomDisplayName, IHasCustomModImageDirectory {
 
-      private const string WizardFamiliarsName = "WizardFamiliars";
-      private const string HatJunimosName = "HatJunimos";
-      private const string ShoulderJunimosName = "ShoulderJunimos";
-      private const string SpiritCreaturesName = "SpiritCreatures";
-
       public StandardVariant Variant { get; set; } = StandardVariant.Vanilla;
       public SimpleImmersion Immersion { get; set; } = SimpleImmersion.Full;
       public bool HatJunimos { get; set; } = false;
@@ -125,10 +120,10 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       }
 
       protected override void RegisterExtraTokens(Integration contentPatcher) {
-        contentPatcher.RegisterCompositeToken(WizardFamiliarsName, new() {
-          [HatJunimosName] = () => this.Immersion.IsFull() && this.HatJunimos,
-          [ShoulderJunimosName] = () => this.Immersion.IsFull() && this.ShoulderJunimos,
-          [SpiritCreaturesName] = () => this.Immersion.IsFull() && this.SpiritCreatures
+        contentPatcher.RegisterCompositeToken("WizardFamiliars", new() {
+          ["HatJunimos"] = () => this.Immersion.IsFull() && this.HatJunimos,
+          ["ShoulderJunimos"] = () => this.Immersion.IsFull() && this.ShoulderJunimos,
+          ["SpiritCreatures"] = () => this.Immersion.IsFull() && this.SpiritCreatures
         });
         // TODO: Determine whether we should be smarter about the value we return for this token.
         contentPatcher.RegisterEnumToken("WizardMarriageMod", () => this.MarriageMod);
@@ -137,18 +132,18 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       protected override IEnumerable<string> GetImageOverlayPaths(
           string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
         if (imageDirectory == ImagePreviewOptions.PortraitsDirectory && ephemeralProperties.Any()) {
-          string pathPrefix = this.GetModImagePath(imageDirectory, variant) + WizardFamiliarsName;
+          string pathPrefix = this.GetModImagePath(imageDirectory, variant) + "WizardFamiliars";
 
-          if (ephemeralProperties.IsTrueValue(HatJunimosName)) {
-            yield return FormatImagePath(HatJunimosName, "Hat_Junimo", "Pink");
+          if (ephemeralProperties.IsTrueValue(nameof(this.HatJunimos))) {
+            yield return FormatImagePath(nameof(this.HatJunimos), "Hat_Junimo", "Pink");
           }
 
-          if (ephemeralProperties.IsTrueValue(ShoulderJunimosName)) {
-            yield return FormatImagePath(ShoulderJunimosName, "Shoulder_Junimo", "Spring");
+          if (ephemeralProperties.IsTrueValue(nameof(this.ShoulderJunimos))) {
+            yield return FormatImagePath(nameof(this.ShoulderJunimos), "Shoulder_Junimo", "Spring");
           }
 
-          if (ephemeralProperties.IsTrueValue(SpiritCreaturesName)) {
-            yield return FormatImagePath(SpiritCreaturesName, "Spirit_Creature", "Solar");
+          if (ephemeralProperties.IsTrueValue(nameof(this.SpiritCreatures))) {
+            yield return FormatImagePath(nameof(this.SpiritCreatures), "Spirit_Creature", "Solar");
           }
 
           string FormatImagePath(string propertyName, string filePrefix, string fileSuffix) {
