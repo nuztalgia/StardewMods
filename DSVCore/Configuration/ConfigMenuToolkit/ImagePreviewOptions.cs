@@ -146,9 +146,11 @@ internal static class ImagePreviewOptions {
   private static readonly Dictionary<string, CharacterPreview> CharacterPreviews = new();
 
   private static readonly ImmutableHashSet<string> SupportedEphemeralProperties = new string[] {
-    "Variant", "Randomization", "SeasonalOutfits",
-    "HatJunimos", "ShoulderJunimos", "SpiritCreatures",
-    "Scar", "SpriteMustache", "SpriteSmile", "Tattoos"
+    "Beard", "EyeColor", "Glasses", "HairCuffs", "HatJunimos", "Piercings", "Randomization",
+    "Scar", "SeasonalOutfits", "ShoulderJunimos", "SpiritCreatures", "SpriteGlasses",
+    "SpriteMustache", "SpriteSmile", "Stubble", "Tattoos", "Variant"
+    // TODO: Support the remaining properties - show feedback for (almost) every interaction!
+    // "Binder", "BlackCamera", "Helmet", "Immersion", "Scrubs", "Self-Care", "Wedding Outfit"
   }.ToImmutableHashSet();
 
   internal static void InitializeCharacter(string characterName,

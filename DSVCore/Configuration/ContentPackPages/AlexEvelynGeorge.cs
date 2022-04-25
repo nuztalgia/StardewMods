@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
@@ -50,6 +51,20 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
         contentPatcher.RegisterEnumToken(
             "GeorgeBeard",
             () => this.Immersion.IsNotUltralight() ? this.Beard : GeorgeBeard.NoBeard);
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if (ephemeralProperties.TryGetValue(nameof(this.Beard), out object? value)
+            && Enum.TryParse(value?.ToString(), ignoreCase: true, out GeorgeBeard beard)) {
+          string beardOverlayPathPrefix =
+              this.GetModImagePath(imageDirectory, variant) + "BeardOverlays/George_Overlay_Beard_";
+          if (beard == GeorgeBeard.Beard) {
+            yield return beardOverlayPathPrefix + "Winter.png";
+          } else if (beard == GeorgeBeard.Dynamic) {
+            yield return beardOverlayPathPrefix + "Fall.png";
+          }
+        }
       }
     }
   }

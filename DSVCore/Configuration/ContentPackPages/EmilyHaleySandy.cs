@@ -51,6 +51,19 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
           ["BlackCam"] = () => this.Immersion.IsNotUltralight() && this.BlackCamera
         });
       }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if ((variant == nameof(FamilyVariant.Black))
+            && ephemeralProperties.IsTrueValue(nameof(this.HairCuffs))) {
+          yield return
+              $"Haley/{imageDirectory}/Black/CuffsOverlays/Haley_{this.GetPreviewOutfit()}.png";
+        }
+        if ((imageDirectory == ImagePreviewOptions.PortraitsDirectory)
+            && ephemeralProperties.IsTrueValue(nameof(this.Piercings))) {
+          yield return $"Haley/Portraits/{variant}/Overlays/Haley_PiercingsOverlay.png";
+        }
+      }
     }
 
     internal sealed class Sandy : BaseCharacterSection,

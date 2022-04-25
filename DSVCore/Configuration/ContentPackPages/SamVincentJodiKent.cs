@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -30,6 +33,30 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
           ["Stubble"] = () => this.Immersion.IsNotUltralight() && this.Stubble,
           ["Piercings"] = () => this.Immersion.IsNotUltralight() && this.Piercings
         });
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        string overlayPathPrefix = this.GetModImagePath(imageDirectory, variant) + "Overlays/Sam_";
+
+        if (ephemeralProperties.TryGetValue(nameof(this.EyeColor), out object? value)
+            && Enum.TryParse(value?.ToString(), ignoreCase: true, out SamEyeColor eyeColor)
+            && (eyeColor is SamEyeColor.Alternate or SamEyeColor.Heterochromia)) {
+          yield return $"{overlayPathPrefix}{eyeColor}_EyesOverlay.png";
+        }
+
+        if ((imageDirectory == ImagePreviewOptions.PortraitsDirectory)
+            && ephemeralProperties.IsTrueValue(nameof(this.Piercings))) {
+          yield return $"Sam/Portraits/Sam_PiercingsOverlay.png";
+        }
+
+        if (ephemeralProperties.IsTrueValue(nameof(this.Stubble))) {
+          yield return overlayPathPrefix + "StubbleOverlay.png";
+        }
+
+        if (ephemeralProperties.IsTrueValue(nameof(this.Beard))) {
+          yield return overlayPathPrefix + "BeardOverlay.png";
+        }
       }
     }
 

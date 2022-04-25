@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -26,6 +28,22 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
             "SebastianGlasses",
             () => this.Immersion.IsNotUltralight() ? this.Glasses : SebastianGlasses.NoGlasses);
       }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        string overlayPathPrefix =
+            this.GetModImagePath(imageDirectory, variant) + "Overlays/Sebastian_";
+
+        if (ephemeralProperties.TryGetValue(nameof(this.Glasses), out object? value)
+            && (value?.ToString() == nameof(SebastianGlasses.Glasses))) {
+          yield return overlayPathPrefix + "Glasses.png";
+        }
+
+        if ((imageDirectory == ImagePreviewOptions.PortraitsDirectory)
+            && ephemeralProperties.IsTrueValue(nameof(this.Piercings))) {
+          yield return overlayPathPrefix + "Piercings_Base.png";
+        }
+      }
     }
 
     internal sealed class Maru : BaseCharacterSection.Bachelorex<MaruVariant> {
@@ -47,6 +65,15 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
             () => (this.Variant is MaruVariant.Vanilla or MaruVariant.ModdedNotsnufffie)
                 && this.SpriteGlasses,
             autoValueString: "Glasses");
+      }
+
+      protected override IEnumerable<string> GetImageOverlayPaths(
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+        if ((variant is nameof(MaruVariant.Vanilla) or nameof(MaruVariant.ModdedNotsnufffie))
+            && (imageDirectory == ImagePreviewOptions.SpritesDirectory)
+            && ephemeralProperties.IsTrueValue(nameof(this.SpriteGlasses))) {
+          yield return $"Maru/Characters/Maru_GlassesOverlay_{variant}.png";
+        }
       }
     }
 
