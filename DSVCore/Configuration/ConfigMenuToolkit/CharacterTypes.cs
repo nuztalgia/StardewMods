@@ -82,7 +82,7 @@ internal interface IHasImmersion<TImmersion> : IHasImmersion where TImmersion : 
 }
 
 internal interface IHasWeddingOutfit {
-  protected const int FirstWeddingOutfit = 1;
+  const int FirstWeddingOutfit = 1;
 
   public int WeddingOutfit { get; set; }
 
@@ -94,11 +94,7 @@ internal interface IHasWeddingOutfit {
         this.GetNumberOfWeddingOutfits());
   }
 
-  (int min, int max) GetWeddingOutfitValueRange() {
-    return (FirstWeddingOutfit, this.GetNumberOfWeddingOutfits());
-  }
-
-  protected int GetNumberOfWeddingOutfits();
+  int GetNumberOfWeddingOutfits();
 }
 
 internal static class CharacterTypeExtensions {

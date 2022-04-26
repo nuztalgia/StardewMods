@@ -27,8 +27,13 @@ internal abstract class BaseMenuSection : BaseMenuComponent {
   }
 
   // Subclasses should implement this method properly if they expect to use it.
-  internal virtual (int min, int max) GetValueRange(PropertyInfo property) {
-    return (min: int.MinValue, max: int.MaxValue);
+  internal virtual int GetMinValue(PropertyInfo property) {
+    return int.MinValue;
+  }
+
+  // Subclasses should implement this method properly if they expect to use it.
+  internal virtual int GetMaxValue(PropertyInfo property) {
+    return int.MaxValue;
   }
 
   protected virtual string? GetOptionName(PropertyInfo property) {

@@ -30,10 +30,12 @@ internal sealed class ConfigMenuHelper {
     this.SetUpCoreAndCompatPage(coreAndCompatPage);
     installedContentPackPages.ForEach(page => this.SetUpContentPackPage(page));
 
-    this.ConfigMenu.OnFieldChanged((string fieldId, object newValue) => {
-      Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
-      ImagePreviewOptions.SetFieldValue(fieldId, newValue);
-    });
+    this.ConfigMenu.OnFieldChanged(OnFieldChanged);
+  }
+
+  private static void OnFieldChanged(string fieldId, object newValue) {
+    Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
+    ImagePreviewOptions.SetFieldValue(fieldId, newValue);
   }
 
   private void SetUpMainPage(
@@ -159,10 +161,10 @@ internal sealed class ConfigMenuHelper {
               section, item.Property, displayName, item.Tooltip, item.UniqueId);
           break;
         }
-        case int: {
-          (int min, int max) = section.GetValueRange(item.Property);
-          this.ConfigMenu.AddIntOption(
-              section, item.Property, displayName, min, max, item.Tooltip, item.UniqueId);
+        case int value: {
+          this.ConfigMenu.AddDynamicSlider(
+              section, item.Property, displayName, value,
+              OnFieldChanged, item.Tooltip, item.UniqueId);
           break;
         }
         default: {

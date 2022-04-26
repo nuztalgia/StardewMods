@@ -68,11 +68,16 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     });
   }
 
-  internal override sealed (int min, int max) GetValueRange(PropertyInfo property) {
+  internal sealed override int GetMinValue(PropertyInfo property) {
     return (property.Name == nameof(IHasWeddingOutfit.WeddingOutfit))
-        ? (this as IHasWeddingOutfit)?.GetWeddingOutfitValueRange()
-            ?? throw new ArgumentException($"WeddingOutfit property is not valid for {this.Name}.")
-        : base.GetValueRange(property);
+        ? IHasWeddingOutfit.FirstWeddingOutfit
+        : base.GetMaxValue(property);
+  }
+
+  internal sealed override int GetMaxValue(PropertyInfo property) {
+    return (property.Name == nameof(IHasWeddingOutfit.WeddingOutfit))
+        ? (this as IHasWeddingOutfit)?.GetNumberOfWeddingOutfits() ?? this.GetMinValue(property)
+        : base.GetMaxValue(property);
   }
 
   internal virtual string[][] GetGameImagePaths(string imageDirectory) {
@@ -120,7 +125,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   // Subclasses should override this method if they have any additional character-specific tokens.
   protected virtual void RegisterExtraTokens(Integration contentPatcher) { }
 
-  // Subclasses should override this method if they have any options that add portrait overlays.
+  // Subclasses should override this method if they have any options that add image overlays.
   protected virtual IEnumerable<string> GetImageOverlayPaths(
       string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
     return Array.Empty<string>();

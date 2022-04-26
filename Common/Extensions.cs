@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
+using StardewValley.Menus;
 
 namespace Nuztalgia.StardewMods.Common;
 
@@ -78,8 +80,49 @@ internal static class IDictionaryExtensions {
 internal static class SpriteBatchExtensions {
 
   internal static void Draw(
-      this SpriteBatch sb, Texture2D texture, Vector2 position, Rectangle sourceRect, float scale) {
-    sb.Draw(texture, position, sourceRect, color: Color.White, rotation: 0f,
+      this SpriteBatch sb,
+      Texture2D texture,
+      Vector2 position,
+      Rectangle sourceRect,
+      float scale = Game1.pixelZoom) {
+    sb.Draw(
+        texture, position, sourceRect, color: Color.White, rotation: 0f,
         origin: Vector2.Zero, scale, effects: SpriteEffects.None, layerDepth: 1f);
+  }
+
+  internal static void DrawTextureBox(
+      this SpriteBatch sb,
+      Texture2D texture,
+      Vector2 position,
+      Rectangle sourceRect,
+      int? width = null,
+      int? height = null,
+      float scale = Game1.pixelZoom,
+      bool drawShadow = false) {
+    IClickableMenu.drawTextureBox(
+        sb, texture, sourceRect, (int) position.X, (int) position.Y,
+        width ?? sourceRect.Width, height ?? sourceRect.Height,
+        color: Color.White, scale, drawShadow);
+  }
+
+  internal static void DrawString(
+      this SpriteBatch sb,
+      SpriteFont spriteFont,
+      string text,
+      Vector2 position,
+      Color color,
+      float scale = 1f,
+      bool drawShadow = false) {
+    if (drawShadow) {
+      Utility.drawTextWithShadow(sb, text, spriteFont, position, color);
+    } else {
+      sb.DrawString(
+          spriteFont, text, position, color, rotation: 0f,
+          origin: Vector2.Zero, scale, SpriteEffects.None, layerDepth: 1f);
+    }
+  }
+
+  internal static void DrawSimpleLabel(this SpriteBatch sb, string text, Vector2 position) {
+    sb.DrawString(Game1.dialogueFont, text, position, color: Game1.textColor, drawShadow: true);
   }
 }
