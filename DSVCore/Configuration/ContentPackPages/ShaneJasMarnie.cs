@@ -51,10 +51,10 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
         if ((variant == nameof(StandardVariant.Vanilla))
-            && (imageDirectory == ImagePreviewOptions.SpritesDirectory)
-            && ephemeralProperties.IsFalseValue(nameof(this.SpriteSmile))) {
+            && (imageDirectory == CharacterConfigState.SpritesDirectory)
+            && ephemeralState.IsFalseValue(nameof(this.SpriteSmile))) {
           yield return "Marnie/Characters/Marnie_NoSmileOverlay_Default.png";
         }
       }

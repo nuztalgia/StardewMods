@@ -12,7 +12,7 @@ internal abstract class BaseContentPackPage : BaseMenuPage {
     this.ContentPackId = $"{RootModId}.{this.Name}";
   }
 
-  internal ImagePreviewOptions.LoadImage GetImageLoader() {
+  internal CharacterConfigState.LoadImage GetImageLoader() {
     return imagePath => ModRegistry.LoadImageFromContentPack(this.ContentPackId, imagePath);
   }
 

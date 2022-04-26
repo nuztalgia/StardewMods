@@ -10,11 +10,12 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal sealed class ConfigMenuHelper {
 
+  private static readonly string PreviewLabel = " =  " + I18n.Option_Preview();
+  private static readonly Func<string, string> FormatValue =
+      value => Globals.GetI18nString($"Value_{value}") ?? value;
+
   private readonly Integration ConfigMenu;
   private readonly IGameContentHelper GameContentHelper;
-
-  private readonly Func<string, string> FormatValue =
-      value => Globals.GetI18nString($"Value_{value}") ?? value;
 
   internal ConfigMenuHelper(Integration genModConfigMenu, IGameContentHelper gameContentHelper) {
     this.ConfigMenu = genModConfigMenu;
@@ -35,7 +36,7 @@ internal sealed class ConfigMenuHelper {
 
   private static void OnFieldChanged(string fieldId, object newValue) {
     Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
-    ImagePreviewOptions.SetFieldValue(fieldId, newValue);
+    CharacterConfigState.Update(fieldId, newValue);
   }
 
   private void SetUpMainPage(
@@ -116,54 +117,33 @@ internal sealed class ConfigMenuHelper {
 
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
       this.ConfigMenu.AddSectionTitle(character.GetDisplayName().CapitalizeFirstChar());
-      IEnumerable<BaseMenuSection.OptionItem> optionItems = character.GetOptions();
 
-      ImagePreviewOptions.InitializeCharacter(
-          character.Name,
-          this.GameContentHelper.Load<Texture2D>,
-          contentPackPage.GetImageLoader(), 
-          character.GetModImagePaths,
-          character.GetGameImagePaths,
-          character.GetPortraitRectsDelegate(),
-          character.GetSpriteRectsDelegate());
-
-      this.AddSectionOptions(character, optionItems)
-          .AddComplexOption(
-              optionName: " =  " + I18n.Option_Preview(),
-              tooltip: character.GetPreviewTooltip(),
-              getHeight: () => ImagePreviewOptions.GetHeight(character.Name),
-              drawAction: (spriteBatch, position) =>
-                  ImagePreviewOptions.Draw(character.Name, spriteBatch, position),
-              resetAction: () => ImagePreviewOptions.ResetState(character.Name),
-              saveAction: () => ImagePreviewOptions.SaveState(character.Name));
-
-      optionItems.ForEach(item => ImagePreviewOptions.SetFieldValue(item.UniqueId, item.Value));
-      ImagePreviewOptions.SaveState(character.Name);
+      this.AddSectionOptions(character)
+          .AddCharacterPreview(
+              character,
+              PreviewLabel,
+              this.GameContentHelper.Load<Texture2D>,
+              contentPackPage.GetImageLoader());
     }
   }
 
   private Integration AddSectionOptions(BaseMenuSection section) {
-    return this.AddSectionOptions(section, section.GetOptions());
-  }
-
-  private Integration AddSectionOptions(
-      BaseMenuSection section, IEnumerable<BaseMenuSection.OptionItem> optionItems) {
-    foreach (BaseMenuSection.OptionItem item in optionItems) {
-      string displayName = " >  " + item.Name;
+    foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
+      string optionName = " >  " + item.Name;
       switch (item.Value) {
         case Enum: {
           this.ConfigMenu.AddEnumOption(
-              section, item.Property, displayName, this.FormatValue, item.Tooltip, item.UniqueId);
+              section, item.Property, optionName, FormatValue, item.Tooltip, item.UniqueId);
           break;
         }
         case bool: {
           this.ConfigMenu.AddBoolOption(
-              section, item.Property, displayName, item.Tooltip, item.UniqueId);
+              section, item.Property, optionName, item.Tooltip, item.UniqueId);
           break;
         }
         case int value: {
           this.ConfigMenu.AddDynamicSlider(
-              section, item.Property, displayName, value,
+              section, item.Property, optionName, value,
               OnFieldChanged, item.Tooltip, item.UniqueId);
           break;
         }

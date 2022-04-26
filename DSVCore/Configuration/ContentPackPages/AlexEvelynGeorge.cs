@@ -25,9 +25,9 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
         if ((variant == nameof(FamilyVariant.Samoan))
-            && ephemeralProperties.IsTrueValue(nameof(this.Tattoos))) {
+            && ephemeralState.IsTrueValue(nameof(this.Tattoos))) {
           yield return
               $"Alex/{imageDirectory}/Samoan/TattooOverlays/Alex_{this.GetPreviewOutfit()}.png";
         }
@@ -54,8 +54,8 @@ internal sealed class AlexEvelynGeorge : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
-        if (ephemeralProperties.TryGetValue(nameof(this.Beard), out object? value)
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
+        if (ephemeralState.TryGetValue(nameof(this.Beard), out object? value)
             && Enum.TryParse(value?.ToString(), ignoreCase: true, out GeorgeBeard beard)) {
           string beardOverlayPathPrefix =
               this.GetModImagePath(imageDirectory, variant) + "BeardOverlays/George_Overlay_Beard_";

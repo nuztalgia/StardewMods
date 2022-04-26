@@ -67,8 +67,38 @@ internal static class GMCMIntegrationExtensions {
         },
         saveAction: () => property.SetValue(section, dataSource.Value),
         tooltip: tooltip,
-        fieldId: fieldId
-    );
+        fieldId: fieldId);
+
+    return configMenu;
+  }
+
+  internal static Integration AddCharacterPreview(
+      this Integration configMenu,
+      BaseCharacterSection character,
+      string optionName,
+      CharacterConfigState.LoadImage loadGameImage,
+      CharacterConfigState.LoadImage loadModImage) {
+
+    var characterState = CharacterConfigState.Create(
+        character.Name,
+        loadGameImage,
+        loadModImage,
+        character.GetModImagePaths,
+        character.GetGameImagePaths,
+        character.GetPortraitRectsDelegate(),
+        character.GetSpriteRectsDelegate());
+    CharacterPreviewImage characterPreview = new(characterState);
+
+    configMenu.AddComplexOption(
+        optionName: optionName,
+        getHeight: characterPreview.GetHeight,
+        drawAction: characterPreview.Draw,
+        resetAction: characterState.ResetState,
+        saveAction: characterState.SaveState,
+        tooltip: character.GetPreviewTooltip());
+
+    character.GetOptions().ForEach(item => CharacterConfigState.Update(item.UniqueId, item.Value));
+    characterState.SaveState();
 
     return configMenu;
   }

@@ -30,17 +30,17 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
         string overlayPathPrefix =
             this.GetModImagePath(imageDirectory, variant) + "Overlays/Sebastian_";
 
-        if (ephemeralProperties.TryGetValue(nameof(this.Glasses), out object? value)
+        if (ephemeralState.TryGetValue(nameof(this.Glasses), out object? value)
             && (value?.ToString() == nameof(SebastianGlasses.Glasses))) {
           yield return overlayPathPrefix + "Glasses.png";
         }
 
-        if ((imageDirectory == ImagePreviewOptions.PortraitsDirectory)
-            && ephemeralProperties.IsTrueValue(nameof(this.Piercings))) {
+        if ((imageDirectory == CharacterConfigState.PortraitsDirectory)
+            && ephemeralState.IsTrueValue(nameof(this.Piercings))) {
           yield return overlayPathPrefix + "Piercings_Base.png";
         }
       }
@@ -68,10 +68,10 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
         if ((variant is nameof(MaruVariant.Vanilla) or nameof(MaruVariant.ModdedNotsnufffie))
-            && (imageDirectory == ImagePreviewOptions.SpritesDirectory)
-            && ephemeralProperties.IsTrueValue(nameof(this.SpriteGlasses))) {
+            && (imageDirectory == CharacterConfigState.SpritesDirectory)
+            && ephemeralState.IsTrueValue(nameof(this.SpriteGlasses))) {
           yield return $"Maru/Characters/Maru_GlassesOverlay_{variant}.png";
         }
       }

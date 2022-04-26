@@ -24,8 +24,8 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
-        if (ephemeralProperties.IsTrueValue(nameof(this.Tattoos))) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
+        if (ephemeralState.IsTrueValue(nameof(this.Tattoos))) {
           yield return $"Emily/{imageDirectory}/Tattoos/Emily_{this.GetPreviewOutfit()}.png";
         }
       }
@@ -53,14 +53,14 @@ internal sealed class EmilyHaleySandy : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
         if ((variant == nameof(FamilyVariant.Black))
-            && ephemeralProperties.IsTrueValue(nameof(this.HairCuffs))) {
+            && ephemeralState.IsTrueValue(nameof(this.HairCuffs))) {
           yield return
               $"Haley/{imageDirectory}/Black/CuffsOverlays/Haley_{this.GetPreviewOutfit()}.png";
         }
-        if ((imageDirectory == ImagePreviewOptions.PortraitsDirectory)
-            && ephemeralProperties.IsTrueValue(nameof(this.Piercings))) {
+        if ((imageDirectory == CharacterConfigState.PortraitsDirectory)
+            && ephemeralState.IsTrueValue(nameof(this.Piercings))) {
           yield return $"Haley/Portraits/{variant}/Overlays/Haley_PiercingsOverlay.png";
         }
       }

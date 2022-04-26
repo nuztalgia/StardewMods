@@ -27,8 +27,8 @@ internal sealed class WillyClintLinus : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
-        if (ephemeralProperties.IsTrueValue(nameof(this.Scar))) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
+        if (ephemeralState.IsTrueValue(nameof(this.Scar))) {
           yield return $"Clint/{imageDirectory}/Default/Clint_Scar.png";
         }
       }

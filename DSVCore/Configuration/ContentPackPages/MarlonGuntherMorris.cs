@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
@@ -30,9 +31,8 @@ internal sealed class MarlonGuntherMorris : BaseContentPackPage {
       public bool SeasonalOutfits { get; set; } = true;
 
       internal override string[][] GetModImagePaths(
-          string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
-        var getValue = ephemeralProperties.TryGetValue;
-        return (getValue(nameof(this.SeasonalOutfits), out object? value) && (value is true))
+          string imageDirectory, IDictionary<string, object?> ephemeralState) {
+        return ephemeralState.IsTrueValue(nameof(this.SeasonalOutfits))
             ? Wrap($"Morris/{imageDirectory}/Morris_Fall_1_Base.png")
             : Wrap<string>();
       }

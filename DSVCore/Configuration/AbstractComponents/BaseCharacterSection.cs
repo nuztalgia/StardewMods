@@ -85,25 +85,25 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   }
 
   internal virtual string[][] GetModImagePaths(
-      string imageDirectory, IDictionary<string, object?> ephemeralProperties) {
+      string imageDirectory, IDictionary<string, object?> ephemeralState) {
     if ((this is IHasCustomModImagePath or IHasVariant)
-        && ephemeralProperties.TryGetValue(nameof(IHasVariant<Enum>.Variant), out object? value)
+        && ephemeralState.TryGetValue(nameof(IHasVariant<Enum>.Variant), out object? value)
         && (value?.ToString() is string variant) && (variant != nameof(StandardVariant.Off))) {
       string image = (this as IHasCustomModImagePath)?.GetModImagePath(imageDirectory)
           ?? this.GetModImagePath(imageDirectory, variant, ((IHasVariant) this).GetPreviewOutfit());
       IEnumerable<string> overlays =
-          this.GetImageOverlayPaths(imageDirectory, variant, ephemeralProperties);
+          this.GetImageOverlayPaths(imageDirectory, variant, ephemeralState);
       return overlays.Any() ? new string[][] { overlays.Prepend(image).ToArray() } : Wrap(image);
     } else {
       return Wrap<string>();
     }
   }
 
-  internal virtual ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
+  internal virtual CharacterConfigState.GetImageRects? GetPortraitRectsDelegate() {
     return _ => StandardPortraitRect;
   }
 
-  internal virtual ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
+  internal virtual CharacterConfigState.GetImageRects? GetSpriteRectsDelegate() {
     return _ => StandardSpriteRect;
   }
 
@@ -127,7 +127,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
 
   // Subclasses should override this method if they have any options that add image overlays.
   protected virtual IEnumerable<string> GetImageOverlayPaths(
-      string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+      string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
     return Array.Empty<string>();
   }
 

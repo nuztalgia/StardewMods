@@ -30,10 +30,10 @@ internal sealed class HarveyGusLewis : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
         if ((variant == nameof(StandardVariant.Vanilla))
-            && (imageDirectory == ImagePreviewOptions.SpritesDirectory)
-            && ephemeralProperties.IsTrueValue(nameof(this.SpriteMustache))) {
+            && (imageDirectory == CharacterConfigState.SpritesDirectory)
+            && ephemeralState.IsTrueValue(nameof(this.SpriteMustache))) {
           yield return "Harvey/Characters/Harvey_MustacheOverlay.png";
         }
       }

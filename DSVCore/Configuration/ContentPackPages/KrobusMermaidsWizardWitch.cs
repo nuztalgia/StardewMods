@@ -23,7 +23,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         return $"Krobus/{imageDirectory}/Krobus_1_Snow.png";
       }
 
-      internal override ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
+      internal override CharacterConfigState.GetImageRects? GetSpriteRectsDelegate() {
         return _ => SpriteRect;
       }
     }
@@ -58,8 +58,8 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       }
 
       internal override string[][] GetModImagePaths(
-          string _, IDictionary<string, object?> ephemeralProperties) {
-        ephemeralProperties.TryGetValue(nameof(this.Randomization), out object? value);
+          string _, IDictionary<string, object?> ephemeralState) {
+        ephemeralState.TryGetValue(nameof(this.Randomization), out object? value);
         Enum.TryParse(typeof(MermaidRandomization), value?.ToString(), out object? enumValue);
         return enumValue switch {
           MermaidRandomization.RandomBoth => GenerateMermaids(true, true),
@@ -71,11 +71,11 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         };
       }
 
-      internal override ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
+      internal override CharacterConfigState.GetImageRects? GetPortraitRectsDelegate() {
         return _ => ModSpriteRects; // These are more like sprites, but should use portrait scaling.
       }
 
-      internal override ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
+      internal override CharacterConfigState.GetImageRects? GetSpriteRectsDelegate() {
         return null; // See comment above.
       }
 
@@ -130,19 +130,19 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       }
 
       protected override IEnumerable<string> GetImageOverlayPaths(
-          string imageDirectory, string variant, IDictionary<string, object?> ephemeralProperties) {
-        if (imageDirectory == ImagePreviewOptions.PortraitsDirectory && ephemeralProperties.Any()) {
+          string imageDirectory, string variant, IDictionary<string, object?> ephemeralState) {
+        if ((imageDirectory == CharacterConfigState.PortraitsDirectory) && ephemeralState.Any()) {
           string pathPrefix = this.GetModImagePath(imageDirectory, variant) + "WizardFamiliars";
 
-          if (ephemeralProperties.IsTrueValue(nameof(this.HatJunimos))) {
+          if (ephemeralState.IsTrueValue(nameof(this.HatJunimos))) {
             yield return FormatImagePath(nameof(this.HatJunimos), "Hat_Junimo", "Pink");
           }
 
-          if (ephemeralProperties.IsTrueValue(nameof(this.ShoulderJunimos))) {
+          if (ephemeralState.IsTrueValue(nameof(this.ShoulderJunimos))) {
             yield return FormatImagePath(nameof(this.ShoulderJunimos), "Shoulder_Junimo", "Spring");
           }
 
-          if (ephemeralProperties.IsTrueValue(nameof(this.SpiritCreatures))) {
+          if (ephemeralState.IsTrueValue(nameof(this.SpiritCreatures))) {
             yield return FormatImagePath(nameof(this.SpiritCreatures), "Spirit_Creature", "Solar");
           }
 
@@ -174,11 +174,11 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
         return Wrap("LooseSprites/Cursors");
       }
 
-      internal override ImagePreviewOptions.GetImageRects? GetPortraitRectsDelegate() {
+      internal override CharacterConfigState.GetImageRects? GetPortraitRectsDelegate() {
         return source => (source == ContentSource.GameContent) ? GameSpriteRect : ModSpriteRect;
       }
 
-      internal override ImagePreviewOptions.GetImageRects? GetSpriteRectsDelegate() {
+      internal override CharacterConfigState.GetImageRects? GetSpriteRectsDelegate() {
         return null; // The witch only really has sprites, but should use portrait scaling (above).
       }
     }
