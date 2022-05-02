@@ -40,6 +40,10 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     }
   }
 
+  private const string VariantKey = nameof(IHasVariant<Enum>.Variant);
+  private const string ImmersionKey = nameof(IHasImmersion<Enum>.Immersion);
+  private const string WeddingOutfitKey = nameof(IHasWeddingOutfit.WeddingOutfit);
+
   private static readonly Rectangle[][] StandardPortraitRect = Wrap(new Rectangle(0, 0, 64, 64));
   private static readonly Rectangle[][] StandardSpriteRect = Wrap(new Rectangle(0, 0, 16, 32));
 
@@ -61,21 +65,21 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
 
   internal override sealed IEnumerable<OptionItem> GetOptions() {
     return base.GetOptions().OrderBy(item => item.Property.Name switch {
-      nameof(IHasVariant<Enum>.Variant) => 1,
-      nameof(IHasImmersion<Enum>.Immersion) => 2,
-      nameof(IHasWeddingOutfit.WeddingOutfit) => 3,
+      VariantKey => 1,
+      ImmersionKey => 2,
+      WeddingOutfitKey => 3,
       _ => 69 // Other options will be in the order in which they're defined in their own class.
     });
   }
 
   internal sealed override int GetMinValue(PropertyInfo property) {
-    return (property.Name == nameof(IHasWeddingOutfit.WeddingOutfit))
+    return (property.Name is WeddingOutfitKey)
         ? IHasWeddingOutfit.FirstWeddingOutfit
         : base.GetMaxValue(property);
   }
 
   internal sealed override int GetMaxValue(PropertyInfo property) {
-    return (property.Name == nameof(IHasWeddingOutfit.WeddingOutfit))
+    return (property.Name is WeddingOutfitKey)
         ? (this as IHasWeddingOutfit)?.GetNumberOfWeddingOutfits() ?? this.GetMinValue(property)
         : base.GetMaxValue(property);
   }
@@ -87,7 +91,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   internal virtual string[][] GetModImagePaths(
       string imageDirectory, IDictionary<string, object?> ephemeralState) {
     if ((this is IHasCustomModImagePath or IHasVariant)
-        && ephemeralState.TryGetValue(nameof(IHasVariant<Enum>.Variant), out object? value)
+        && ephemeralState.TryGetValue(VariantKey, out object? value)
         && (value?.ToString() is string variant) && (variant != nameof(StandardVariant.Off))) {
       string image = (this as IHasCustomModImagePath)?.GetModImagePath(imageDirectory)
           ?? this.GetModImagePath(imageDirectory, variant, ((IHasVariant) this).GetPreviewOutfit());
@@ -116,7 +120,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
     return this.FormatCharacterDisplayString(property.PropertyType.Name switch {
       nameof(StandardImmersion) => I18n.Tooltip_Immersion_Standard(),
       nameof(SimpleImmersion) => I18n.Tooltip_Immersion_Simple(),
-      _ => (property.Name == nameof(IHasWeddingOutfit.WeddingOutfit))
+      _ => (property.Name is WeddingOutfitKey)
           ? I18n.Tooltip_WeddingOutfit()
           : base.GetTooltip(property)
     });

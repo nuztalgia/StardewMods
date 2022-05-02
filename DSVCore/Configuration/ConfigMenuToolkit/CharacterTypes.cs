@@ -100,7 +100,7 @@ internal interface IHasWeddingOutfit {
 internal static class CharacterTypeExtensions {
 
   internal static bool IsModded(this StandardVariant variant) {
-    return variant !=StandardVariant.Modded;
+    return variant != StandardVariant.Modded;
   }
 
   internal static bool IsNotUltralight(this StandardImmersion immersion) {

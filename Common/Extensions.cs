@@ -25,6 +25,17 @@ internal static class StringExtensions {
   internal static string[] CommaSplit(this string s) {
     return s.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
   }
+
+  internal static TEnum? AsEnum<TEnum>(this string s) where TEnum : struct, Enum {
+    return (s.AsEnum(typeof(TEnum)) is TEnum enumValue) ? enumValue : null;
+  }
+
+  internal static Enum? AsEnum(this string s, Type type) {
+    return (Enum.TryParse(type, s, ignoreCase: true, out object? parsedValue)
+            && (parsedValue is Enum) && (parsedValue?.GetType() == type))
+        ? (parsedValue as Enum)
+        : null;
+  }
 }
 
 internal static class IEnumerableExtensions {
@@ -62,18 +73,26 @@ internal static class IEnumerableExtensions {
 
 internal static class IDictionaryExtensions {
 
-  internal static void ForEach<K, V>(this IDictionary<K, V> items, Action<K, V> action) {
-    foreach ((K key, V value) in items) {
+  internal static void ForEach<K, V>(this IDictionary<K, V> dict, Action<K, V> action) {
+    foreach ((K key, V value) in dict) {
       action(key, value);
     }
   }
 
-  internal static bool IsTrueValue<K, V>(this IDictionary<K, V> items, K key) {
-    return items.TryGetValue(key, out V? value) && (value is true);
+  internal static bool IsTrueValue<K, V>(this IDictionary<K, V> dict, K key) {
+    return dict.TryGetValue(key, out V? value) && (value is true);
   }
 
-  internal static bool IsFalseValue<K, V>(this IDictionary<K, V> items, K key) {
-    return items.TryGetValue(key, out V? value) && (value is false);
+  internal static bool IsFalseValue<K, V>(this IDictionary<K, V> dict, K key) {
+    return dict.TryGetValue(key, out V? value) && (value is false);
+  }
+
+  internal static bool TryGetEnumValue<E>(
+      this IDictionary<string, object?> dict, string key, out E? enumValue) where E : struct, Enum {
+    enumValue = dict.TryGetValue(key, out object? dictValue)
+        ? dictValue?.ToString()?.AsEnum<E>()
+        : null;
+    return enumValue is not null;
   }
 }
 
