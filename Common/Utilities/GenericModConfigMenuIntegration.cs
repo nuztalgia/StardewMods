@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
@@ -25,7 +26,11 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
   }
 
   internal Integration AddSpacing() {
-    return this.AddSectionTitle(string.Empty);
+    return this.AddParagraph("\n");
+  }
+
+  internal Integration AddSpacing(int size) {
+    return this.AddParagraph(string.Join(" ", Enumerable.Repeat('\n', size)));
   }
 
   internal Integration AddSectionTitle(string text) {

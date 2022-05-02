@@ -1,13 +1,13 @@
 {
   // Various text displayed on the main menu screen.
   "main.intro.title": "Welcome to Diverse Stardew Valley!",
-  "main.intro.description": "This menu allows you to easily manage your config options for all of the DSV content packs that you've installed. Visit the website for visual guides and more info: https://diversestardewvalley.weebly.com",
+  "main.intro.description": "This menu allows you to easily manage your config options for all of the DSV content packs that you've installed. Visit the website for more information: https://diversestardewvalley.weebly.com",
   "main.installed-packs.title": "Installed Content Packs:",
   "main.installed-packs.description": "Click on any of these links to change your settings for specific packs.",
   "main.installed-packs.none": "None. You should head on over to ModDrop and get some!",
   "main.other-packs.title": "Other Content Packs:",
   "main.other-packs.description": "All of these packs are available on ModDrop. Just search for \"DSV\"!",
-  "main.other-packs.none": "You've got all of them. Thank you for supporting DSV! <",
+  "main.other-packs.none": "You've got all of them. Thank you for supporting DSV! < \n",
 
   // Various text displayed on the "Core Options & Compatibility" page.
   "core.section.title": "Core Options",
@@ -68,7 +68,7 @@
   "option.stubble": "Stubble",
 
   // Info text, option labels, and tooltips for Flower Queen's Crown (DSV add-on pack).
-  "info.flower-queens-crown": "This DSV add-on pack gives you more control over who will wear the Flower Queen's crown each year.",
+  "info.flower-queens-crown": "This DSV add-on gives you more control over who will wear the Flower Queen's crown each year.",
   "option.flower-queens-crown.flower-queen": "Flower Queen",
   "tooltip.flower-queens-crown.flower-queen": "Gives other NPCs a chance to be the Flower Queen during the Flower Dance. If \"Random\" is selected, one person will be chosen each year. If \"Everyone\" is selected, all eligible townspeople will wear Flower Queen crowns. Note: Some extra dialogue lines are not available if \"Everyone\" is selected.",
   "option.flower-queens-crown.townspeople-only": "Townspeople Only",
@@ -86,7 +86,7 @@
   // Info text, option labels, and tooltips for compatibility with Make Gunther Real.
   "info.make-gunther-real": "DSV is compatible by default with Make Gunther Real. Additionally, the following option allows you to configure Gunther's daughter Cecily to use an alternate art style that matches the DSV version you've selected for her father.",
   "option.make-gunther-real.alternate-cecily": "Alternate Cecily",
-  "tooltip.make-gunther-real.alternate-cecily": "Toggles whether Gunther's daughter Cecily will use alternate sprites and portraits that match DSV's Gunther. Set this to false if you prefer Cecily's original art.",
+  "tooltip.make-gunther-real.alternate-cecily": "Toggles whether Gunther's daughter Cecily will use alternate sprites and portraits that match DSV's Gunther. Disable this option if you prefer Cecily's original art.",
 
   // Info text and labels for compatibility with PPaF and LfL, which are auto-synced.
   // The sequence "{0}" will be replaced by the name of the mod in question.

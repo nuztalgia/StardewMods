@@ -35,7 +35,7 @@ internal class ModEntry : BaseMod {
     if (!this.TryIntegrateWithGMCM(out GMCMIntegration? gmcmIntegration)) {
       Log.Warn(
           "Could not retrieve the Generic Mod Config Menu API. " +
-          "A lot of the functionality of this mod will be disabled.");
+          "A significant portion of the functionality of this mod will be unavailable.");
       return;
     }
 

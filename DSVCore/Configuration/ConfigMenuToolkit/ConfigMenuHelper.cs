@@ -35,7 +35,7 @@ internal sealed class ConfigMenuHelper {
   }
 
   private static void OnFieldChanged(string fieldId, object newValue) {
-    Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
+    Log.Trace($"Field '{fieldId}' was changed to: '{newValue}'.");
     CharacterConfigState.Update(fieldId, newValue);
   }
 
@@ -123,7 +123,8 @@ internal sealed class ConfigMenuHelper {
               character,
               PreviewLabel,
               this.GameContentHelper.Load<Texture2D>,
-              contentPackPage.GetImageLoader());
+              contentPackPage.GetImageLoader())
+          .AddSpacing();
     }
   }
 
