@@ -140,9 +140,10 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
         name: () => optionName,
         draw: drawAction,
         tooltip: (tooltip is null) ? null : () => tooltip,
-        beforeMenuOpened: resetAction, // Menu "sub-pages" reset their options on page open/close.
-        beforeSave: saveAction,
+        beforeMenuOpened: resetAction, // Make sure the option reflects the actual current state.
+        beforeMenuClosed: resetAction, // Option state should be reset when the menu page is closed.
         beforeReset: resetAction,
+        beforeSave: () => saveAction?.Invoke(), // GMCM doesn't support null actions for beforeSave.
         height: getHeight,
         fieldId: fieldId
     );

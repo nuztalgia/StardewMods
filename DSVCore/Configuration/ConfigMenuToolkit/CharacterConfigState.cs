@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -64,6 +65,34 @@ internal class CharacterConfigState {
     }
   }
 
+  internal static CharacterConfigState Create(
+      string characterName,
+      LoadImage loadGameImage, LoadImage loadModImage,
+      GetModImagePaths getModImagePaths, GetGameImagePaths getGameImagePaths,
+      GetImageRects? getPortraitRects, GetImageRects? getSpriteRects) {
+    Log.Verbose($"Initializing character config state for {characterName}.");
+    CharacterConfigState characterState =
+        new(loadGameImage, loadModImage, getModImagePaths,
+            getGameImagePaths, getPortraitRects, getSpriteRects);
+    CharacterStates.Add(characterName, characterState);
+    return characterState;
+  }
+
+  internal static Texture2D[] GetPortraitData(string characterName) {
+    return (CharacterStates.TryGetValue(characterName, out CharacterConfigState? characterState)
+            && (characterState.CurrentPortraits?.FirstOrDefault() is Texture2D[] portraitData))
+        ? portraitData
+        : Array.Empty<Texture2D>();
+  }
+
+  internal static void Update(string fieldId, object? newValue) {
+    string[] splitFieldId = fieldId.Split('_');
+    (string characterName, string stateKey) = (splitFieldId[0], splitFieldId[1]);
+    if (CharacterStates.TryGetValue(characterName, out CharacterConfigState? characterState)) {
+      characterState.UpdateEphemeralState(stateKey, newValue);
+    }
+  }
+
   internal void SaveState() {
     this.SavedState = this.EphemeralState.ToImmutableDictionary();
     this.RefreshImages();
@@ -100,27 +129,6 @@ internal class CharacterConfigState {
     Texture2D[][] TryLoadImagesFromDirectory(string imageDirectory) {
       var modImages = this.LoadModImages(imageDirectory);
       return modImages.First().Any() ? modImages : this.LoadGameImages(imageDirectory);
-    }
-  }
-
-  internal static CharacterConfigState Create(
-      string characterName,
-      LoadImage loadGameImage, LoadImage loadModImage,
-      GetModImagePaths getModImagePaths, GetGameImagePaths getGameImagePaths,
-      GetImageRects? getPortraitRects, GetImageRects? getSpriteRects) {
-    Log.Verbose($"Initializing character config state for {characterName}.");
-    CharacterConfigState characterState =
-        new(loadGameImage, loadModImage, getModImagePaths,
-            getGameImagePaths, getPortraitRects, getSpriteRects);
-    CharacterStates.Add(characterName, characterState);
-    return characterState;
-  }
-
-  internal static void Update(string fieldId, object? newValue) {
-    string[] splitFieldId = fieldId.Split('_');
-    (string characterName, string stateKey) = (splitFieldId[0], splitFieldId[1]);
-    if (CharacterStates.TryGetValue(characterName, out CharacterConfigState? characterState)) {
-      characterState.UpdateEphemeralState(stateKey, newValue);
     }
   }
 }

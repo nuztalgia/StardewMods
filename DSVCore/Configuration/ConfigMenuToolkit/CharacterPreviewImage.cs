@@ -35,54 +35,33 @@ internal class CharacterPreviewImage {
     position.Y += StandardMargin;
     bool baselineAdjusted = false;
 
-    TryDraw(sb,
-        ref position,
-        ref baselineAdjusted,
-        this.CharacterState.PortraitRects,
-        this.CharacterState.CurrentPortraits,
-        PortraitScale);
+    TryDraw(this.CharacterState.PortraitRects, this.CharacterState.CurrentPortraits, PortraitScale);
+    TryDraw(this.CharacterState.SpriteRects, this.CharacterState.CurrentSprites, SpriteScale);
 
-    TryDraw(sb,
-        ref position,
-        ref baselineAdjusted,
-        this.CharacterState.SpriteRects,
-        this.CharacterState.CurrentSprites,
-        SpriteScale);
-  }
+    void TryDraw(Rectangle[][]? allRects, Texture2D[][]? allImages, int scale) {
+      if ((allRects is null) || (allImages is null)
+          || allImages.IsEmpty() || allImages.First().IsEmpty()) {
+        return;
+      }
 
-  private static void TryDraw(
-      SpriteBatch sb,
-      ref Vector2 position,
-      ref bool baselineAdjusted,
-      Rectangle[][]? allRects,
-      Texture2D[][]? allImages,
-      int scale) {
+      foreach (var (rectGroup, imageGroup) in allRects.Zip(allImages)) {
+        if ((rectGroup.Length != 1) && (rectGroup.Length != imageGroup.Length)) {
+          Log.Error($"Mismatch: {rectGroup.Length} rectangles and {imageGroup.Length} images.");
+        } else {
+          Rectangle mainRect = rectGroup.First();
+          position.Y -= baselineAdjusted ? (mainRect.Height * scale) : 0;
 
-    if ((allRects is null) || (allImages is null)
-        || (!allImages.Any()) || (!allImages.First().Any())) {
-      return;
-    }
-
-    foreach (var (rectGroup, imageGroup) in allRects.Zip(allImages)) {
-      if ((rectGroup.Length != 1) && (rectGroup.Length != imageGroup.Length)) {
-        Log.Error($"Mismatch: {rectGroup.Length} rectangles and {imageGroup.Length} images.");
-      } else {
-        Rectangle mainRect = rectGroup.First();
-        position.Y -= baselineAdjusted ? (mainRect.Height * scale) : 0;
-
-        if (rectGroup.Length == 1) {
-          foreach (Texture2D image in imageGroup) {
-            sb.Draw(image, position, mainRect, scale);
+          if (rectGroup.Length == 1) {
+            imageGroup.ForEach((Texture2D image) => sb.Draw(image, position, mainRect, scale));
+          } else if (rectGroup.Length == imageGroup.Length) {
+            rectGroup.Zip(imageGroup).ForEach(
+                (Rectangle rect, Texture2D image) => sb.Draw(image, position, rect, scale));
           }
-        } else if (rectGroup.Length == imageGroup.Length) {
-          foreach ((Rectangle rect, Texture2D image) in rectGroup.Zip(imageGroup)) {
-            sb.Draw(image, position, rect, scale);
-          }
+
+          position.X += (mainRect.Width * scale) + (StandardMargin * 2);
+          position.Y += mainRect.Height * scale;
+          baselineAdjusted = true;
         }
-
-        position.X += (mainRect.Width * scale) + (StandardMargin * 2);
-        position.Y += mainRect.Height * scale;
-        baselineAdjusted = true;
       }
     }
   }

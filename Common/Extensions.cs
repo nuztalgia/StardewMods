@@ -42,6 +42,10 @@ internal static class IEnumerableExtensions {
 
   private static readonly Random Randomizer = new();
 
+  internal static bool IsEmpty<T>(this IEnumerable<T> items) {
+    return !items.Any();
+  }
+
   internal static string CommaJoin<T>(this IEnumerable<T> items) {
     return string.Join(", ", items);
   }
@@ -104,6 +108,7 @@ internal static class SpriteBatchExtensions {
       Vector2 position,
       Rectangle sourceRect,
       float scale = Game1.pixelZoom) {
+
     sb.Draw(
         texture, position, sourceRect, color: Color.White, rotation: 0f,
         origin: Vector2.Zero, scale, effects: SpriteEffects.None, layerDepth: 1f);
@@ -118,6 +123,7 @@ internal static class SpriteBatchExtensions {
       int? height = null,
       float scale = Game1.pixelZoom,
       bool drawShadow = false) {
+
     IClickableMenu.drawTextureBox(
         sb, texture, sourceRect, (int) position.X, (int) position.Y,
         width ?? sourceRect.Width, height ?? sourceRect.Height,
@@ -126,22 +132,23 @@ internal static class SpriteBatchExtensions {
 
   internal static void DrawString(
       this SpriteBatch sb,
-      SpriteFont spriteFont,
       string text,
       Vector2 position,
-      Color color,
-      float scale = 1f,
-      bool drawShadow = false) {
-    if (drawShadow) {
-      Utility.drawTextWithShadow(sb, text, spriteFont, position, color);
+      SpriteFont? spriteFont = null,
+      Color? color = null,
+      float? scale = null,
+      bool? drawShadow = null) {
+
+    spriteFont ??= Game1.dialogueFont;
+    color ??= Game1.textColor;
+    drawShadow ??= (spriteFont == Game1.dialogueFont);
+
+    if (drawShadow is true) {
+      Utility.drawTextWithShadow(sb, text, spriteFont, position, (Color) color);
     } else {
       sb.DrawString(
-          spriteFont, text, position, color, rotation: 0f,
-          origin: Vector2.Zero, scale, SpriteEffects.None, layerDepth: 1f);
+          spriteFont, text, position, (Color) color, rotation: 0f,
+          origin: Vector2.Zero, scale ?? 1f, SpriteEffects.None, layerDepth: 1f);
     }
-  }
-
-  internal static void DrawSimpleLabel(this SpriteBatch sb, string text, Vector2 position) {
-    sb.DrawString(Game1.dialogueFont, text, position, color: Game1.textColor, drawShadow: true);
   }
 }

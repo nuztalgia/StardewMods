@@ -44,7 +44,7 @@ internal class DynamicSlider {
     this.UpdateMouseState(position, out float mousePositionPercent);
     this.UpdateCurrentValue(mousePositionPercent, out float currentValuePercent);
 
-    sb.DrawSimpleLabel(
+    sb.DrawString(
         this.DataSource.Value.ToString(),
         new Vector2(position.X + TrackWidth + (ScaledPadding * 2), position.Y));
 
