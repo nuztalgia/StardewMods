@@ -102,4 +102,22 @@ internal static class GMCMIntegrationExtensions {
 
     return configMenu;
   }
+
+  internal static Integration AddCharacterThumbnails(
+      this Integration configMenu, BaseSyncedCompatSection syncedSection) {
+
+    CharacterThumbnails characterThumbnails = new(
+        syncedSection.GetSyncedItems,
+        CharacterConfigState.GetPortraitData,
+        I18n.Compat_Synced_None(),
+        I18n.Compat_Synced_Error());
+
+    configMenu.AddComplexOption(
+        optionName: string.Empty,
+        getHeight: characterThumbnails.GetHeight,
+        drawAction: characterThumbnails.Draw,
+        resetAction: characterThumbnails.Update);
+
+    return configMenu;
+  }
 }

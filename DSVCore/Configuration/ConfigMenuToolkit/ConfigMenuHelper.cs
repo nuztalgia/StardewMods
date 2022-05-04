@@ -90,17 +90,10 @@ internal sealed class ConfigMenuHelper {
           .AddParagraph(section.GetInfoText());
 
       if (section is BaseSyncedCompatSection syncedSection) {
-        this.ConfigMenu.AddParagraph(() =>
-            syncedSection.GetSyncedItems() is IEnumerable<string> syncedItems
-                ? syncedItems.Any()
-                    ? "> " + string.Join(" \n > ", syncedItems) // TODO: Display these prettily.
-                    : I18n.Compat_Synced_None()
-                : I18n.Compat_Synced_None());
+        this.ConfigMenu.AddCharacterThumbnails(syncedSection);
       } else {
-        this.AddSectionOptions(section);
+        this.AddSectionOptions(section).AddSpacing();
       }
-
-      this.ConfigMenu.AddSpacing();
     }
 
     // Show the placeholder if there are no compat mods or if the only one is Flower Queen's Crown.
