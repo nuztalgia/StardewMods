@@ -6,14 +6,19 @@ namespace Nuztalgia.StardewMods.LazyComms;
 
 internal static class Utilities {
 
+  // Un-aliases any recognized aliases in the input string. Works for nested aliases too.
+  internal static string TranslateInput(string input) {
+    return string.Join(' ', ExpandEnumerable(ParseArgs(input)));
+  }
+
   // Iteratively calls ExpandString() on the input enumerable.
-  internal static IEnumerable<string> ExpandEnumerable(IEnumerable<string> input) {
+  private static IEnumerable<string> ExpandEnumerable(IEnumerable<string> input) {
     IEnumerable<string> result = new List<string>();
     return input.Aggregate(result, (result, value) => result.Concat(ExpandString(value)));
   }
 
   // Recursively calls itself through ExpandEnumerable() if the input string contains multiple args.
-  internal static IEnumerable<string> ExpandString(string input) {
+  private static IEnumerable<string> ExpandString(string input) {
     if (!Aliases.Data.TryGetValue(input, out string? value)) {
       return new string[] { input };
     }
@@ -22,7 +27,7 @@ internal static class Utilities {
   }
 
   // Adapted from SMAPI's CommandManager to ensure consistency.
-  internal static IEnumerable<string> ParseArgs(string input) {
+  private static IEnumerable<string> ParseArgs(string input) {
     List<string> argList = new();
     StringBuilder currentArg = new();
     bool inQuotes = false;
