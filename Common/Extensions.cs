@@ -152,3 +152,26 @@ internal static class SpriteBatchExtensions {
     }
   }
 }
+
+internal static class SpriteFontExtensions {
+
+  internal static IEnumerable<string> GetLines(
+      this SpriteFont spriteFont, string text, float startX, float endX) {
+    string currentLine = "";
+
+    foreach (string word in text.Split(' ')) {
+      string possibleLine = $"{currentLine} {word}".Trim();
+
+      if ((startX + spriteFont.MeasureString(possibleLine).X) > endX) {
+        yield return currentLine;
+        currentLine = word;
+      } else {
+        currentLine = possibleLine;
+      }
+    }
+
+    if (!currentLine.IsEmpty()) {
+      yield return currentLine;
+    }
+  }
+}

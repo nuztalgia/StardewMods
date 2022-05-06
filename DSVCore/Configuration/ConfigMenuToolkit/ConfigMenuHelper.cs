@@ -90,7 +90,8 @@ internal sealed class ConfigMenuHelper {
           .AddParagraph(section.GetInfoText());
 
       if (section is BaseSyncedCompatSection syncedSection) {
-        this.ConfigMenu.AddCharacterThumbnails(syncedSection);
+        this.ConfigMenu.AddCharacterThumbnails(
+            syncedSection, this.GameContentHelper.Load<Texture2D>);
       } else {
         this.AddSectionOptions(section).AddSpacing();
       }

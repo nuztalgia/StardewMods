@@ -92,8 +92,8 @@
   // The sequence "{0}" will be replaced by the name of the mod in question.
   "info.platonic-p-a-f": "DSV automatically syncs with your configuration choices in Platonic Partners and Friendships. As a result, the following characters will have the blush removed from their love portraits and will have a unique platonic outfit for PPaF’s commitment ceremony.",
   "info.looking-for-love": "DSV automatically syncs with your configuration choices in Looking for Love. As a result, the following characters will use LfL-compatible portraits and seasonal outfits, while still respecting the DSV options that you've selected for them.",
-  "compat.synced.none": "None.",
-  "compat.synced.error": "Oops! We weren't able to fetch your settings. This should fix itself if/when you relaunch the game.",
+  "compat.synced.none": "None at the moment! You can change this in the {0} config menu.",
+  "compat.synced.error": "Oops! We encountered a problem while syncing with {0}. You can fix this by closing and relaunching Stardew Valley. Sorry for the inconvenience!",
 
   // Qualified names of specific characters that might be different in other languages.
   "character.wizard": "the Wizard",

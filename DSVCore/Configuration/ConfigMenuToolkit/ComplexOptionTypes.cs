@@ -104,13 +104,16 @@ internal static class GMCMIntegrationExtensions {
   }
 
   internal static Integration AddCharacterThumbnails(
-      this Integration configMenu, BaseSyncedCompatSection syncedSection) {
+      this Integration configMenu,
+      BaseSyncedCompatSection syncedSection,
+      CharacterConfigState.LoadImage loadGameImage) {
 
     CharacterThumbnails characterThumbnails = new(
         syncedSection.GetSyncedItems,
         CharacterConfigState.GetPortraitData,
-        I18n.Compat_Synced_None(),
-        I18n.Compat_Synced_Error());
+        loadGameImage,
+        I18n.Compat_Synced_None().Format(syncedSection.GetDisplayName()),
+        I18n.Compat_Synced_Error().Format(syncedSection.GetDisplayName()));
 
     configMenu.AddComplexOption(
         optionName: string.Empty,
