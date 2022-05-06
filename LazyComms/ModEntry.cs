@@ -1,32 +1,31 @@
-using Nuztalgia.StardewMods.Common;
-using StardewModdingAPI;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.LazyComms;
 
-public class ModEntry : Mod {
+internal class ModEntry : BaseMod {
 
-  public override void Entry(IModHelper helper) {
-    Log.Initialize(this.Monitor);
-    Aliases.Initialize(helper.Content);
+  protected override void OnModEntry() {
+    Aliases.Initialize(this.Helper.ModContent);
 
     // Register all of the valid user-defined aliases when the mod is first loaded.
-    foreach (KeyValuePair<string, string> entry in Aliases.Data) {
+    foreach ((string aliasKey, string aliasValue) in Aliases.Data) {
       try {
-        string command = Utilities.ExpandString(entry.Value).Stringify();
-        helper.ConsoleCommands.Add(entry.Key, $"An alias for '{command}'.", HandleCommand);
+        string command = Utilities.ExpandString(aliasValue).SpaceJoin();
+        this.Helper.ConsoleCommands.Add(aliasKey, $"An alias for '{command}'.", this.HandleCommand);
       } catch (Exception e) when (e is ArgumentException or FormatException) {
-        Log.Warn($"Alias name '{entry.Key}' is invalid. Skipping.");
+        Log.Warn($"Alias name '{aliasKey}' is invalid. Skipping.");
       }
     }
+  }
 
-    // This callback is a local function to reuse helper.ConsoleCommands without extra hassle.
-    void HandleCommand(string name, string[] arguments) {
-      string[] command = Utilities.ExpandEnumerable(arguments.Prepend(name));
-      Log.Info($"Triggering command: '{command.Stringify()}'");
-      helper.ConsoleCommands.Trigger(command[0], command[1..]);
-    }
+  private void HandleCommand(string name, string[] arguments) {
+    string[] command = Utilities.ExpandEnumerable(arguments.Prepend(name)).ToArray();
+    Log.Info($"Triggering command: '{command.SpaceJoin()}'");
+
+#pragma warning disable CS0618 // ICommandHelper.Trigger() is obsolete & will be removed in SMAPI 4.
+    this.Helper.ConsoleCommands.Trigger(command[0], command[1..]);
+#pragma warning restore CS0618
   }
 }
