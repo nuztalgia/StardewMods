@@ -16,7 +16,11 @@ internal static class HarmonyHelper {
 
   private static readonly PatchInfo[] Patches = new PatchInfo[] {
     new("StardewModdingAPI.Framework.CommandManager", "TryParse",
-        PrefixMethodName: nameof(CommandManager_TryParse_Prefix)),
+        PrefixMethodName: nameof(SmapiCommandManager_TryParse_Prefix)),
+    new("ChatCommands.CommandValidator", "IsValidCommand",
+        PrefixMethodName: nameof(ChatCommandsValidator_IsValidCommand_Prefix)),
+    new("ChatCommands.Util.Utils", "ParseArgs",
+        PrefixMethodName: nameof(ChatCommandsUtils_ParseArgs_Prefix)),
   };
 
   internal static void Patch(string modId) {
@@ -27,12 +31,12 @@ internal static class HarmonyHelper {
       string methodName = patch.OriginalMethodName;
 
       if (AccessTools.TypeByName(className) is not Type classType) {
-        Log.Error($"Failed to get type of class '{className}'. Skipping patch.");
+        Log.Trace($"Couldn't get type of class '{className}'. Skipping patch.");
         continue;
       }
 
       if (AccessTools.Method(classType, methodName) is not MethodInfo originalMethod) {
-        Log.Error($"Failed to get method '{methodName}' on '{className}'. Skipping patch.");
+        Log.Trace($"Couldn't get method '{methodName}' from '{className}'. Skipping patch.");
         continue;
       }
 
@@ -54,12 +58,27 @@ internal static class HarmonyHelper {
     }
   }
 
-  private static bool CommandManager_TryParse_Prefix(ref string input) {
-    string translatedInput = InputHelper.Translate(input);
-    if (input != translatedInput) {
-      Log.Info($"Received command '{input}'. Executing command '{translatedInput}'.");
-      input = translatedInput;
-    }
+  private static bool SmapiCommandManager_TryParse_Prefix(ref string input) {
+    input = Translate(input, logDiff: true);
     return true;
+  }
+
+  private static bool ChatCommandsValidator_IsValidCommand_Prefix(ref string input) {
+    input = Translate(input, logDiff: false);
+    return true;
+  }
+
+  private static bool ChatCommandsUtils_ParseArgs_Prefix(ref string input) {
+    // TODO: Make this log the diff to the in-game chatbox (in addition to the SMAPI console).
+    input = Translate(input, logDiff: true);
+    return true;
+  }
+
+  private static string Translate(string input, bool logDiff) {
+    string translatedInput = InputHelper.Translate(input);
+    if (logDiff && (input != translatedInput)) {
+      Log.Info($"Received command '{input}'. Executing command '{translatedInput}'.");
+    }
+    return translatedInput;
   }
 }
