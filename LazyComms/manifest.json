@@ -15,11 +15,11 @@
       "IsRequired": false
     },
     {
-      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "UniqueID": "cat.chatcommands",
       "IsRequired": false
     },
     {
-      "UniqueID": "cat.chatcommands",
+      "UniqueID": "spacechase0.GenericModConfigMenu",
       "IsRequired": false
     }
   ]

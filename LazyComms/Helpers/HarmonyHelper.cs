@@ -31,12 +31,12 @@ internal static class HarmonyHelper {
       string methodName = patch.OriginalMethodName;
 
       if (AccessTools.TypeByName(className) is not Type classType) {
-        Log.Trace($"Couldn't get type of class '{className}'. Skipping patch.");
+        Log.Trace($"Couldn't find type of class named '{className}'. Skipping patch.");
         continue;
       }
 
       if (AccessTools.Method(classType, methodName) is not MethodInfo originalMethod) {
-        Log.Trace($"Couldn't get method '{methodName}' from '{className}'. Skipping patch.");
+        Log.Trace($"Couldn't find method '{methodName}' on '{className}'. Skipping patch.");
         continue;
       }
 
