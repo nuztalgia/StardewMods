@@ -14,7 +14,7 @@ internal static class ConfigHelper {
     LoadConfig(modHelper);
 
     if (gmcm is null) {
-      Log.Trace("Could not hook into GMCM. Must relaunch game in order to modify aliases.");
+      Log.Trace("Could not hook into GMCM. Will be unable to view/modify aliases while in-game.");
       return;
     }
 
@@ -49,8 +49,15 @@ internal static class ConfigHelper {
   }
 
   private static void SetUpConfigMenu(Integration gmcm) {
-    // TODO: Figure out a better format for displaying these.
+    // TODO: Make these actually configurable in the GMCM interface.
     gmcm.AddSectionTitle(I18n.CommandAliases)
-        .AddParagraph(string.Join(" \n ", Config.Select(alias => $"{alias.Key} > {alias.Value}")));
+        .AddComplexOption(
+            optionName: string.Empty,
+            getHeight: () => UIHelper.RowHeight * Config.Count,
+            drawAction: UIHelper.GetDrawAction(
+                keys: Config.Keys.ToArray(),
+                values: Config.Values.Select(value => InputHelper.Translate(value)).ToArray(),
+                numberOfRows: Config.Count))
+        .AddSpacing();
   }
 }
