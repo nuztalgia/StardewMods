@@ -78,11 +78,11 @@ internal class CharacterConfigState {
     return characterState;
   }
 
-  internal static Texture2D[] GetPortraitData(string characterName) {
+  internal static Texture2D[]? GetPortraitData(string characterName) {
     return (CharacterStates.TryGetValue(characterName, out CharacterConfigState? characterState)
             && (characterState.CurrentPortraits?.FirstOrDefault() is Texture2D[] portraitData))
         ? portraitData
-        : Array.Empty<Texture2D>();
+        : null;
   }
 
   internal static void Update(string fieldId, object? newValue) {

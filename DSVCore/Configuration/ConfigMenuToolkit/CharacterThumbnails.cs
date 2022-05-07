@@ -33,7 +33,7 @@ internal class CharacterThumbnails {
   private static readonly Rectangle ErrorStateRect = new(592, 346, RawIconSize, RawIconSize);
 
   private static readonly SpriteFont MessageFont = Game1.smallFont;
-  private static readonly int MessageLineHeight = (int) MessageFont.MeasureString("_").Y;
+  private static readonly int MessageLineHeight = MessageFont.MeasureLineHeight();
 
   private static readonly SpriteFont LabelFont = Game1.dialogueFont;
   private static readonly Vector2 MaximumLabelSize = LabelFont.MeasureString("Sebastian");
@@ -74,24 +74,26 @@ internal class CharacterThumbnails {
   }
 
   internal void Update() {
+    this.CharacterImageData.Clear();
     this.CurrentCharacters = this.GetNames()?.OrderBy(characterName => characterName).ToList();
-    this.CurrentCharacters?.ForEach(characterName =>
-        this.CharacterImageData[characterName] = this.GetImages(characterName));
+
+    // TODO: Add some sort of indicator for characters whose content packs aren't installed.
+    this.CurrentCharacters?.ForEach(characterName => {
+      if (this.GetImages(characterName) is Texture2D[] imageData) {
+        this.CharacterImageData.Add(characterName, imageData);
+      }
+    });
   }
 
   internal int GetHeight() {
-    return this.CurrentCharacters?.Count switch {
-      null => GetMessageHeight(this.ErrorStateMessage),
-      0 => GetMessageHeight(this.EmptyStateMessage),
-      int numberOfCharacters => GetCharactersHeight(numberOfCharacters) + (ItemPadding * 2)
-    } + ItemPadding;
-
-    static int GetMessageHeight(string message) {
-      return MessageLineHeight * (MessageFont.GetLines(message, 0, AvailableWidth).Count() + 2);
-    } 
-
-    static int GetCharactersHeight(int numberOfCharacters) {
-      return (int) Math.Ceiling(numberOfCharacters / (float) NumberOfItemsPerRow) * ItemHeight;
+    int numberOfCharacters = this.CharacterImageData.Count;
+    if (numberOfCharacters == 0) {
+      string msg = this.CurrentCharacters is null ? this.ErrorStateMessage : this.EmptyStateMessage;
+      int numberOfLines = MessageFont.GetLines(msg, 0, AvailableWidth).Count();
+      return (MessageLineHeight * (numberOfLines + 2)) + ItemPadding;
+    } else {
+      int numberOfRows = (int) Math.Ceiling(numberOfCharacters / (float) NumberOfItemsPerRow);
+      return (numberOfRows * ItemHeight) + (ItemPadding * 3);
     }
   }
 
@@ -99,18 +101,18 @@ internal class CharacterThumbnails {
     float startX = position.X - (AvailableWidth / 2);
     float endX = startX + AvailableWidth;
 
-    if (this.CurrentCharacters?.Any() is true) {
+    if (this.CharacterImageData.Any()) {
       position.X = startX =
           GetCenteredDrawPosition(NumberOfItemsPerRow * ItemWidth, startX, endX) - ItemPadding;
       position.Y += ItemPadding;
 
-      foreach (string characterName in this.CurrentCharacters) {
+      foreach ((string characterName, Texture2D[] imageData) in this.CharacterImageData) {
         if ((position.X + ItemWidth) > endX) {
           position.X = startX;
           position.Y += ItemHeight;
         }
 
-        this.DrawItem(sb, position, characterName);
+        DrawThumbnailItem(sb, position, characterName, imageData);
         position.X += ItemWidth;
       }
     } else {
@@ -129,20 +131,6 @@ internal class CharacterThumbnails {
     }
   }
 
-  private void DrawItem(SpriteBatch sb, Vector2 position, string characterName) {
-    (float startX, float endX) = (position.X, position.X + ItemWidth);
-    Vector2 imagePosition = new(
-        x: GetCenteredDrawPosition(ScaledImageWidth, startX, endX),
-        y: position.Y);
-    Vector2 textPosition = new(
-        x: GetCenteredDrawPosition((int) LabelFont.MeasureString(characterName).X, startX, endX),
-        y: position.Y + ScaledImageHeight + ItemPadding);
-
-    this.CharacterImageData[characterName].ForEach(
-        (Texture2D image) => sb.Draw(image, imagePosition, ImageRect, ImageScale));
-    sb.DrawString(characterName, textPosition);
-  }
-
   private void DrawIcon(SpriteBatch sb, Vector2 position, Rectangle sourceRect) {
     this.CurrentIconTick = (this.CurrentIconTick + 1) % TicksPerIconFrame;
 
@@ -155,6 +143,21 @@ internal class CharacterThumbnails {
     }
 
     sb.Draw(this.IconSourceImage, position, sourceRect, IconScale);
+  }
+
+  private static void DrawThumbnailItem(
+      SpriteBatch sb, Vector2 position, string characterName, Texture2D[] imageData) {
+    (float startX, float endX) = (position.X, position.X + ItemWidth);
+
+    Vector2 imagePosition = new(
+        x: GetCenteredDrawPosition(ScaledImageWidth, startX, endX),
+        y: position.Y);
+    Vector2 textPosition = new(
+        x: GetCenteredDrawPosition((int) LabelFont.MeasureString(characterName).X, startX, endX),
+        y: position.Y + ScaledImageHeight + ItemPadding);
+
+    imageData.ForEach(image => sb.Draw(image, imagePosition, ImageRect, ImageScale));
+    sb.DrawString(characterName, textPosition);
   }
 
   private static int GetCenteredDrawPosition(int size, float startBound, float endBound) {

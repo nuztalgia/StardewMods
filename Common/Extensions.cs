@@ -155,6 +155,10 @@ internal static class SpriteBatchExtensions {
 
 internal static class SpriteFontExtensions {
 
+  internal static int MeasureLineHeight(this SpriteFont spriteFont) {
+    return (int) spriteFont.MeasureString("_").Y;
+  }
+
   internal static IEnumerable<string> GetLines(
       this SpriteFont spriteFont, string text, float startX, float endX) {
     string currentLine = "";
