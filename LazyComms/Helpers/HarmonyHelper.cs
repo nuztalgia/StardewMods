@@ -22,7 +22,7 @@ internal static class HarmonyHelper {
   }
 
   private static bool CommandManager_TryParse_Prefix(ref string input) {
-    string translatedInput = Utilities.TranslateInput(input);
+    string translatedInput = InputHelper.Translate(input);
     if (input != translatedInput) {
       Log.Info($"Received command '{input}'. Executing command '{translatedInput}'.");
       input = translatedInput;

@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Nuztalgia.StardewMods.LazyComms;
 
-internal static class Utilities {
+internal static class InputHelper {
 
   // Un-aliases any recognized aliases in the input string. Works for nested aliases too.
-  internal static string TranslateInput(string input) {
+  internal static string Translate(string input) {
     return string.Join(' ', ExpandEnumerable(ParseArgs(input)));
   }
 

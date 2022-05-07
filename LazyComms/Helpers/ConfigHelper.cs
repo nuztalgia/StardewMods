@@ -43,7 +43,7 @@ internal static class ConfigHelper {
     } else if (string.IsNullOrWhiteSpace(value)) {
       Log.Warn($"Alias '{key}' doesn't define a valid command. Skipping.");
     } else {
-      Log.Trace($"Using alias '{key}' for '{Utilities.TranslateInput(value)}'.");
+      Log.Trace($"Using alias '{key}' for '{InputHelper.Translate(value)}'.");
       Config.Add(key, value);
     }
   }
