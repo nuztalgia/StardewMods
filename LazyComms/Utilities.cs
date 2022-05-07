@@ -19,11 +19,12 @@ internal static class Utilities {
 
   // Recursively calls itself through ExpandEnumerable() if the input string contains multiple args.
   private static IEnumerable<string> ExpandString(string input) {
-    if (!Aliases.Data.TryGetValue(input, out string? value)) {
+    if (ConfigHelper.GetAliasValue(input) is string value) {
+      IEnumerable<string> result = ParseArgs(value);
+      return (result.Count() == 1) ? result : ExpandEnumerable(result);
+    } else {
       return new string[] { input };
     }
-    IEnumerable<string> result = ParseArgs(value);
-    return (result.Count() == 1) ? result : ExpandEnumerable(result);
   }
 
   // Adapted from SMAPI's CommandManager to ensure consistency.

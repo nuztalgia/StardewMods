@@ -12,7 +12,11 @@
   <Import Project="..\common.targets" />
 
   <ItemGroup>
-    <Content Include="aliases.json">
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="example_config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
