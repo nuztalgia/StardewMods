@@ -7,11 +7,20 @@
   "UpdateKeys": [
     "Nexus:11549"
   ],
-  "MinimumApiVersion": "3.14.0",
+  "MinimumApiVersion": "3.14.1",
   "EntryDll": "LazyComms.dll",
   "Dependencies": [
     {
-      "UniqueID": "SMAPI.ConsoleCommands"
+      "UniqueID": "SMAPI.ConsoleCommands",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "cat.chatcommands",
+      "IsRequired": false
     }
   ]
 }
