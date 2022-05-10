@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <Import Project="..\Common\Common.projitems" Label="Shared" />
+  <Import Project="..\Common.Patching\Common.Patching.projitems" Label="Shared" />
   <Import Project="..\common.targets" />
 
 </Project>
