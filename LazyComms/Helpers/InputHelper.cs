@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Nuztalgia.StardewMods.Common;
 
 namespace Nuztalgia.StardewMods.LazyComms;
 
@@ -8,17 +9,17 @@ internal static class InputHelper {
 
   // Un-aliases any recognized aliases in the input string. Works for nested aliases too.
   internal static string Translate(string input) {
-    return string.Join(' ', ExpandEnumerable(ParseArgs(input)));
+    return ExpandEnumerable(ParseArgs(input)).SpaceJoin();
   }
 
   // Iteratively calls ExpandString() on the input enumerable.
-  private static IEnumerable<string> ExpandEnumerable(IEnumerable<string> input) {
+  internal static IEnumerable<string> ExpandEnumerable(IEnumerable<string> input) {
     IEnumerable<string> result = new List<string>();
     return input.Aggregate(result, (result, value) => result.Concat(ExpandString(value)));
   }
 
   // Recursively calls itself through ExpandEnumerable() if the input string contains multiple args.
-  private static IEnumerable<string> ExpandString(string input) {
+  internal static IEnumerable<string> ExpandString(string input) {
     if (ConfigHelper.GetAliasValue(input) is string value) {
       IEnumerable<string> result = ParseArgs(value);
       return (result.Count() == 1) ? result : ExpandEnumerable(result);

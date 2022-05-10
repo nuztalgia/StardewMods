@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.ModRegistry;
 using Nuztalgia.StardewMods.Common.Patching;
@@ -14,37 +16,43 @@ internal static class PatchHelper {
     Type type = typeof(PatchHelper);
 
     patcher.ForMethod("StardewModdingAPI.Framework.CommandManager", "TryParse")?
-        .ApplyPrefixPatch(type, nameof(SmapiCommandManager_TryParse_Prefix));
+        .ApplyPrefixPatch(type, nameof(CommandManager_TryParse_Prefix));
+
+    patcher.ForMethod("StardewModdingAPI.Framework.ModHelpers.CommandHelper", "Trigger")?
+        .ApplyPrefixPatch(type, nameof(CommandHelper_Trigger_Prefix));
 
     if (ModRegistry.IsLoaded(ChatCommandsModId)) {
       patcher.ForMethod("ChatCommands.CommandValidator", "IsValidCommand")?
-          .ApplyPrefixPatch(type, nameof(ChatCommandsValidator_IsValidCommand_Prefix));
-      patcher.ForMethod("ChatCommands.Util.Utils", "ParseArgs")?
-          .ApplyPrefixPatch(type, nameof(ChatCommandsUtils_ParseArgs_Prefix));
+          .ApplyPrefixPatch(type, nameof(CommandValidator_IsValidCommand_Prefix));
     }
   }
 
-  private static bool SmapiCommandManager_TryParse_Prefix(ref string input) {
-    input = Translate(input, logDiff: true);
-    return true;
-  }
-
-  private static bool ChatCommandsValidator_IsValidCommand_Prefix(ref string input) {
-    input = Translate(input, logDiff: false);
-    return true;
-  }
-
-  private static bool ChatCommandsUtils_ParseArgs_Prefix(ref string input) {
-    // TODO: Make this log the diff to the in-game chatbox (in addition to the SMAPI console).
-    input = Translate(input, logDiff: true);
-    return true;
-  }
-
-  private static string Translate(string input, bool logDiff) {
+  private static bool CommandManager_TryParse_Prefix(ref string input) {
     string translatedInput = InputHelper.Translate(input);
-    if (logDiff && (input != translatedInput)) {
+
+    if (input != translatedInput) {
       Log.Info($"Received command '{input}'. Executing command '{translatedInput}'.");
+      input = translatedInput;
     }
-    return translatedInput;
+
+    return true;
+  }
+
+  private static bool CommandHelper_Trigger_Prefix(ref string name, ref string[] arguments) {
+    IEnumerable<string> originalCommand = arguments.Prepend(name);
+    IEnumerable<string> translatedCommand = InputHelper.ExpandEnumerable(originalCommand);
+
+    if (!originalCommand.SequenceEqual(translatedCommand)) {
+      Log.Info($"Received command '{originalCommand.SpaceJoin()}'. " +
+          $"Executing command '{translatedCommand.SpaceJoin()}'.");
+      (name, arguments) = (translatedCommand.First(), translatedCommand.Skip(1).ToArray());
+    }
+
+    return true;
+  }
+
+  private static bool CommandValidator_IsValidCommand_Prefix(ref string input) {
+    input = InputHelper.Translate(input);
+    return true;
   }
 }

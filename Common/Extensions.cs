@@ -50,6 +50,10 @@ internal static class IEnumerableExtensions {
     return string.Join(", ", items);
   }
 
+  internal static string SpaceJoin<T>(this IEnumerable<T> items) {
+    return string.Join(' ', items);
+  }
+
   internal static T? GetRandom<T>(this IEnumerable<T> items) {
     return items.Count() switch {
       0 => default,
