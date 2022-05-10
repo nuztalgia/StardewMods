@@ -132,14 +132,13 @@ internal static class SpriteBatchExtensions {
 
   internal static void DrawString(
       this SpriteBatch sb,
+      SpriteFont spriteFont,
       string text,
       Vector2 position,
-      SpriteFont? spriteFont = null,
       Color? color = null,
       float? scale = null,
       bool? drawShadow = null) {
 
-    spriteFont ??= Game1.dialogueFont;
     color ??= Game1.textColor;
     drawShadow ??= (spriteFont == Game1.dialogueFont);
 

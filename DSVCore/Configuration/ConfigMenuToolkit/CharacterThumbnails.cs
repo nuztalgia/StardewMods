@@ -11,7 +11,7 @@ namespace Nuztalgia.StardewMods.DSVCore;
 internal class CharacterThumbnails {
 
   internal delegate IEnumerable<string>? GetCharacterNames();
-  internal delegate Texture2D[] GetImageData(string characterName);
+  internal delegate Texture2D[]? GetImageData(string characterName);
 
   private const int RawIconSize = 13;
   private const int IconScale = 2;
@@ -125,7 +125,7 @@ internal class CharacterThumbnails {
       string message = isError ? this.ErrorStateMessage : this.EmptyStateMessage;
 
       foreach (string line in MessageFont.GetLines(message, position.X, endX)) {
-        sb.DrawString(line, position, MessageFont, drawShadow: true);
+        sb.DrawString(MessageFont, line, position, drawShadow: true);
         position.Y += MessageLineHeight;
       }
     }
@@ -157,7 +157,7 @@ internal class CharacterThumbnails {
         y: position.Y + ScaledImageHeight + ItemPadding);
 
     imageData.ForEach(image => sb.Draw(image, imagePosition, ImageRect, ImageScale));
-    sb.DrawString(characterName, textPosition);
+    sb.DrawString(LabelFont, characterName, textPosition);
   }
 
   private static int GetCenteredDrawPosition(int size, float startBound, float endBound) {

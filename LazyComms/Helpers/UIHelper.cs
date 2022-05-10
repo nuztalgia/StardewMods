@@ -46,13 +46,13 @@ internal static class UIHelper {
     float keyWidth = KeyFont.MeasureString(key).X;
 
     position.X += maxKeyWidth - keyWidth;
-    sb.DrawString(key, position);
+    sb.DrawString(KeyFont, key, position);
 
     position.X += keyWidth + KeyPadding + ArrowPadding;
     SpriteText.drawString(sb, ArrowText, (int) position.X, (int) position.Y);
 
     position.X += ArrowWidth;
     position.Y += ValueOffsetY;
-    sb.DrawString(value, position, ValueFont, drawShadow: true);
+    sb.DrawString(ValueFont, value, position, drawShadow: true);
   }
 }

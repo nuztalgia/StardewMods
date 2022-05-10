@@ -75,7 +75,7 @@ internal abstract class BaseCharacterSection : BaseMenuSection {
   internal sealed override int GetMinValue(PropertyInfo property) {
     return (property.Name is WeddingOutfitKey)
         ? IHasWeddingOutfit.FirstWeddingOutfit
-        : base.GetMaxValue(property);
+        : base.GetMinValue(property);
   }
 
   internal sealed override int GetMaxValue(PropertyInfo property) {
