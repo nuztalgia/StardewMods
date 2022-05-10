@@ -7,7 +7,7 @@ internal class ModEntry : BaseMod {
 
   protected override void OnModEntry() {
     I18n.Init(this.Helper.Translation);
-    HarmonyHelper.Patch(this.ModManifest.UniqueID);
+    PatchHelper.ApplyPatches(this.ModManifest.UniqueID);
   }
 
   protected override void OnGameLaunched() {
