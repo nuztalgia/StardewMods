@@ -4,8 +4,9 @@
     <AssemblyName>DSVCore</AssemblyName>
     <Version>0.6.0</Version>
     <RootNamespace>Nuztalgia.StardewMods.DSVCore</RootNamespace>
-    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
 
+  <PropertyGroup>
     <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
     <TranslationClassBuilder_AddKeyMap>true</TranslationClassBuilder_AddKeyMap>
   </PropertyGroup>
@@ -13,9 +14,5 @@
   <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="..\common.targets" />
-
-  <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
-  </ItemGroup>
 
 </Project>

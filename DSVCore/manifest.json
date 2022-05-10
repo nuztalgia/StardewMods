@@ -5,12 +5,12 @@
   "Description": "Core mod for Diverse Stardew Valley that manages config options.",
   "UniqueID": "DSVTeam.DiverseSeasonalOutfits.Core",
   "UpdateKeys": [],
-  "MinimumApiVersion": "3.14.0",
+  "MinimumApiVersion": "3.14.2",
   "EntryDll": "DSVCore.dll",
   "Dependencies": [
     {
       "UniqueID": "Pathoschild.ContentPatcher",
-      "MinimumVersion": "1.25.0"
+      "MinimumVersion": "1.26.0"
     },
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
