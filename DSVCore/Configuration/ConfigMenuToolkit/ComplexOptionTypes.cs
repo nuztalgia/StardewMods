@@ -8,25 +8,25 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class GMCMIntegrationExtensions {
 
-  internal static Integration AddDynamicSlider(
+  internal static Integration AddSlider(
       this Integration configMenu,
       BaseMenuSection section,
       PropertyInfo property,
       string optionName,
       string tooltip,
       string fieldId,
-      Action<string, object> onValueChange) {
+      Action<string, object> onValueChanged) {
 
-    DynamicSlider dynamicSlider = new(
+    Slider slider = new(
         name: optionName,
         tooltip: tooltip,
-        getValue: () => (int) property.GetValue(section)!,
+        loadValue: () => (int) property.GetValue(section)!,
         saveValue: (int value) => property.SetValue(section, value),
         staticMinValue: section.GetMinValue(property),
         getDynamicMaxValue: () => section.GetMaxValue(property),
-        onValueChange: (newValue) => onValueChange(fieldId, newValue));
+        onValueChanged: (newValue) => onValueChanged(fieldId, newValue));
 
-    dynamicSlider.AddToConfigMenu(configMenu.Api, configMenu.Manifest);
+    slider.AddToConfigMenu(configMenu.Api, configMenu.Manifest);
     return configMenu;
   }
 

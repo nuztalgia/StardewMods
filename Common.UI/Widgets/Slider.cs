@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class DynamicSlider : BaseWidget.Option<int> {
+internal class Slider : BaseWidget.Option<int> {
 
   private const int RawBarWidth = 10;
   private const int RawBarHeight = 6;
@@ -27,7 +27,7 @@ internal class DynamicSlider : BaseWidget.Option<int> {
   private int MinValue;
   private int MaxValue;
 
-  internal DynamicSlider(
+  internal Slider(
       string name,
       Func<int> loadValue,
       Action<int> saveValue,

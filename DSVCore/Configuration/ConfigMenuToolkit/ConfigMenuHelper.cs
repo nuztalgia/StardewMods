@@ -137,7 +137,7 @@ internal sealed class ConfigMenuHelper {
           break;
         }
         case int value: {
-          this.ConfigMenu.AddDynamicSlider(
+          this.ConfigMenu.AddSlider(
               section, item.Property, optionName, item.Tooltip, item.UniqueId, OnFieldChanged);
           break;
         }
