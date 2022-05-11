@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\DynamicSlider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseOptionWidget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BaseTextWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpriteBatchExtensions.cs" />
