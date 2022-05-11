@@ -77,10 +77,10 @@ internal class DynamicSlider : BaseWidget.Option<int> {
         MainFont, this.ValueToString(currentValue), new(position.X + TextOffset, position.Y));
 
     position.Y += ScaledPadding;
-    sb.DrawTextureBox(Cursors, position, TrackSourceRect, TrackWidth, ScaledBarHeight);
+    sb.DrawFromCursors(position, TrackSourceRect, TrackWidth, ScaledBarHeight);
 
     float valuePercent = (currentValue - this.MinValue) / (float) (this.MaxValue - this.MinValue);
     position.X += valuePercent * (TrackWidth - ScaledBarWidth);
-    sb.Draw(Cursors, position, BarSourceRect);
+    sb.DrawFromCursors(position, BarSourceRect);
   }
 }

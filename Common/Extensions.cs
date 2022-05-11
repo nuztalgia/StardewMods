@@ -118,22 +118,6 @@ internal static class SpriteBatchExtensions {
         origin: Vector2.Zero, scale, effects: SpriteEffects.None, layerDepth: 1f);
   }
 
-  internal static void DrawTextureBox(
-      this SpriteBatch sb,
-      Texture2D texture,
-      Vector2 position,
-      Rectangle sourceRect,
-      int? width = null,
-      int? height = null,
-      float scale = Game1.pixelZoom,
-      bool drawShadow = false) {
-
-    IClickableMenu.drawTextureBox(
-        sb, texture, sourceRect, (int) position.X, (int) position.Y,
-        width ?? sourceRect.Width, height ?? sourceRect.Height,
-        color: Color.White, scale, drawShadow);
-  }
-
   internal static void DrawString(
       this SpriteBatch sb,
       SpriteFont spriteFont,

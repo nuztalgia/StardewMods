@@ -13,5 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)BaseOptionWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interaction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SpriteBatchExtensions.cs" />
   </ItemGroup>
 </Project>

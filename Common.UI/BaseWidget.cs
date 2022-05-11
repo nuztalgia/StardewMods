@@ -17,7 +17,6 @@ internal abstract partial class BaseWidget {
 
   protected static readonly SpriteFont MainFont = Game1.dialogueFont;
   protected static readonly SpriteFont SmallFont = Game1.smallFont;
-  protected static readonly Texture2D Cursors = Game1.mouseCursors;
 
   private static int ViewportWidth;
   private static int TotalWidth;
