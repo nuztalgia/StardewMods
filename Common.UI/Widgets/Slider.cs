@@ -19,7 +19,7 @@ internal class Slider : BaseWidget.Option<int> {
   private static int TrackWidth;
   private static int TextOffset;
 
-  private readonly Func<int, string> ValueToString;
+  private readonly DynamicText Label;
 
   private readonly Func<int>? GetMinValue;
   private readonly Func<int>? GetMaxValue;
@@ -40,7 +40,9 @@ internal class Slider : BaseWidget.Option<int> {
       string? tooltip = null)
           : base(name, loadValue, saveValue, onValueChanged, tooltip, new Interaction.Draggable()) {
 
-    this.ValueToString = valueToString ?? (value => value.ToString());
+    this.Label = DynamicText.CreateOptionLabel(
+        (valueToString == null) ? () => this.Value.ToString() : () => valueToString(this.Value));
+
     this.GetMinValue = getDynamicMinValue;
     this.GetMaxValue = getDynamicMaxValue;
     this.MinValue = staticMinValue ?? int.MinValue;
@@ -53,7 +55,7 @@ internal class Slider : BaseWidget.Option<int> {
     return (TrackWidth, DefaultHeight);
   }
 
-  protected override int UpdateValue(Vector2 position, int previousValue) {
+  protected override int UpdateValue(Vector2 position) {
     if (this.GetMinValue != null) {
       this.MinValue = this.GetMinValue();
     }
@@ -64,7 +66,7 @@ internal class Slider : BaseWidget.Option<int> {
 
     return this.IsDragging
         ? Math.Clamp(GetValueByMousePosition(), this.MinValue, this.MaxValue)
-        : previousValue;
+        : this.Value;
 
     int GetValueByMousePosition() {
       float mousePositionPercent = (this.MousePosition.X - position.X) / TrackWidth;
@@ -72,14 +74,13 @@ internal class Slider : BaseWidget.Option<int> {
     }
   }
 
-  protected override void Draw(SpriteBatch sb, Vector2 position, int currentValue) {
-    sb.DrawString(
-        MainFont, this.ValueToString(currentValue), new(position.X + TextOffset, position.Y));
+  protected override void DrawOption(SpriteBatch sb, Vector2 position) {
+    sb.DrawWidget(this.Label, new(position.X + TextOffset, position.Y));
 
     position.Y += ScaledPadding;
     sb.DrawFromCursors(position, TrackSourceRect, TrackWidth, ScaledBarHeight);
 
-    float valuePercent = (currentValue - this.MinValue) / (float) (this.MaxValue - this.MinValue);
+    float valuePercent = (this.Value - this.MinValue) / (float) (this.MaxValue - this.MinValue);
     position.X += valuePercent * (TrackWidth - ScaledBarWidth);
     sb.DrawFromCursors(position, BarSourceRect);
   }

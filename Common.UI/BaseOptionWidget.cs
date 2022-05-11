@@ -8,11 +8,11 @@ internal abstract partial class BaseWidget {
 
   internal abstract class Option<TValue> : BaseWidget where TValue : IEquatable<TValue> {
 
+    protected TValue Value { get; private set; }
+
     private readonly Func<TValue> LoadValue;
     private readonly Action<TValue> SaveValue;
     private readonly Action<TValue>? OnValueChanged;
-
-    private TValue Value;
 
     protected Option(
         string name,
@@ -34,15 +34,15 @@ internal abstract partial class BaseWidget {
       this.OnValueChanged = onValueChanged;
     }
 
-    protected abstract TValue UpdateValue(Vector2 position, TValue previousValue);
+    protected abstract TValue UpdateValue(Vector2 position);
 
-    protected abstract void Draw(SpriteBatch sb, Vector2 position, TValue currentValue);
+    protected abstract void DrawOption(SpriteBatch sb, Vector2 position);
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
       TValue previousValue = this.Value;
 
-      this.Value = this.UpdateValue(position, previousValue);
-      this.Draw(sb, position, this.Value);
+      this.Value = this.UpdateValue(position);
+      this.DrawOption(sb, position);
 
       if (!previousValue.Equals(this.Value)) {
         this.OnValueChanged?.Invoke(this.Value);

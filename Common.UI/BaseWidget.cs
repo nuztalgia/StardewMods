@@ -15,9 +15,6 @@ internal abstract partial class BaseWidget {
   private const int MinTotalWidth = 1200;
   private const int ViewportPadding = 200;
 
-  protected static readonly SpriteFont MainFont = Game1.dialogueFont;
-  protected static readonly SpriteFont SmallFont = Game1.smallFont;
-
   private static int ViewportWidth;
   private static int TotalWidth;
 
@@ -44,7 +41,7 @@ internal abstract partial class BaseWidget {
     gmcmApi.AddComplexOption(
         mod: modManifest,
         name: () => this.Name,
-        draw: this.InteractiveDraw,
+        draw: this.InternalDraw,
         tooltip: (this.Tooltip is null) ? null : () => this.Tooltip,
         beforeMenuOpened: this.OnMenuOpening,
         beforeMenuClosed: this.RefreshStateAndSize,
@@ -64,7 +61,7 @@ internal abstract partial class BaseWidget {
 
   protected abstract void Draw(SpriteBatch sb, Vector2 position);
 
-  private void InteractiveDraw(SpriteBatch sb, Vector2 position) {
+  internal void InternalDraw(SpriteBatch sb, Vector2 position) {
     this.Interaction?.Update(new((int) position.X, (int) position.Y, this.Width, this.Height));
     this.Draw(sb, position);
   }

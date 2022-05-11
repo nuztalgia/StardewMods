@@ -29,4 +29,8 @@ internal static class SpriteBatchExtensions {
         (int) position.X, (int) position.Y, width, height,
         color ?? Color.White, scale: Game1.pixelZoom, drawShadow);
   }
+
+  internal static void DrawWidget(this SpriteBatch sb, BaseWidget widget, Vector2 position) {
+    widget.InternalDraw(sb, position);
+  }
 }

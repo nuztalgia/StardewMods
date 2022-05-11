@@ -13,7 +13,7 @@ internal class Button : BaseWidget {
 
   private Color TintColor => this.IsHovering ? Color.Wheat : Color.White;
 
-  private readonly string LabelText;
+  private readonly StaticText Label;
 
   private readonly int TextWidth;
   private readonly int TextHeight;
@@ -32,8 +32,8 @@ internal class Button : BaseWidget {
       int? maxHeight = null)
           : base(interaction: new Interaction.Clickable(clickAction)) {
 
-    this.LabelText = labelText;
-    Vector2 measuredText = SmallFont.MeasureString(labelText);
+    this.Label = StaticText.CreateButtonLabel(labelText);
+    Vector2 measuredText = this.Label.MeasureSingleLine(labelText);
     (this.TextWidth, this.TextHeight) = ((int) measuredText.X, (int) measuredText.Y);
 
     this.TargetWidth =
@@ -51,6 +51,6 @@ internal class Button : BaseWidget {
   protected override void Draw(SpriteBatch sb, Vector2 position) {
     sb.DrawFromCursors(position, SourceRect, this.Width, this.Height, this.TintColor);
     position += this.TextOffset;
-    sb.DrawString(SmallFont, this.LabelText, position);
+    sb.DrawWidget(this.Label, position);
   }
 }
