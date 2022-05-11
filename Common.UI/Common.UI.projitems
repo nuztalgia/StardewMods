@@ -10,8 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\DynamicSlider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BaseDynamicWidget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BaseOptionWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseWidget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interaction.cs" />
   </ItemGroup>
 </Project>

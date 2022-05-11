@@ -7,7 +7,7 @@ using StardewValley;
 
 namespace Nuztalgia.StardewMods.Common.UI; 
 
-internal abstract class BaseWidget {
+internal abstract partial class BaseWidget {
 
   protected const int DefaultHeight = 48;
   protected const int PixelZoom = Game1.pixelZoom;
@@ -17,27 +17,35 @@ internal abstract class BaseWidget {
 
   protected static readonly SpriteFont MainFont = Game1.dialogueFont;
   protected static readonly SpriteFont SmallFont = Game1.smallFont;
-  protected static readonly Texture2D CursorsImage = Game1.mouseCursors;
-
-  protected virtual string Name { get; private init; }
-  protected virtual string? Tooltip { get; private init; }
-
-  internal virtual int Width { get; private set; }
-  internal virtual int Height { get; private set; }
+  protected static readonly Texture2D Cursors = Game1.mouseCursors;
 
   private static int ViewportWidth;
   private static int TotalWidth;
 
-  protected BaseWidget(string? name = null, string? tooltip = null) {
+  // The widget's Interaction must have been set appropriately in order to use these without error.
+  protected bool IsHovering => (this.Interaction as Interaction.Clickable)!.IsHovering;
+  protected bool IsDragging => (this.Interaction as Interaction.Draggable)!.IsDragging;
+  protected Point MousePosition => (this.Interaction as Interaction.Draggable)!.MousePosition;
+
+  private readonly string Name;
+  private readonly string? Tooltip;
+  private readonly Interaction? Interaction;
+
+  protected int Width { get; private set; }
+  protected int Height { get; private set; }
+
+  protected BaseWidget(
+      string? name = null, string? tooltip = null, Interaction? interaction = null) {
     this.Name = name ?? string.Empty;
     this.Tooltip = tooltip;
+    this.Interaction = interaction;
   }
 
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
     gmcmApi.AddComplexOption(
         mod: modManifest,
         name: () => this.Name,
-        draw: this.Draw,
+        draw: this.InteractiveDraw,
         tooltip: (this.Tooltip is null) ? null : () => this.Tooltip,
         beforeMenuOpened: this.OnMenuOpening,
         beforeMenuClosed: this.RefreshStateAndSize,
@@ -47,14 +55,19 @@ internal abstract class BaseWidget {
     );
   }
 
-  protected abstract void Draw(SpriteBatch sb, Vector2 position);
-
   protected virtual void ResetState() { }
 
   protected virtual void SaveState() { }
 
-  protected virtual (int width, int height) CalculateDimensions(int totalWidth) {
+  protected virtual (int width, int height) UpdateDimensions(int totalWidth) {
     return (totalWidth, DefaultHeight);
+  }
+
+  protected abstract void Draw(SpriteBatch sb, Vector2 position);
+
+  private void InteractiveDraw(SpriteBatch sb, Vector2 position) {
+    this.Interaction?.Update(new((int) position.X, (int) position.Y, this.Width, this.Height));
+    this.Draw(sb, position);
   }
 
   private void OnMenuOpening() {
@@ -67,6 +80,6 @@ internal abstract class BaseWidget {
 
   private void RefreshStateAndSize() {
     this.ResetState();
-    (this.Width, this.Height) = this.CalculateDimensions(TotalWidth);
+    (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
   }
 }

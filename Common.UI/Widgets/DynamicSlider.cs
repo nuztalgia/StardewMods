@@ -1,11 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class DynamicSlider : BaseWidgetWithValue<int>, Extensions.IDraggable {
+internal class DynamicSlider : BaseWidget.Option<int> {
 
   private const int RawBarWidth = 10;
   private const int RawBarHeight = 6;
@@ -20,9 +19,7 @@ internal class DynamicSlider : BaseWidgetWithValue<int>, Extensions.IDraggable {
   private static int TrackWidth;
   private static int TextOffset;
 
-  public bool IsDragging { get; set; }
-  public ButtonState MouseButtonState { get; set; }
-  public (int X, int Y) MousePosition { get; set; }
+  private readonly Func<int, string> ValueToString;
 
   private readonly Func<int>? GetMinValue;
   private readonly Func<int>? GetMaxValue;
@@ -32,36 +29,42 @@ internal class DynamicSlider : BaseWidgetWithValue<int>, Extensions.IDraggable {
 
   internal DynamicSlider(
       string name,
-      Func<int> getValue,
+      Func<int> loadValue,
       Action<int> saveValue,
       int? staticMinValue = null,
       int? staticMaxValue = null,
       Func<int>? getDynamicMinValue = null,
       Func<int>? getDynamicMaxValue = null,
+      Action<int>? onValueChanged = null,
       Func<int, string>? valueToString = null,
-      Action<int>? onValueChange = null,
       string? tooltip = null)
-          : base(name, getValue, saveValue, valueToString, onValueChange, tooltip) {
+          : base(name, loadValue, saveValue, onValueChanged, tooltip, new Interaction.Draggable()) {
+
+    this.ValueToString = valueToString ?? (value => value.ToString());
     this.GetMinValue = getDynamicMinValue;
     this.GetMaxValue = getDynamicMaxValue;
     this.MinValue = staticMinValue ?? int.MinValue;
     this.MaxValue = staticMaxValue ?? int.MaxValue;
   }
 
-  protected override void UpdateState(Vector2 position) {
-    this.UpdateMouseState(position, customDraggableWidth: TrackWidth);
+  protected override (int width, int height) UpdateDimensions(int totalWidth) {
+    TrackWidth = totalWidth / 3;
+    TextOffset = TrackWidth + (ScaledPadding * 2);
+    return (TrackWidth, DefaultHeight);
+  }
 
-    if (this.GetMinValue is not null) {
+  protected override int UpdateValue(Vector2 position, int previousValue) {
+    if (this.GetMinValue != null) {
       this.MinValue = this.GetMinValue();
     }
-    if (this.GetMaxValue is not null) {
+
+    if (this.GetMaxValue != null) {
       this.MaxValue = this.GetMaxValue();
     }
 
-    this.Value = Math.Clamp(
-        this.IsDragging ? GetValueByMousePosition() : this.Value,
-        this.MinValue,
-        this.MaxValue);
+    return this.IsDragging
+        ? Math.Clamp(GetValueByMousePosition(), this.MinValue, this.MaxValue)
+        : previousValue;
 
     int GetValueByMousePosition() {
       float mousePositionPercent = (this.MousePosition.X - position.X) / TrackWidth;
@@ -69,20 +72,15 @@ internal class DynamicSlider : BaseWidgetWithValue<int>, Extensions.IDraggable {
     }
   }
 
-  protected override void DrawState(SpriteBatch sb, Vector2 position) {
-    sb.DrawString(MainFont, this.ValueText, new(position.X + TextOffset, position.Y));
+  protected override void Draw(SpriteBatch sb, Vector2 position, int currentValue) {
+    sb.DrawString(
+        MainFont, this.ValueToString(currentValue), new(position.X + TextOffset, position.Y));
 
     position.Y += ScaledPadding;
-    sb.DrawTextureBox(CursorsImage, position, TrackSourceRect, TrackWidth, ScaledBarHeight);
+    sb.DrawTextureBox(Cursors, position, TrackSourceRect, TrackWidth, ScaledBarHeight);
 
-    float valuePercent = (this.Value - this.MinValue) / (float) (this.MaxValue - this.MinValue);
+    float valuePercent = (currentValue - this.MinValue) / (float) (this.MaxValue - this.MinValue);
     position.X += valuePercent * (TrackWidth - ScaledBarWidth);
-    sb.Draw(CursorsImage, position, BarSourceRect);
-  }
-
-  protected override (int width, int height) CalculateDimensions(int totalWidth) {
-    TrackWidth = totalWidth / 3;
-    TextOffset = TrackWidth + (ScaledPadding * 2);
-    return (totalWidth / 2, DefaultHeight);
+    sb.Draw(Cursors, position, BarSourceRect);
   }
 }
