@@ -26,11 +26,12 @@ internal class Button : BaseWidget {
   internal Button(
       string labelText,
       Action clickAction,
+      Alignment alignment = Alignment.None,
       int? minWidth = null,
       int? minHeight = null,
       int? maxWidth = null,
       int? maxHeight = null)
-          : base(interaction: new Interaction.Clickable(clickAction)) {
+          : base(interaction: new Interaction.Clickable(clickAction), alignment: alignment) {
 
     this.Label = StaticText.CreateButtonLabel(labelText);
     Vector2 measuredText = this.Label.MeasureSingleLine(labelText);

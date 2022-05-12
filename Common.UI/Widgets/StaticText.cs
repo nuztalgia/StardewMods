@@ -4,12 +4,17 @@ internal class StaticText : BaseTextWidget.Simple {
 
   protected override string Text { get; }
 
-  protected StaticText(string text, FontSize fontSize, bool drawShadow, bool wrapLines)
-      : base(fontSize, drawShadow, wrapLines) {
+  protected StaticText(
+      string text,
+      FontSize fontSize,
+      Alignment alignment,
+      bool wrapLines,
+      bool drawShadow)
+          : base(fontSize, alignment, wrapLines, drawShadow) {
     this.Text = text;
   }
 
   internal static StaticText CreateButtonLabel(string text) {
-    return new(text, FontSize.Regular, drawShadow: false, wrapLines: false);
+    return new(text, FontSize.Small, Alignment.None, wrapLines: false, drawShadow: false);
   }
 }

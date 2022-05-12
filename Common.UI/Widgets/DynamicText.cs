@@ -8,12 +8,17 @@ internal class DynamicText : BaseTextWidget.Simple {
 
   private readonly Func<string> GetText;
 
-  protected DynamicText(Func<string> getText, FontSize fontSize, bool drawShadow, bool wrapLines)
-      : base(fontSize, drawShadow, wrapLines) {
+  protected DynamicText(
+      Func<string> getText,
+      FontSize fontSize,
+      Alignment alignment,
+      bool wrapLines,
+      bool drawShadow)
+          : base(fontSize, alignment, wrapLines, drawShadow) {
     this.GetText = getText;
   }
 
   internal static DynamicText CreateOptionLabel(Func<string> getText) {
-    return new(getText, FontSize.Regular, drawShadow: true, wrapLines: false);
+    return new(getText, FontSize.Regular, Alignment.None, wrapLines: false, drawShadow: true);
   }
 }

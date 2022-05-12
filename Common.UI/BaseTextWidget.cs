@@ -21,7 +21,8 @@ internal abstract class BaseTextWidget : BaseWidget {
     private readonly SpriteFont Font;
     private readonly bool DrawShadow;
 
-    protected Simple(FontSize fontSize, bool drawShadow, bool wrapLines) : base(wrapLines) {
+    protected Simple(FontSize fontSize, Alignment alignment, bool wrapLines, bool drawShadow)
+        : base(alignment, wrapLines) {
       this.Font = (fontSize == FontSize.Small) ? Game1.smallFont : Game1.dialogueFont;
       this.DrawShadow = drawShadow;
 
@@ -57,7 +58,7 @@ internal abstract class BaseTextWidget : BaseWidget {
 
   private string[]? SplitLines;
 
-  protected BaseTextWidget(bool wrapLines = false) {
+  protected BaseTextWidget(Alignment alignment, bool wrapLines) : base(alignment: alignment) {
     this.WrapLines = wrapLines;
   }
 

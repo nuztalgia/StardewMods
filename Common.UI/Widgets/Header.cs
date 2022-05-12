@@ -10,7 +10,7 @@ internal class Header : BaseTextWidget {
   protected override int SingleLineWidth => int.MaxValue; // Always fill the available width.
   protected override int SingleLineHeight { get; }
 
-  internal Header(string text) {
+  internal Header(string text) : base(alignment: Alignment.Left, wrapLines: false) {
     this.Text = text;
     this.SingleLineHeight = SpriteText.getHeightOfString(text);
   }
@@ -20,7 +20,6 @@ internal class Header : BaseTextWidget {
   }
 
   protected override void Draw(SpriteBatch sb, Vector2 position, string text) {
-    position.X -= (this.Width / 2) + 8; // Align left.
     SpriteText.drawString(sb, text, (int) position.X, (int) position.Y);
   }
 }

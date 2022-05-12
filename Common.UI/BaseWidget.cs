@@ -9,6 +9,10 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract partial class BaseWidget {
 
+  internal enum Alignment {
+    None, Left, Right
+  }
+
   protected const int DefaultHeight = 48;
   protected const int PixelZoom = Game1.pixelZoom;
 
@@ -18,6 +22,9 @@ internal abstract partial class BaseWidget {
   private static int ViewportWidth;
   private static int TotalWidth;
 
+  private static int LeftAdjustment;
+  private static int RightAdjustment;
+
   // The widget's Interaction must have been set appropriately in order to use these without error.
   protected bool IsHovering => (this.Interaction as Interaction.Clickable)!.IsHovering;
   protected bool IsDragging => (this.Interaction as Interaction.Draggable)!.IsDragging;
@@ -26,15 +33,21 @@ internal abstract partial class BaseWidget {
   private readonly string Name;
   private readonly string? Tooltip;
   private readonly Interaction? Interaction;
+  private readonly Alignment AlignmentX;
 
   protected int Width { get; private set; }
   protected int Height { get; private set; }
 
   protected BaseWidget(
-      string? name = null, string? tooltip = null, Interaction? interaction = null) {
+      string? name = null,
+      string? tooltip = null,
+      Interaction? interaction = null,
+      Alignment alignment = Alignment.None) {
+
     this.Name = name ?? string.Empty;
     this.Tooltip = tooltip;
     this.Interaction = interaction;
+    this.AlignmentX = alignment;
   }
 
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
@@ -62,6 +75,11 @@ internal abstract partial class BaseWidget {
   protected abstract void Draw(SpriteBatch sb, Vector2 position);
 
   internal void InternalDraw(SpriteBatch sb, Vector2 position) {
+    if (this.AlignmentX == Alignment.Left) {
+      position.X -= LeftAdjustment;
+    } else if (this.AlignmentX == Alignment.Right) {
+      position.X += RightAdjustment - this.Width;
+    }
     this.Interaction?.Update(new((int) position.X, (int) position.Y, this.Width, this.Height));
     this.Draw(sb, position);
   }
@@ -70,6 +88,8 @@ internal abstract partial class BaseWidget {
     if (ViewportWidth != Game1.uiViewport.Width) {
       ViewportWidth = Game1.uiViewport.Width;
       TotalWidth = Math.Min(ViewportWidth - ViewportPadding, MinTotalWidth);
+      LeftAdjustment = (TotalWidth / 2) + 8;
+      RightAdjustment = (TotalWidth / 2) - 8;
     }
     this.RefreshStateAndSize();
   }
