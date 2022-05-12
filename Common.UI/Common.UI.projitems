@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\DynamicText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Header.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\StaticText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseOptionWidget.cs" />

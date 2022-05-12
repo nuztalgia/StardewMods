@@ -45,11 +45,11 @@ internal sealed class ConfigMenuHelper {
       IEnumerable<BaseContentPackPage> otherContentPackPages) {
 
     this.ConfigMenu
-        .AddSectionTitle(I18n.Main_Intro_Title)
+        .AddStaticHeader(I18n.Main_Intro_Title)
         .AddParagraph(I18n.Main_Intro_Description)
         .AddPageLink(coreAndCompatPage.Name, $" > {coreAndCompatPage.GetDisplayName()}")
         .AddSpacing()
-        .AddSectionTitle(I18n.Main_InstalledPacks_Title)
+        .AddStaticHeader(I18n.Main_InstalledPacks_Title)
         .AddParagraph(installedContentPackPages.Any()
                       ? I18n.Main_InstalledPacks_Description
                       : I18n.Main_InstalledPacks_None);
@@ -61,14 +61,14 @@ internal sealed class ConfigMenuHelper {
 
     this.ConfigMenu
         .AddSpacing()
-        .AddSectionTitle(I18n.Main_OtherPacks_Title)
+        .AddStaticHeader(I18n.Main_OtherPacks_Title)
         .AddParagraph(otherContentPackPages.Any()
                       ? I18n.Main_OtherPacks_Description
                       : I18n.Main_OtherPacks_None);
 
     foreach (BaseContentPackPage contentPackPage in otherContentPackPages) {
       Log.Trace($"'{contentPackPage.GetDisplayName()}' pack is *NOT* installed.");
-      this.ConfigMenu.AddSectionTitle($" * {contentPackPage.GetDisplayName()}");
+      this.ConfigMenu.AddStaticHeader($" * {contentPackPage.GetDisplayName()}");
     }
   }
 
@@ -101,7 +101,7 @@ internal sealed class ConfigMenuHelper {
     if (!compatSections.Any()
         || (compatSections.Count() == 1 && compatSections.First().Name == "FlowerQueensCrown")) {
       this.ConfigMenu
-          .AddSectionTitle(I18n.Compat_Placeholder_Title)
+          .AddStaticHeader(I18n.Compat_Placeholder_Title)
           .AddParagraph(I18n.Compat_Placeholder_Description);
     }
   }
@@ -110,7 +110,7 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu.AddPage(contentPackPage.Name, contentPackPage.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
-      this.ConfigMenu.AddSectionTitle(character.GetDisplayName().CapitalizeFirstChar());
+      this.ConfigMenu.AddStaticHeader(character.GetDisplayName().CapitalizeFirstChar());
 
       this.AddSectionOptions(character)
           .AddCharacterPreview(

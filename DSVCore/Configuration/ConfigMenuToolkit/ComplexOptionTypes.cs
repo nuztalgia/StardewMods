@@ -8,6 +8,15 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class GMCMIntegrationExtensions {
 
+  internal static Integration AddStaticHeader(this Integration configMenu, Func<string> getText) {
+    return configMenu.AddStaticHeader(getText());
+  }
+
+  internal static Integration AddStaticHeader(this Integration configMenu, string text) {
+    new Header(text).AddToConfigMenu(configMenu.Api, configMenu.Manifest);
+    return configMenu;
+  }
+
   internal static Integration AddSlider(
       this Integration configMenu,
       BaseMenuSection section,
