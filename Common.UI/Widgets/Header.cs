@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.BellsAndWhistles;
@@ -5,6 +6,14 @@ using StardewValley.BellsAndWhistles;
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Header : BaseTextWidget {
+
+  internal class WithButton : Composite {
+    internal WithButton(string headerText, string buttonText, Action buttonAction) {
+      this.AddSubWidget(new Header(headerText),
+          postDraw: (ref Vector2 position, int _, int _) => position.Y -= 4);
+      this.AddSubWidget(new Button(buttonText, buttonAction, Alignment.Right));
+    }
+  }
 
   protected override string Text { get; }
   protected override int SingleLineWidth => int.MaxValue; // Always fill the available width.
