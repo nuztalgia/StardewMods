@@ -9,15 +9,16 @@
     <Import_RootNamespace>Nuztalgia.StardewMods.Common.UI</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\CompositeWidget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\OptionWidget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\SpriteFontWidget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\TextWidget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\Widget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\DynamicText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Header.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\StaticText.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BaseCompositeWidget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BaseOptionWidget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BaseTextWidget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BaseWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpriteBatchExtensions.cs" />
   </ItemGroup>

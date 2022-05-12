@@ -1,8 +1,8 @@
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class StaticText : BaseTextWidget.Simple {
+internal class StaticText : BaseWidget.Text.SpriteFont {
 
-  protected override string Text { get; }
+  protected override string RawText { get; }
 
   protected StaticText(
       string text,
@@ -11,7 +11,7 @@ internal class StaticText : BaseTextWidget.Simple {
       bool wrapLines,
       bool drawShadow)
           : base(fontSize, alignment, wrapLines, drawShadow) {
-    this.Text = text;
+    this.RawText = text;
   }
 
   internal static StaticText CreateButtonLabel(string text) {

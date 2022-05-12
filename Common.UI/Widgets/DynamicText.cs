@@ -2,9 +2,9 @@ using System;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class DynamicText : BaseTextWidget.Simple {
+internal class DynamicText : BaseWidget.Text.SpriteFont {
 
-  protected override string Text => this.GetText();
+  protected override string RawText => this.GetText();
 
   private readonly Func<string> GetText;
 

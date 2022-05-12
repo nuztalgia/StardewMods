@@ -5,7 +5,7 @@ using StardewValley.BellsAndWhistles;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class Header : BaseTextWidget {
+internal class Header : BaseWidget.Text {
 
   internal class WithButton : Composite {
     internal WithButton(string headerText, string buttonText, Action buttonAction) {
@@ -15,12 +15,12 @@ internal class Header : BaseTextWidget {
     }
   }
 
-  protected override string Text { get; }
+  protected override string RawText { get; }
   protected override int SingleLineWidth => int.MaxValue; // Always fill the available width.
   protected override int SingleLineHeight { get; }
 
   internal Header(string text) : base(alignment: Alignment.Left, wrapLines: false) {
-    this.Text = text;
+    this.RawText = text;
     this.SingleLineHeight = SpriteText.getHeightOfString(text);
   }
 
