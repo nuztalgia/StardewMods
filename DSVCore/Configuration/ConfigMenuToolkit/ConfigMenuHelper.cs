@@ -78,7 +78,7 @@ internal sealed class ConfigMenuHelper {
 
     this.ConfigMenu
         .AddPage(coreAndCompatPage.Name, coreAndCompatPage.GetDisplayName())
-        .AddSectionTitle(coreOptions.GetDisplayName())
+        .AddStaticHeader(coreOptions.GetDisplayName())
         .AddParagraph(I18n.Core_Section_Description);
 
     this.AddSectionOptions(coreOptions)
@@ -86,7 +86,7 @@ internal sealed class ConfigMenuHelper {
 
     foreach (BaseCompatSection section in compatSections) {
       this.ConfigMenu
-          .AddSectionTitle(section.GetDisplayName())
+          .AddCompatSectionHeader(section)
           .AddParagraph(section.GetInfoText());
 
       if (section is BaseSyncedCompatSection syncedSection) {

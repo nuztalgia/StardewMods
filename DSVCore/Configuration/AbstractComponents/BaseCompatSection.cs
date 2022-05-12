@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Nuztalgia.StardewMods.Common.ContentPatcher;
 using Nuztalgia.StardewMods.Common.ModRegistry;
+using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -33,6 +34,10 @@ internal abstract class BaseCompatSection : BaseMenuSection {
 
   internal override sealed bool IsAvailable() {
     return ModRegistry.IsLoaded(this.ModId);
+  }
+
+  internal IManifest? GetModManifest() {
+    return ModRegistry.GetModManifest(this.ModId);
   }
 
   internal string GetInfoText() {

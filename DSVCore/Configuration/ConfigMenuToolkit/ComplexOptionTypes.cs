@@ -3,6 +3,7 @@ using System.Reflection;
 using Nuztalgia.StardewMods.Common;
 using Nuztalgia.StardewMods.Common.GenericModConfigMenu;
 using Nuztalgia.StardewMods.Common.UI;
+using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -14,6 +15,22 @@ internal static class GMCMIntegrationExtensions {
 
   internal static Integration AddStaticHeader(this Integration configMenu, string text) {
     new Header(text).AddToConfigMenu(configMenu.Api, configMenu.Manifest);
+    return configMenu;
+  }
+
+  internal static Integration AddCompatSectionHeader(
+      this Integration configMenu, BaseCompatSection section) {
+
+    if ((section as BaseSyncedCompatSection)?.GetModManifest() is not IManifest modManifest) {
+      return configMenu.AddStaticHeader(section.GetDisplayName());
+    }
+
+    Header.WithButton header = new(
+        headerText: modManifest.Name,
+        buttonText: I18n.Compat_Synced_OpenMenu(),
+        buttonAction: () => configMenu.Api.OpenModMenu(modManifest));
+
+    header.AddToConfigMenu(configMenu.Api, configMenu.Manifest);
     return configMenu;
   }
 

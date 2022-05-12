@@ -23,6 +23,10 @@ internal static class ModRegistry {
     return SmapiModRegistry.IsLoaded(modId);
   }
 
+  internal static IManifest? GetModManifest(string modId) {
+    return SmapiModRegistry.Get(modId)?.Manifest;
+  }
+
   internal static Texture2D? LoadImageFromContentPack(string modId, string assetPath) {
     return LoadExternalAsset<IContentPack, Texture2D>(modId, assetPath);
   }
