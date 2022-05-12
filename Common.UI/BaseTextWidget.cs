@@ -13,12 +13,24 @@ internal abstract class BaseTextWidget : BaseWidget {
 
     protected enum FontSize { Regular, Small }
 
+    protected override int SingleLineWidth => (int) this.MeasureSingleLine(this.Text).X;
+    protected override int SingleLineHeight { get; }
+
+    private static readonly Dictionary<FontSize, int> LineHeights = new();
+
     private readonly SpriteFont Font;
     private readonly bool DrawShadow;
 
     protected Simple(FontSize fontSize, bool drawShadow, bool wrapLines) : base(wrapLines) {
       this.Font = (fontSize == FontSize.Small) ? Game1.smallFont : Game1.dialogueFont;
       this.DrawShadow = drawShadow;
+
+      if (!LineHeights.ContainsKey(fontSize)) {
+        // This widget's line height should only depend on the font size that it specified.
+        LineHeights.Add(fontSize, (int) this.MeasureSingleLine("This text is irrelevant!").Y);
+      }
+
+      this.SingleLineHeight = LineHeights[fontSize];
     }
 
     internal override sealed Vector2 MeasureSingleLine(string text) {
@@ -38,16 +50,14 @@ internal abstract class BaseTextWidget : BaseWidget {
   }
 
   protected abstract string Text { get; }
+  protected abstract int SingleLineWidth { get; }
+  protected abstract int SingleLineHeight { get; }
 
-  private int SingleLineWidth => (int) this.MeasureSingleLine(this.Text).X;
-
-  private readonly int SingleLineHeight;
   private readonly bool WrapLines;
 
   private string[]? SplitLines;
 
   protected BaseTextWidget(bool wrapLines = false) {
-    this.SingleLineHeight = (int) this.MeasureSingleLine("_").Y;
     this.WrapLines = wrapLines;
   }
 
@@ -75,13 +85,13 @@ internal abstract class BaseTextWidget : BaseWidget {
     }
   }
 
-  private IEnumerable<string> GetSplitLines(int maxWidth) {
+  private IEnumerable<string> GetSplitLines(int maxLineWidth) {
     string currentLine = "";
 
     foreach (string word in this.Text.Split(' ')) {
       string possibleLine = $"{currentLine} {word}".Trim();
 
-      if (this.MeasureSingleLine(possibleLine).X > maxWidth) {
+      if (this.MeasureSingleLine(possibleLine).X > maxLineWidth) {
         yield return currentLine;
         currentLine = word;
       } else {

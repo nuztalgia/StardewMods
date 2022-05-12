@@ -2,13 +2,13 @@ using System;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal sealed class DynamicText : BaseTextWidget.Simple {
+internal class DynamicText : BaseTextWidget.Simple {
 
   protected override string Text => this.GetText();
 
   private readonly Func<string> GetText;
 
-  private DynamicText(Func<string> getText, FontSize fontSize, bool drawShadow, bool wrapLines)
+  protected DynamicText(Func<string> getText, FontSize fontSize, bool drawShadow, bool wrapLines)
       : base(fontSize, drawShadow, wrapLines) {
     this.GetText = getText;
   }
