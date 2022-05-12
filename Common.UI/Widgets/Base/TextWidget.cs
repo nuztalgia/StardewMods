@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal abstract partial class BaseWidget {
+internal abstract partial class Widget {
 
-  internal abstract partial class Text : BaseWidget {
+  internal abstract partial class Text : Widget {
 
     protected abstract string RawText { get; }
     protected abstract int SingleLineWidth { get; }

@@ -2,7 +2,7 @@ using System;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class DynamicText : BaseWidget.Text.SpriteFont {
+internal class DynamicText : Widget.Text.SpriteFont {
 
   protected override string RawText => this.GetText();
 

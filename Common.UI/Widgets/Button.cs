@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class Button : BaseWidget {
+internal class Button : Widget {
 
   private const int HorizontalPadding = 32;
   private const int VerticalPadding = 16;

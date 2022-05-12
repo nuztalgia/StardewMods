@@ -1,6 +1,6 @@
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class StaticText : BaseWidget.Text.SpriteFont {
+internal class StaticText : Widget.Text.SpriteFont {
 
   protected override string RawText { get; }
 

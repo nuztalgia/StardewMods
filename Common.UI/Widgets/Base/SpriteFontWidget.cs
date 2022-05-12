@@ -7,9 +7,9 @@ using SFont = Microsoft.Xna.Framework.Graphics.SpriteFont;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal abstract partial class BaseWidget {
+internal abstract partial class Widget {
 
-  internal abstract partial class Text : BaseWidget {
+  internal abstract partial class Text : Widget {
 
     internal abstract class SpriteFont : Text {
 

@@ -4,9 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal abstract partial class BaseWidget {
+internal abstract partial class Widget {
 
-  internal abstract class Option<TValue> : BaseWidget where TValue : IEquatable<TValue> {
+  internal abstract class Option<TValue> : Widget where TValue : IEquatable<TValue> {
 
     protected TValue Value { get; private set; }
 

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class Slider : BaseWidget.Option<int> {
+internal class Slider : Widget.Option<int> {
 
   private const int RawBarWidth = 10;
   private const int RawBarHeight = 6;

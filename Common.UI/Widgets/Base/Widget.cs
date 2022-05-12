@@ -7,7 +7,7 @@ using StardewValley;
 
 namespace Nuztalgia.StardewMods.Common.UI; 
 
-internal abstract partial class BaseWidget {
+internal abstract partial class Widget {
 
   internal enum Alignment {
     None, Left, Right
@@ -38,7 +38,7 @@ internal abstract partial class BaseWidget {
   protected int Width { get; private set; }
   protected int Height { get; private set; }
 
-  protected BaseWidget(
+  protected Widget(
       string? name = null,
       string? tooltip = null,
       Interaction? interaction = null,

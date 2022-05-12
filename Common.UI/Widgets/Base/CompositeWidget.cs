@@ -5,14 +5,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal abstract partial class BaseWidget {
+internal abstract partial class Widget {
 
-  internal abstract class Composite : BaseWidget {
+  internal abstract class Composite : Widget {
 
     protected delegate void AdjustPosition(ref Vector2 position, int widgetWidth, int widgetHeight);
 
     private readonly record struct SubWidget(
-        BaseWidget Widget,
+        Widget Widget,
         AdjustPosition? PreDraw,
         AdjustPosition? PostDraw
     );
@@ -20,13 +20,13 @@ internal abstract partial class BaseWidget {
     private readonly List<SubWidget> SubWidgets = new();
 
     protected void AddSubWidget(
-        BaseWidget widget, AdjustPosition? preDraw = null, AdjustPosition? postDraw = null) {
+        Widget widget, AdjustPosition? preDraw = null, AdjustPosition? postDraw = null) {
       this.SubWidgets.Add(new SubWidget(widget, preDraw, postDraw));
     }
 
     protected override sealed (int width, int height) UpdateDimensions(int totalWidth) {
       int maxHeight = DefaultHeight;
-      this.ForEachWidget((BaseWidget widget) => {
+      this.ForEachWidget((Widget widget) => {
         (widget.Width, widget.Height) = widget.UpdateDimensions(totalWidth);
         maxHeight = Math.Max(widget.Height, maxHeight);
       });
@@ -42,14 +42,14 @@ internal abstract partial class BaseWidget {
     }
 
     protected override sealed void ResetState() {
-      this.ForEachWidget((BaseWidget widget) => widget.ResetState());
+      this.ForEachWidget((Widget widget) => widget.ResetState());
     }
 
     protected override sealed void SaveState() {
-      this.ForEachWidget((BaseWidget widget) => widget.SaveState());
+      this.ForEachWidget((Widget widget) => widget.SaveState());
     }
 
-    private void ForEachWidget(Action<BaseWidget> action) {
+    private void ForEachWidget(Action<Widget> action) {
       this.SubWidgets.ForEach((SubWidget subWidget) => action(subWidget.Widget));
     }
   }
