@@ -35,7 +35,7 @@ internal class Button : Widget.Composite {
     }
 
     protected override void Draw(SpriteBatch sb, Vector2 position) {
-      sb.DrawFromCursors(position, SourceRect, this.Width, this.Height, this.TintColor);
+      this.DrawFromCursors(sb, position, SourceRect, color: this.TintColor);
     }
   }
 
@@ -56,11 +56,11 @@ internal class Button : Widget.Composite {
     (int textWidth, int textHeight) = ((int) measuredText.X, (int) measuredText.Y);
 
     Background background = new(
-      clickAction: clickAction,
-      textWidth: textWidth,
-      textHeight: textHeight,
-      targetWidth: Math.Clamp(textWidth + PaddingX, minWidth ?? 0, maxWidth ?? int.MaxValue),
-      targetHeight: Math.Clamp(textHeight + PaddingY, minHeight ?? 0, maxHeight ?? int.MaxValue));
+        clickAction: clickAction,
+        textWidth: textWidth,
+        textHeight: textHeight,
+        targetWidth: Math.Clamp(textWidth + PaddingX, minWidth ?? 0, maxWidth ?? int.MaxValue),
+        targetHeight: Math.Clamp(textHeight + PaddingY, minHeight ?? 0, maxHeight ?? int.MaxValue));
 
     this.AddSubWidget(background,
         postDraw: (ref Vector2 position, int _, int _) => position += background.TextOffset);

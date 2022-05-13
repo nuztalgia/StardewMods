@@ -14,7 +14,6 @@ internal abstract partial class Widget {
   }
 
   protected const int DefaultHeight = 48;
-  protected const int PixelZoom = Game1.pixelZoom;
 
   private const int MinTotalWidth = 1200;
   private const int ViewportPadding = 200;
@@ -35,8 +34,8 @@ internal abstract partial class Widget {
   private readonly Interaction? Interaction;
   private readonly Alignment AlignmentX;
 
-  protected int Width { get; private set; }
-  protected int Height { get; private set; }
+  private int Width;
+  private int Height;
 
   protected Widget(
       string? name = null,
@@ -74,7 +73,7 @@ internal abstract partial class Widget {
 
   protected abstract void Draw(SpriteBatch sb, Vector2 position);
 
-  internal void InternalDraw(SpriteBatch sb, Vector2 position) {
+  private void InternalDraw(SpriteBatch sb, Vector2 position) {
     if (this.AlignmentX == Alignment.Left) {
       position.X -= LeftAdjustment;
     } else if (this.AlignmentX == Alignment.Right) {

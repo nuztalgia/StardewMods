@@ -13,7 +13,7 @@ internal class Slider : Widget.Composite {
 
     private const int ScaledBarWidth = RawBarWidth * PixelZoom;
     private const int ScaledBarHeight = RawBarHeight * PixelZoom;
-    private const int ScaledPadding = ScaledBarHeight / 2;
+    private const int ScaledPadding = (DefaultHeight - ScaledBarHeight) / 2;
 
     private static readonly Rectangle BarSourceRect = new(420, 441, RawBarWidth, RawBarHeight);
     private static readonly Rectangle TrackSourceRect = new(403, 383, 6, RawBarHeight);
@@ -68,11 +68,11 @@ internal class Slider : Widget.Composite {
 
     protected override void DrawOption(SpriteBatch sb, Vector2 position) {
       position.Y += ScaledPadding;
-      sb.DrawFromCursors(position, TrackSourceRect, TrackWidth, ScaledBarHeight);
+      this.DrawFromCursors(sb, position, TrackSourceRect, height: ScaledBarHeight);
 
       float valuePercent = (this.Value - this.MinValue) / (float) (this.MaxValue - this.MinValue);
       position.X += valuePercent * (TrackWidth - ScaledBarWidth);
-      sb.DrawFromCursors(position, BarSourceRect);
+      this.DrawFromCursors(sb, position, BarSourceRect);
     }
   }
 
