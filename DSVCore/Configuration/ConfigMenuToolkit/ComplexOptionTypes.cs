@@ -9,6 +9,20 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class GMCMIntegrationExtensions {
 
+  internal static Integration AddDefaultSpacing(this Integration configMenu) {
+    new Spacing().AddToConfigMenu(configMenu.Api, configMenu.Manifest);
+    return configMenu;
+  }
+
+  internal static Integration AddStaticParagraph(this Integration configMenu, Func<string> getText) {
+    return configMenu.AddStaticParagraph(getText());
+  }
+
+  internal static Integration AddStaticParagraph(this Integration configMenu, string text) {
+    StaticText.CreateParagraph(text).AddToConfigMenu(configMenu.Api, configMenu.Manifest);
+    return configMenu;
+  }
+
   internal static Integration AddStaticHeader(this Integration configMenu, Func<string> getText) {
     return configMenu.AddStaticHeader(getText());
   }

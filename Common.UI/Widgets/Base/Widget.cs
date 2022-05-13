@@ -72,9 +72,7 @@ internal abstract partial class Widget {
 
   protected virtual void SaveState() { }
 
-  protected virtual (int width, int height) UpdateDimensions(int totalWidth) {
-    return (totalWidth, DefaultHeight);
-  }
+  protected abstract (int width, int height) UpdateDimensions(int totalWidth);
 
   protected abstract void Draw(SpriteBatch sb, Vector2 position);
 

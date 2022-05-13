@@ -46,13 +46,13 @@ internal sealed class ConfigMenuHelper {
 
     this.ConfigMenu
         .AddStaticHeader(I18n.Main_Intro_Title)
-        .AddParagraph(I18n.Main_Intro_Description)
+        .AddStaticParagraph(I18n.Main_Intro_Description)
         .AddPageLink(coreAndCompatPage.Name, $" > {coreAndCompatPage.GetDisplayName()}")
-        .AddSpacing()
+        .AddDefaultSpacing()
         .AddStaticHeader(I18n.Main_InstalledPacks_Title)
-        .AddParagraph(installedContentPackPages.Any()
-                      ? I18n.Main_InstalledPacks_Description
-                      : I18n.Main_InstalledPacks_None);
+        .AddStaticParagraph(installedContentPackPages.Any()
+            ? I18n.Main_InstalledPacks_Description
+            : I18n.Main_InstalledPacks_None);
 
     foreach (BaseContentPackPage contentPackPage in installedContentPackPages) {
       Log.Trace($"'{contentPackPage.GetDisplayName()}' pack is installed. Adding config menu.");
@@ -60,11 +60,11 @@ internal sealed class ConfigMenuHelper {
     }
 
     this.ConfigMenu
-        .AddSpacing()
+        .AddDefaultSpacing()
         .AddStaticHeader(I18n.Main_OtherPacks_Title)
-        .AddParagraph(otherContentPackPages.Any()
-                      ? I18n.Main_OtherPacks_Description
-                      : I18n.Main_OtherPacks_None);
+        .AddStaticParagraph(otherContentPackPages.Any()
+            ? I18n.Main_OtherPacks_Description
+            : I18n.Main_OtherPacks_None);
 
     foreach (BaseContentPackPage contentPackPage in otherContentPackPages) {
       Log.Trace($"'{contentPackPage.GetDisplayName()}' pack is *NOT* installed.");
@@ -79,21 +79,21 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu
         .AddPage(coreAndCompatPage.Name, coreAndCompatPage.GetDisplayName())
         .AddStaticHeader(coreOptions.GetDisplayName())
-        .AddParagraph(I18n.Core_Section_Description);
+        .AddStaticParagraph(I18n.Core_Section_Description);
 
     this.AddSectionOptions(coreOptions)
-        .AddSpacing();
+        .AddDefaultSpacing();
 
     foreach (BaseCompatSection section in compatSections) {
       this.ConfigMenu
           .AddCompatSectionHeader(section)
-          .AddParagraph(section.GetInfoText());
+          .AddStaticParagraph(section.GetInfoText());
 
       if (section is BaseSyncedCompatSection syncedSection) {
         this.ConfigMenu.AddCharacterThumbnails(
             syncedSection, this.GameContentHelper.Load<Texture2D>);
       } else {
-        this.AddSectionOptions(section).AddSpacing();
+        this.AddSectionOptions(section).AddDefaultSpacing();
       }
     }
 
@@ -102,7 +102,7 @@ internal sealed class ConfigMenuHelper {
         || (compatSections.Count() == 1 && compatSections.First().Name == "FlowerQueensCrown")) {
       this.ConfigMenu
           .AddStaticHeader(I18n.Compat_Placeholder_Title)
-          .AddParagraph(I18n.Compat_Placeholder_Description);
+          .AddStaticParagraph(I18n.Compat_Placeholder_Description);
     }
   }
 
@@ -118,7 +118,7 @@ internal sealed class ConfigMenuHelper {
               PreviewLabel,
               this.GameContentHelper.Load<Texture2D>,
               contentPackPage.GetImageLoader())
-          .AddSpacing();
+          .AddDefaultSpacing();
     }
   }
 
