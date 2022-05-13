@@ -15,12 +15,12 @@ internal abstract partial class Widget {
     private readonly Action<TValue>? OnValueChanged;
 
     protected Option(
+        Interaction interaction,
         Func<TValue> loadValue,
         Action<TValue> saveValue,
         Action<TValue>? onValueChanged = null,
         string? name = null,
-        string? tooltip = null,
-        Interaction? interaction = null)
+        string? tooltip = null)
             : base(name, tooltip, interaction) {
 
       this.Value = loadValue();

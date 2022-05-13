@@ -34,7 +34,7 @@ internal class Slider : Widget.Composite {
         Func<int>? getDynamicMinValue = null,
         Func<int>? getDynamicMaxValue = null,
         Action<int>? onValueChanged = null)
-            : base(loadValue, saveValue, onValueChanged, interaction: new Interaction.Draggable()) {
+            : base(new Interaction.Draggable(), loadValue, saveValue, onValueChanged) {
 
       this.GetMinValue = getDynamicMinValue;
       this.GetMaxValue = getDynamicMaxValue;

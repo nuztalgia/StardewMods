@@ -45,6 +45,15 @@ internal abstract partial class Widget {
     this.Alignment = alignment;
   }
 
+  protected Widget(string? name, string? tooltip, Alignment? alignment)
+      : this(name, tooltip, interaction: null, alignment) { }
+
+  protected Widget(Interaction interaction)
+      : this(name: null, tooltip: null, interaction, alignment: null) { }
+
+  protected Widget(Alignment? alignment)
+      : this(name: null, tooltip: null, interaction: null, alignment) { }
+
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
     gmcmApi.AddComplexOption(
         mod: modManifest,

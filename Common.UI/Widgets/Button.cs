@@ -16,7 +16,7 @@ internal class Button : Widget.Composite {
     private readonly int TargetHeight;
 
     internal Background(Action clickAction, int targetWidth, int targetHeight)
-        : base(interaction: new Interaction.Clickable(clickAction)) {
+        : base(new Interaction.Clickable(clickAction)) {
       this.TargetWidth = targetWidth;
       this.TargetHeight = targetHeight;
     }
