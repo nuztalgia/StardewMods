@@ -19,7 +19,9 @@ internal abstract partial class Widget {
 
     private readonly List<SubWidget> SubWidgets = new();
 
-    protected Composite(Alignment alignment = Alignment.None) : base(alignment: alignment) { }
+    protected Composite(
+        string? name = null, string? tooltip = null, Alignment alignment = Alignment.None)
+            : base(name, tooltip, alignment: alignment) { }
 
     protected void AddSubWidget(
         Widget widget, AdjustPosition? preDraw = null, AdjustPosition? postDraw = null) {

@@ -4,28 +4,77 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class Slider : Widget.Option<int> {
+internal class Slider : Widget.Composite {
 
-  private const int RawBarWidth = 10;
-  private const int RawBarHeight = 6;
+  private class TrackBar : Option<int> {
 
-  private const int ScaledBarWidth = RawBarWidth * PixelZoom;
-  private const int ScaledBarHeight = RawBarHeight * PixelZoom;
-  private const int ScaledPadding = ScaledBarHeight / 2;
+    private const int RawBarWidth = 10;
+    private const int RawBarHeight = 6;
 
-  private static readonly Rectangle BarSourceRect = new(420, 441, RawBarWidth, RawBarHeight);
-  private static readonly Rectangle TrackSourceRect = new(403, 383, 6, RawBarHeight);
+    private const int ScaledBarWidth = RawBarWidth * PixelZoom;
+    private const int ScaledBarHeight = RawBarHeight * PixelZoom;
+    private const int ScaledPadding = ScaledBarHeight / 2;
 
-  private static int TrackWidth;
-  private static int TextOffset;
+    private static readonly Rectangle BarSourceRect = new(420, 441, RawBarWidth, RawBarHeight);
+    private static readonly Rectangle TrackSourceRect = new(403, 383, 6, RawBarHeight);
 
-  private readonly DynamicText Label;
+    private static int TrackWidth;
 
-  private readonly Func<int>? GetMinValue;
-  private readonly Func<int>? GetMaxValue;
+    private readonly Func<int>? GetMinValue;
+    private readonly Func<int>? GetMaxValue;
 
-  private int MinValue;
-  private int MaxValue;
+    private int MinValue;
+    private int MaxValue;
+
+    public TrackBar(
+        Func<int> loadValue,
+        Action<int> saveValue,
+        int? staticMinValue = null,
+        int? staticMaxValue = null,
+        Func<int>? getDynamicMinValue = null,
+        Func<int>? getDynamicMaxValue = null,
+        Action<int>? onValueChanged = null)
+            : base(loadValue, saveValue, onValueChanged, interaction: new Interaction.Draggable()) {
+
+      this.GetMinValue = getDynamicMinValue;
+      this.GetMaxValue = getDynamicMaxValue;
+      this.MinValue = staticMinValue ?? int.MinValue;
+      this.MaxValue = staticMaxValue ?? int.MaxValue;
+    }
+
+    protected override (int width, int height) UpdateDimensions(int totalWidth) {
+      TrackWidth = totalWidth / 3;
+      return (TrackWidth, DefaultHeight);
+    }
+
+    protected override int UpdateValue(Vector2 position) {
+      if (this.GetMinValue != null) {
+        this.MinValue = this.GetMinValue();
+      }
+
+      if (this.GetMaxValue != null) {
+        this.MaxValue = this.GetMaxValue();
+      }
+
+      return this.IsDragging
+          ? Math.Clamp(GetValueByMousePosition(), this.MinValue, this.MaxValue)
+          : this.Value;
+
+      int GetValueByMousePosition() {
+        float mousePositionPercent = (this.MousePosition.X - position.X) / TrackWidth;
+        return (int) (mousePositionPercent * (this.MaxValue - this.MinValue)) + this.MinValue;
+      }
+    }
+
+    protected override void DrawOption(SpriteBatch sb, Vector2 position) {
+      position.Y += ScaledPadding;
+      sb.DrawFromCursors(position, TrackSourceRect, TrackWidth, ScaledBarHeight);
+
+      float valuePercent = (this.Value - this.MinValue) / (float) (this.MaxValue - this.MinValue);
+      position.X += valuePercent * (TrackWidth - ScaledBarWidth);
+      sb.DrawFromCursors(position, BarSourceRect);
+    }
+  }
 
   internal Slider(
       string name,
@@ -37,51 +86,21 @@ internal class Slider : Widget.Option<int> {
       Func<int>? getDynamicMaxValue = null,
       Action<int>? onValueChanged = null,
       Func<int, string>? valueToString = null,
-      string? tooltip = null)
-          : base(name, loadValue, saveValue, onValueChanged, tooltip, new Interaction.Draggable()) {
+      string? tooltip = null) : base(name, tooltip) {
 
-    this.Label = DynamicText.CreateOptionLabel(
-        (valueToString == null) ? () => this.Value.ToString() : () => valueToString(this.Value));
+    TrackBar trackBar = new(
+        loadValue, saveValue,
+        staticMinValue, staticMaxValue,
+        getDynamicMinValue, getDynamicMaxValue,
+        onValueChanged);
 
-    this.GetMinValue = getDynamicMinValue;
-    this.GetMaxValue = getDynamicMaxValue;
-    this.MinValue = staticMinValue ?? int.MinValue;
-    this.MaxValue = staticMaxValue ?? int.MaxValue;
-  }
+    DynamicText label = DynamicText.CreateOptionLabel(
+        (valueToString == null)
+            ? () => trackBar.Value.ToString()
+            : () => valueToString(trackBar.Value));
 
-  protected override (int width, int height) UpdateDimensions(int totalWidth) {
-    TrackWidth = totalWidth / 3;
-    TextOffset = TrackWidth + (ScaledPadding * 2);
-    return (TrackWidth, DefaultHeight);
-  }
-
-  protected override int UpdateValue(Vector2 position) {
-    if (this.GetMinValue != null) {
-      this.MinValue = this.GetMinValue();
-    }
-
-    if (this.GetMaxValue != null) {
-      this.MaxValue = this.GetMaxValue();
-    }
-
-    return this.IsDragging
-        ? Math.Clamp(GetValueByMousePosition(), this.MinValue, this.MaxValue)
-        : this.Value;
-
-    int GetValueByMousePosition() {
-      float mousePositionPercent = (this.MousePosition.X - position.X) / TrackWidth;
-      return (int) (mousePositionPercent * (this.MaxValue - this.MinValue)) + this.MinValue;
-    }
-  }
-
-  protected override void DrawOption(SpriteBatch sb, Vector2 position) {
-    sb.DrawWidget(this.Label, new(position.X + TextOffset, position.Y));
-
-    position.Y += ScaledPadding;
-    sb.DrawFromCursors(position, TrackSourceRect, TrackWidth, ScaledBarHeight);
-
-    float valuePercent = (this.Value - this.MinValue) / (float) (this.MaxValue - this.MinValue);
-    position.X += valuePercent * (TrackWidth - ScaledBarWidth);
-    sb.DrawFromCursors(position, BarSourceRect);
+    this.AddSubWidget(trackBar,
+        postDraw: (ref Vector2 position, int width, int _) => position.X += width + 24);
+    this.AddSubWidget(label);
   }
 }

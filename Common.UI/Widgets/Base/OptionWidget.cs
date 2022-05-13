@@ -8,17 +8,17 @@ internal abstract partial class Widget {
 
   internal abstract class Option<TValue> : Widget where TValue : IEquatable<TValue> {
 
-    protected TValue Value { get; private set; }
+    internal TValue Value { get; private set; }
 
     private readonly Func<TValue> LoadValue;
     private readonly Action<TValue> SaveValue;
     private readonly Action<TValue>? OnValueChanged;
 
     protected Option(
-        string name,
         Func<TValue> loadValue,
         Action<TValue> saveValue,
         Action<TValue>? onValueChanged = null,
+        string? name = null,
         string? tooltip = null,
         Interaction? interaction = null)
             : base(name, tooltip, interaction) {
