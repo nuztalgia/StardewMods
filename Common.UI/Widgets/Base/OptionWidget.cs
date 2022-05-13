@@ -8,7 +8,7 @@ internal abstract partial class Widget {
 
   internal abstract class Option<TValue> : Widget where TValue : IEquatable<TValue> {
 
-    internal TValue Value { get; private set; }
+    internal TValue Value { get; private protected set; }
 
     private readonly Func<TValue> LoadValue;
     private readonly Action<TValue> SaveValue;
@@ -34,14 +34,11 @@ internal abstract partial class Widget {
       this.OnValueChanged = onValueChanged;
     }
 
-    protected abstract TValue UpdateValue(Vector2 position);
-
     protected abstract void DrawOption(SpriteBatch sb, Vector2 position);
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
       TValue previousValue = this.Value;
 
-      this.Value = this.UpdateValue(position);
       this.DrawOption(sb, position);
 
       if (!previousValue.Equals(this.Value)) {

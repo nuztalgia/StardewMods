@@ -20,13 +20,10 @@ internal class Slider : Widget.Composite {
 
     private static int TrackWidth;
 
-    private readonly Func<int>? GetMinValue;
-    private readonly Func<int>? GetMaxValue;
+    private readonly Func<int> GetMinValue;
+    private readonly Func<int> GetMaxValue;
 
-    private int MinValue;
-    private int MaxValue;
-
-    public TrackBar(
+    internal TrackBar(
         Func<int> loadValue,
         Action<int> saveValue,
         int? staticMinValue = null,
@@ -36,10 +33,8 @@ internal class Slider : Widget.Composite {
         Action<int>? onValueChanged = null)
             : base(new Interaction.Draggable(), loadValue, saveValue, onValueChanged) {
 
-      this.GetMinValue = getDynamicMinValue;
-      this.GetMaxValue = getDynamicMaxValue;
-      this.MinValue = staticMinValue ?? int.MinValue;
-      this.MaxValue = staticMaxValue ?? int.MaxValue;
+      this.GetMinValue = getDynamicMinValue ?? (() => staticMinValue ?? int.MinValue);
+      this.GetMaxValue = getDynamicMaxValue ?? (() => staticMaxValue ?? int.MaxValue);
     }
 
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
@@ -47,30 +42,20 @@ internal class Slider : Widget.Composite {
       return (TrackWidth, DefaultHeight);
     }
 
-    protected override int UpdateValue(Vector2 position) {
-      if (this.GetMinValue != null) {
-        this.MinValue = this.GetMinValue();
-      }
-
-      if (this.GetMaxValue != null) {
-        this.MaxValue = this.GetMaxValue();
-      }
-
-      return this.IsDragging
-          ? Math.Clamp(GetValueByMousePosition(), this.MinValue, this.MaxValue)
-          : this.Value;
-
-      int GetValueByMousePosition() {
-        float mousePositionPercent = (this.MousePosition.X - position.X) / TrackWidth;
-        return (int) (mousePositionPercent * (this.MaxValue - this.MinValue)) + this.MinValue;
-      }
-    }
-
     protected override void DrawOption(SpriteBatch sb, Vector2 position) {
+      (int min, int max) = (this.GetMinValue(), this.GetMaxValue());
+      (min, max) = (Math.Min(min, max), Math.Max(min, max));
+      float valueRange = max - min;
+
+      if (this.IsDragging) {
+        float mousePositionPercent = (this.MousePosition.X - position.X) / TrackWidth;
+        this.Value = Math.Clamp((int) (mousePositionPercent * valueRange) + min, min, max);
+      }
+
       position.Y += ScaledPadding;
       this.DrawFromCursors(sb, position, TrackSourceRect, height: ScaledBarHeight);
 
-      float valuePercent = (this.Value - this.MinValue) / (float) (this.MaxValue - this.MinValue);
+      float valuePercent = (this.Value - min) / valueRange;
       position.X += valuePercent * (TrackWidth - ScaledBarWidth);
       this.DrawFromCursors(sb, position, BarSourceRect);
     }
