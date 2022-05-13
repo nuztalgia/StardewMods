@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\SpriteFontWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\TextWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\Widget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Utils\Alignment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Utils\Drawing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Utils\Interaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Button.cs" />

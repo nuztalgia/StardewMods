@@ -20,7 +20,7 @@ internal abstract partial class Widget {
     private readonly List<SubWidget> SubWidgets = new();
 
     protected Composite(
-        string? name = null, string? tooltip = null, Alignment alignment = Alignment.None)
+        string? name = null, string? tooltip = null, Alignment? alignment = null)
             : base(name, tooltip, alignment: alignment) { }
 
     protected void AddSubWidget(
@@ -41,7 +41,7 @@ internal abstract partial class Widget {
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
       foreach (var (widget, preDraw, postDraw) in this.SubWidgets) {
         preDraw?.Invoke(ref position, widget.Width, widget.Height);
-        widget.InternalDraw(sb, position);
+        widget.Draw(sb, position, this.Width, this.Height);
         postDraw?.Invoke(ref position, widget.Width, widget.Height);
       }
     }

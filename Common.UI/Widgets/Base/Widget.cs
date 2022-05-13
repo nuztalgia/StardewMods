@@ -9,10 +9,6 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract partial class Widget {
 
-  internal enum Alignment {
-    None, Left, Right
-  }
-
   protected const int DefaultHeight = 48;
 
   private const int MinTotalWidth = 1200;
@@ -32,7 +28,7 @@ internal abstract partial class Widget {
   private readonly string Name;
   private readonly string? Tooltip;
   private readonly Interaction? Interaction;
-  private readonly Alignment AlignmentX;
+  private readonly Alignment? Alignment;
 
   private int Width;
   private int Height;
@@ -41,19 +37,19 @@ internal abstract partial class Widget {
       string? name = null,
       string? tooltip = null,
       Interaction? interaction = null,
-      Alignment alignment = Alignment.None) {
+      Alignment? alignment = null) {
 
     this.Name = name ?? string.Empty;
     this.Tooltip = tooltip;
     this.Interaction = interaction;
-    this.AlignmentX = alignment;
+    this.Alignment = alignment;
   }
 
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
     gmcmApi.AddComplexOption(
         mod: modManifest,
         name: () => this.Name,
-        draw: this.InternalDraw,
+        draw: (sb, position) => this.Draw(sb, position, null, null),
         tooltip: (this.Tooltip is null) ? null : () => this.Tooltip,
         beforeMenuOpened: this.OnMenuOpening,
         beforeMenuClosed: this.RefreshStateAndSize,
@@ -73,12 +69,12 @@ internal abstract partial class Widget {
 
   protected abstract void Draw(SpriteBatch sb, Vector2 position);
 
-  private void InternalDraw(SpriteBatch sb, Vector2 position) {
-    if (this.AlignmentX == Alignment.Left) {
-      position.X -= LeftAdjustment;
-    } else if (this.AlignmentX == Alignment.Right) {
-      position.X += RightAdjustment - this.Width;
-    }
+  private void Draw(
+      SpriteBatch sb, Vector2 position, int? containerWidth = null, int? containerHeight = null) {
+    this.Alignment?.Align(
+        ref position, this.Width, this.Height,
+        containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
+        LeftAdjustment, RightAdjustment);
     this.Interaction?.Update(new((int) position.X, (int) position.Y, this.Width, this.Height));
     this.Draw(sb, position);
   }

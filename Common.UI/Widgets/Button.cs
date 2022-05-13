@@ -12,26 +12,17 @@ internal class Button : Widget.Composite {
 
     private Color TintColor => this.IsHovering ? Color.Wheat : Color.White;
 
-    private readonly int TextWidth;
-    private readonly int TextHeight;
     private readonly int TargetWidth;
     private readonly int TargetHeight;
 
-    internal Vector2 TextOffset;
-
-    internal Background(
-        Action clickAction, int textWidth, int textHeight, int targetWidth, int targetHeight)
-            : base(interaction: new Interaction.Clickable(clickAction)) {
-      this.TextWidth = textWidth;
-      this.TextHeight = textHeight;
+    internal Background(Action clickAction, int targetWidth, int targetHeight)
+        : base(interaction: new Interaction.Clickable(clickAction)) {
       this.TargetWidth = targetWidth;
       this.TargetHeight = targetHeight;
     }
 
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
-      (int width, int height) = (Math.Min(totalWidth, this.TargetWidth), this.TargetHeight);
-      this.TextOffset = new Vector2(width - this.TextWidth, height - this.TextHeight) / 2;
-      return (width, height);
+      return (Math.Min(totalWidth, this.TargetWidth), this.TargetHeight);
     }
 
     protected override void Draw(SpriteBatch sb, Vector2 position) {
@@ -45,7 +36,7 @@ internal class Button : Widget.Composite {
   internal Button(
       string labelText,
       Action clickAction,
-      Alignment alignment = Alignment.None,
+      Alignment? alignment = null,
       int? minWidth = null,
       int? minHeight = null,
       int? maxWidth = null,
@@ -57,13 +48,10 @@ internal class Button : Widget.Composite {
 
     Background background = new(
         clickAction: clickAction,
-        textWidth: textWidth,
-        textHeight: textHeight,
         targetWidth: Math.Clamp(textWidth + PaddingX, minWidth ?? 0, maxWidth ?? int.MaxValue),
         targetHeight: Math.Clamp(textHeight + PaddingY, minHeight ?? 0, maxHeight ?? int.MaxValue));
 
-    this.AddSubWidget(background,
-        postDraw: (ref Vector2 position, int _, int _) => position += background.TextOffset);
+    this.AddSubWidget(background);
     this.AddSubWidget(label);
   }
 }

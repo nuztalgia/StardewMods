@@ -23,7 +23,7 @@ internal abstract partial class Widget {
       private readonly SFont Font;
       private readonly bool DrawShadow;
 
-      protected SpriteFont(FontSize fontSize, Alignment alignment, bool wrapLines, bool drawShadow)
+      protected SpriteFont(FontSize fontSize, Alignment? alignment, bool wrapLines, bool drawShadow)
           : base(alignment, wrapLines) {
         this.Font = (fontSize == FontSize.Small) ? Game1.smallFont : Game1.dialogueFont;
         this.DrawShadow = drawShadow;

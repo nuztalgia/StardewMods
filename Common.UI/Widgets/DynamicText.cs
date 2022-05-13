@@ -11,7 +11,7 @@ internal class DynamicText : Widget.Text.SpriteFont {
   protected DynamicText(
       Func<string> getText,
       FontSize fontSize,
-      Alignment alignment,
+      Alignment? alignment,
       bool wrapLines,
       bool drawShadow)
           : base(fontSize, alignment, wrapLines, drawShadow) {
@@ -19,6 +19,6 @@ internal class DynamicText : Widget.Text.SpriteFont {
   }
 
   internal static DynamicText CreateOptionLabel(Func<string> getText) {
-    return new(getText, FontSize.Regular, Alignment.None, wrapLines: false, drawShadow: true);
+    return new(getText, FontSize.Regular, alignment: null, wrapLines: false, drawShadow: true);
   }
 }

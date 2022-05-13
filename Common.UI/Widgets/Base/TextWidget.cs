@@ -18,7 +18,7 @@ internal abstract partial class Widget {
 
     private string[]? SplitLines;
 
-    protected Text(Alignment alignment, bool wrapLines) : base(alignment: alignment) {
+    protected Text(Alignment? alignment, bool wrapLines) : base(alignment: alignment) {
       this.WrapLines = wrapLines;
     }
 

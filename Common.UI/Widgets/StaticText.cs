@@ -7,7 +7,7 @@ internal class StaticText : Widget.Text.SpriteFont {
   protected StaticText(
       string text,
       FontSize fontSize,
-      Alignment alignment,
+      Alignment? alignment,
       bool wrapLines,
       bool drawShadow)
           : base(fontSize, alignment, wrapLines, drawShadow) {
@@ -15,6 +15,6 @@ internal class StaticText : Widget.Text.SpriteFont {
   }
 
   internal static StaticText CreateButtonLabel(string text) {
-    return new(text, FontSize.Small, Alignment.None, wrapLines: false, drawShadow: false);
+    return new(text, FontSize.Small, Alignment.Center, wrapLines: false, drawShadow: false);
   }
 }
