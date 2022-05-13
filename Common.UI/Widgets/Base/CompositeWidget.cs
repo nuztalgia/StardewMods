@@ -19,18 +19,21 @@ internal abstract partial class Widget {
 
     private readonly List<SubWidget> SubWidgets = new();
 
+    protected Composite(Alignment alignment = Alignment.None) : base(alignment: alignment) { }
+
     protected void AddSubWidget(
         Widget widget, AdjustPosition? preDraw = null, AdjustPosition? postDraw = null) {
       this.SubWidgets.Add(new SubWidget(widget, preDraw, postDraw));
     }
 
     protected override sealed (int width, int height) UpdateDimensions(int totalWidth) {
-      int maxHeight = DefaultHeight;
+      (int maxWidth, int maxHeight) = (0, 0);
       this.ForEachWidget((Widget widget) => {
         (widget.Width, widget.Height) = widget.UpdateDimensions(totalWidth);
+        maxWidth = Math.Max(widget.Width, maxWidth);
         maxHeight = Math.Max(widget.Height, maxHeight);
       });
-      return (totalWidth, maxHeight);
+      return (maxWidth, maxHeight);
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
