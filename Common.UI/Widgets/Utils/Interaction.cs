@@ -5,59 +5,63 @@ using StardewValley;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal abstract class Interaction {
+internal interface IHoverable {
+  bool IsHovering { get; set; }
+}
 
-  internal sealed class Clickable : Interaction {
-    internal bool IsHovering { get; private set; }
+internal interface IClickable {
+  Action ClickAction { get; init; }
+  string? ClickSoundName => null;
+}
 
-    private readonly Action ClickAction;
-    private readonly string? ClickSoundName;
+internal interface IDraggable {
+  bool IsDragging { get; set; }
+}
 
-    public Clickable(Action clickAction, string? clickSoundName = null) {
-      this.ClickAction = clickAction;
-      this.ClickSoundName = clickSoundName;
-    }
+internal abstract partial class Widget {
 
-    protected override void Update(ButtonState oldButtonState, bool isHovering, Point _) {
-      if (isHovering && (oldButtonState == ButtonState.Pressed)
-          && (this.MouseButtonState == ButtonState.Released)) {
-        TryPlaySound(this.ClickSoundName);
-        this.ClickAction();
+  protected static int MousePositionX;
+  protected static int MousePositionY;
+
+  private record Interaction(IHoverable? Hoverable, IClickable? Clickable, IDraggable? Draggable) {
+
+    private ButtonState MouseButtonState;
+
+    internal void Update(Vector2 position, int width, int height) {
+      MousePositionX = Game1.getOldMouseX();
+      MousePositionY = Game1.getOldMouseY();
+
+      bool isHovering = (position.X < MousePositionX) && (MousePositionX < (position.X + width))
+          && (position.Y < MousePositionY) && (MousePositionY < (position.Y + height));
+
+      if (this.Hoverable != null) {
+        this.Hoverable.IsHovering = isHovering;
       }
-      this.IsHovering = isHovering;
-    }
-  }
 
-  internal sealed class Draggable : Interaction {
-    internal Point MousePosition { get; private set; }
-    internal bool IsDragging { get; private set; }
+      ButtonState oldMouseButtonState = this.MouseButtonState;
+      this.MouseButtonState = Mouse.GetState().LeftButton;
 
-    protected override void Update(
-        ButtonState oldButtonState, bool isHovering, Point mousePosition) {
-      if (this.MouseButtonState == ButtonState.Released) {
-        this.IsDragging = false;
-      } else if (isHovering && (oldButtonState == ButtonState.Released)) {
-        this.IsDragging = true;
+      if (this.Clickable != null) {
+        if (isHovering && (oldMouseButtonState == ButtonState.Pressed)
+            && (this.MouseButtonState == ButtonState.Released)) {
+          TryPlaySound(this.Clickable.ClickSoundName);
+          this.Clickable.ClickAction();
+        }
       }
-      this.MousePosition = mousePosition;
+
+      if (this.Draggable != null) {
+        if (this.MouseButtonState == ButtonState.Released) {
+          this.Draggable.IsDragging = false;
+        } else if (isHovering && (oldMouseButtonState == ButtonState.Released)) {
+          this.Draggable.IsDragging = true;
+        }
+      }
     }
-  }
 
-  private ButtonState MouseButtonState;
-
-  internal void Update(Rectangle interactionArea) {
-    ButtonState oldButtonState = this.MouseButtonState;
-    this.MouseButtonState = Mouse.GetState().LeftButton;
-
-    Point mousePosition = new(Game1.getOldMouseX(), Game1.getOldMouseY());
-    this.Update(oldButtonState, interactionArea.Contains(mousePosition), mousePosition);
-  }
-
-  protected abstract void Update(ButtonState oldButtonState, bool isHovering, Point mousePosition);
-
-  protected static void TryPlaySound(string? soundName) {
-    if (soundName != null) {
-      Game1.playSound(soundName);
+    private static void TryPlaySound(string? soundName) {
+      if (soundName != null) {
+        Game1.playSound(soundName);
+      }
     }
   }
 }

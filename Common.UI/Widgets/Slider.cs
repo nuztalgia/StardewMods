@@ -6,7 +6,7 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Slider : Widget.Composite {
 
-  private class TrackBar : Option<int> {
+  private class TrackBar : Option<int>, IDraggable {
 
     private const int RawBarWidth = 10;
     private const int RawBarHeight = 6;
@@ -20,6 +20,8 @@ internal class Slider : Widget.Composite {
 
     private static int TrackWidth;
 
+    public bool IsDragging { get; set; }
+
     private readonly Func<int> GetMinValue;
     private readonly Func<int> GetMaxValue;
 
@@ -31,7 +33,7 @@ internal class Slider : Widget.Composite {
         Func<int>? getDynamicMinValue = null,
         Func<int>? getDynamicMaxValue = null,
         Action<int>? onValueChanged = null)
-            : base(new Interaction.Draggable(), loadValue, saveValue, onValueChanged) {
+            : base(loadValue, saveValue, onValueChanged) {
 
       this.GetMinValue = getDynamicMinValue ?? (() => staticMinValue ?? int.MinValue);
       this.GetMaxValue = getDynamicMaxValue ?? (() => staticMaxValue ?? int.MaxValue);
@@ -48,8 +50,8 @@ internal class Slider : Widget.Composite {
       float valueRange = max - min;
 
       if (this.IsDragging) {
-        float mousePositionPercent = (this.MousePosition.X - position.X) / TrackWidth;
-        this.Value = Math.Clamp((int) (mousePositionPercent * valueRange) + min, min, max);
+        float mouseValue = (MousePositionX - position.X) / TrackWidth * valueRange;
+        this.Value = Math.Clamp((int) mouseValue + min, min, max);
       }
 
       position.Y += ScaledPadding;

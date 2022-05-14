@@ -6,17 +6,21 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Button : Widget.Composite {
 
-  private class Background : Widget {
+  private class Background : Widget, IClickable, IHoverable {
 
     private static readonly Rectangle SourceRect = new(432, 439, 9, 9);
 
+    public Action ClickAction { get; init; }
+    public string ClickSoundName => "wand";
+
+    public bool IsHovering { get; set; }
     private Color TintColor => this.IsHovering ? Color.Wheat : Color.White;
 
     private readonly int TargetWidth;
     private readonly int TargetHeight;
 
-    internal Background(Action clickAction, int targetWidth, int targetHeight)
-        : base(new Interaction.Clickable(clickAction)) {
+    internal Background(Action clickAction, int targetWidth, int targetHeight) {
+      this.ClickAction = clickAction;
       this.TargetWidth = targetWidth;
       this.TargetHeight = targetHeight;
     }

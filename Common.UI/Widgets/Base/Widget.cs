@@ -20,39 +20,25 @@ internal abstract partial class Widget {
   private static int LeftAdjustment;
   private static int RightAdjustment;
 
-  // The widget's Interaction must have been set appropriately in order to use these without error.
-  protected bool IsHovering => (this.Interaction as Interaction.Clickable)!.IsHovering;
-  protected bool IsDragging => (this.Interaction as Interaction.Draggable)!.IsDragging;
-  protected Point MousePosition => (this.Interaction as Interaction.Draggable)!.MousePosition;
-
   private readonly string Name;
   private readonly string? Tooltip;
-  private readonly Interaction? Interaction;
-  private readonly Alignment? Alignment;
+  private readonly Alignment? Alignable;
+  private readonly Interaction? Interactable;
 
   private int Width;
   private int Height;
 
-  protected Widget(
-      string? name = null,
-      string? tooltip = null,
-      Interaction? interaction = null,
-      Alignment? alignment = null) {
-
+  protected Widget(string? name = null, string? tooltip = null, Alignment? alignment = null) {
     this.Name = name ?? string.Empty;
     this.Tooltip = tooltip;
-    this.Interaction = interaction;
-    this.Alignment = alignment;
+    this.Alignable = alignment;
+
+    if (this is IHoverable or IClickable or IDraggable) {
+      this.Interactable = new(this as IHoverable, this as IClickable, this as IDraggable);
+    }
   }
 
-  protected Widget(string? name, string? tooltip, Alignment? alignment)
-      : this(name, tooltip, interaction: null, alignment) { }
-
-  protected Widget(Interaction interaction)
-      : this(name: null, tooltip: null, interaction, alignment: null) { }
-
-  protected Widget(Alignment? alignment)
-      : this(name: null, tooltip: null, interaction: null, alignment) { }
+  protected Widget(Alignment? alignment) : this(name: null, tooltip: null, alignment) { }
 
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
     gmcmApi.AddComplexOption(
@@ -78,11 +64,11 @@ internal abstract partial class Widget {
 
   private void Draw(
       SpriteBatch sb, Vector2 position, int? containerWidth = null, int? containerHeight = null) {
-    this.Alignment?.Align(
+    this.Alignable?.Align(
         ref position, this.Width, this.Height,
         containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
         LeftAdjustment, RightAdjustment);
-    this.Interaction?.Update(new((int) position.X, (int) position.Y, this.Width, this.Height));
+    this.Interactable?.Update(position, this.Width, this.Height);
     this.Draw(sb, position);
   }
 
