@@ -132,8 +132,8 @@ internal sealed class ConfigMenuHelper {
           break;
         }
         case bool: {
-          this.ConfigMenu.AddBoolOption(
-              section, item.Property, optionName, item.Tooltip, item.UniqueId);
+          this.ConfigMenu.AddCheckbox(
+              section, item.Property, optionName, item.Tooltip, item.UniqueId, OnFieldChanged);
           break;
         }
         case int value: {

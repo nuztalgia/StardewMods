@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Utils\Drawing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Utils\Interaction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Button.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Checkbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\DynamicText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Header.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Slider.cs" />

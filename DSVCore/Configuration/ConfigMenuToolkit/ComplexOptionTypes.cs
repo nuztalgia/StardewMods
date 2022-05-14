@@ -48,6 +48,26 @@ internal static class GMCMIntegrationExtensions {
     return configMenu;
   }
 
+  internal static Integration AddCheckbox(
+      this Integration configMenu,
+      BaseMenuSection section,
+      PropertyInfo property,
+      string optionName,
+      string tooltip,
+      string fieldId,
+      Action<string, object> onValueChanged) {
+
+    Checkbox checkbox = new(
+        name: optionName,
+        tooltip: tooltip,
+        loadValue: () => (bool) property.GetValue(section)!,
+        saveValue: (bool value) => property.SetValue(section, value),
+        onValueChanged: (newValue) => onValueChanged(fieldId, newValue));
+
+    checkbox.AddToConfigMenu(configMenu.Api, configMenu.Manifest);
+    return configMenu;
+  }
+
   internal static Integration AddSlider(
       this Integration configMenu,
       BaseMenuSection section,
