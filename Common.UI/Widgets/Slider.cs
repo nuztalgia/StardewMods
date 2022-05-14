@@ -6,7 +6,7 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Slider : Widget.Composite {
 
-  private class TrackBar : Option<int>, IDraggable {
+  private class TrackBar : OptionWidget<int>, IDraggable {
 
     private const int RawBarWidth = 10;
     private const int RawBarHeight = 6;
@@ -22,6 +22,8 @@ internal class Slider : Widget.Composite {
 
     public bool IsDragging { get; set; }
 
+    internal readonly Func<string> ValueToString;
+
     private readonly Func<int> GetMinValue;
     private readonly Func<int> GetMaxValue;
 
@@ -32,8 +34,13 @@ internal class Slider : Widget.Composite {
         int? staticMaxValue = null,
         Func<int>? getDynamicMinValue = null,
         Func<int>? getDynamicMaxValue = null,
+        Func<int, string>? valueToString = null,
         Action<int>? onValueChanged = null)
             : base(loadValue, saveValue, onValueChanged) {
+
+      this.ValueToString = (valueToString == null)
+          ? () => this.Value.ToString()
+          : () => valueToString(this.Value);
 
       this.GetMinValue = getDynamicMinValue ?? (() => staticMinValue ?? int.MinValue);
       this.GetMaxValue = getDynamicMaxValue ?? (() => staticMaxValue ?? int.MaxValue);
@@ -44,7 +51,7 @@ internal class Slider : Widget.Composite {
       return (TrackWidth, DefaultHeight);
     }
 
-    protected override void DrawOption(SpriteBatch sb, Vector2 position) {
+    protected override void Draw(SpriteBatch sb, Vector2 position) {
       (int min, int max) = (this.GetMinValue(), this.GetMaxValue());
       (min, max) = (Math.Min(min, max), Math.Max(min, max));
       float valueRange = max - min;
@@ -71,23 +78,18 @@ internal class Slider : Widget.Composite {
       int? staticMaxValue = null,
       Func<int>? getDynamicMinValue = null,
       Func<int>? getDynamicMaxValue = null,
-      Action<int>? onValueChanged = null,
       Func<int, string>? valueToString = null,
+      Action<int>? onValueChanged = null,
       string? tooltip = null) : base(name, tooltip) {
 
     TrackBar trackBar = new(
         loadValue, saveValue,
         staticMinValue, staticMaxValue,
         getDynamicMinValue, getDynamicMaxValue,
-        onValueChanged);
-
-    DynamicText label = DynamicText.CreateOptionLabel(
-        (valueToString == null)
-            ? () => trackBar.Value.ToString()
-            : () => valueToString(trackBar.Value));
+        valueToString, onValueChanged);
 
     this.AddSubWidget(trackBar,
         postDraw: (ref Vector2 position, int width, int _) => position.X += width + 24);
-    this.AddSubWidget(label);
+    this.AddSubWidget(DynamicText.CreateOptionLabel(trackBar.ValueToString));
   }
 }
