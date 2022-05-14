@@ -5,7 +5,7 @@ using StardewValley.BellsAndWhistles;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal class Header : Widget.Text {
+internal class Header : TextWidget {
 
   internal class WithButton : Composite {
     internal WithButton(string headerText, string buttonText, Action buttonAction) {
