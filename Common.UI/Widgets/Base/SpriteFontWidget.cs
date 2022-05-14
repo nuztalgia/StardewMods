@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -7,39 +6,31 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract class SpriteFontWidget : TextWidget {
 
-  protected enum FontSize { Regular, Small }
+  protected enum Font { Regular, Small }
 
-  protected override int SingleLineWidth => (int) this.MeasureSingleLine(this.RawText).X;
-  protected override int SingleLineHeight { get; }
+  protected override int LineHeight { get; }
+  protected override MeasureWidth MeasureTextWidth { get; }
 
-  private static readonly Dictionary<FontSize, int> LineHeights = new();
-
-  private readonly SpriteFont Font;
+  private readonly SpriteFont SpriteFont;
   private readonly bool DrawShadow;
 
-  protected SpriteFontWidget(FontSize fontSize, Alignment? alignment, bool wrapLines, bool drawShadow)
-      : base(alignment, wrapLines) {
-    this.Font = (fontSize == FontSize.Small) ? Game1.smallFont : Game1.dialogueFont;
+  protected SpriteFontWidget(Font font, bool drawShadow, bool wrapLines, Alignment? alignment)
+      : base(wrapLines, alignment) {
+
+    this.SpriteFont = (font == Font.Small) ? Game1.smallFont : Game1.dialogueFont;
     this.DrawShadow = drawShadow;
 
-    if (!LineHeights.ContainsKey(fontSize)) {
-      // This widget's line height should only depend on the font size that it specified.
-      LineHeights.Add(fontSize, (int) this.MeasureSingleLine("This text is irrelevant!").Y);
-    }
-
-    this.SingleLineHeight = LineHeights[fontSize];
-  }
-
-  internal override sealed Vector2 MeasureSingleLine(string text) {
-    return this.Font.MeasureString(text);
+    // This type of widget's LineHeight is purely based on the Font that was specified.
+    this.LineHeight = (int) this.SpriteFont.MeasureString("This text is irrelevant!").Y;
+    this.MeasureTextWidth = (string text) => (int) this.SpriteFont.MeasureString(text).X;
   }
 
   protected override sealed void Draw(SpriteBatch sb, Vector2 position, string text) {
     if (this.DrawShadow) {
-      Utility.drawTextWithShadow(sb, text, this.Font, position, Game1.textColor);
+      Utility.drawTextWithShadow(sb, text, this.SpriteFont, position, Game1.textColor);
     } else {
       sb.DrawString(
-          this.Font, text, position, Game1.textColor,
+          this.SpriteFont, text, position, Game1.textColor,
           rotation: 0f, origin: Vector2.Zero, scale: 1f,
           effects: SpriteEffects.None, layerDepth: 1f);
     }

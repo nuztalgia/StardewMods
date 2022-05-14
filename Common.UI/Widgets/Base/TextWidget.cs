@@ -8,19 +8,19 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract class TextWidget : Widget {
 
+  protected delegate int MeasureWidth(string text);
+
   protected abstract string RawText { get; }
-  protected abstract int SingleLineWidth { get; }
-  protected abstract int SingleLineHeight { get; }
+  protected abstract int LineHeight { get; }
+  protected abstract MeasureWidth MeasureTextWidth { get; }
 
   private readonly bool WrapLines;
 
   private string[]? SplitLines;
 
-  protected TextWidget(Alignment? alignment, bool wrapLines) : base(alignment) {
+  protected TextWidget(bool wrapLines, Alignment? alignment) : base(alignment) {
     this.WrapLines = wrapLines;
   }
-
-  internal abstract Vector2 MeasureSingleLine(string text);
 
   protected abstract void Draw(SpriteBatch sb, Vector2 position, string text);
 
@@ -30,17 +30,18 @@ internal abstract class TextWidget : Widget {
     } else {
       foreach (string line in this.SplitLines) {
         this.Draw(sb, position, line);
-        position.Y += this.SingleLineHeight;
+        position.Y += this.LineHeight;
       }
     }
   }
 
   protected override sealed (int width, int height) UpdateDimensions(int totalWidth) {
-    if (this.WrapLines && (this.SingleLineWidth > totalWidth)) {
+    int singleLineWidth = this.MeasureTextWidth(this.RawText);
+    if (this.WrapLines && (singleLineWidth > totalWidth)) {
       this.SplitLines = this.GetSplitLines(totalWidth).ToArray();
-      return (totalWidth, this.SplitLines.Length * this.SingleLineHeight);
+      return (totalWidth, this.SplitLines.Length * this.LineHeight);
     } else {
-      return (Math.Min(this.SingleLineWidth, totalWidth), this.SingleLineHeight);
+      return (Math.Min(singleLineWidth, totalWidth), this.LineHeight);
     }
   }
 
@@ -50,7 +51,7 @@ internal abstract class TextWidget : Widget {
     foreach (string word in this.RawText.Split(' ')) {
       string possibleLine = $"{currentLine} {word}".Trim();
 
-      if (this.MeasureSingleLine(possibleLine).X > maxLineWidth) {
+      if (this.MeasureTextWidth(possibleLine) > maxLineWidth) {
         yield return currentLine;
         currentLine = word;
       } else {

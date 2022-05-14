@@ -11,21 +11,18 @@ internal class Header : TextWidget {
     internal WithButton(string headerText, string buttonText, Action buttonAction) {
       this.AddSubWidget(new Header(headerText),
           postDraw: (ref Vector2 position, int _, int _) => position.Y -= 4);
-      this.AddSubWidget(new Button(buttonText, buttonAction, Alignment.Right));
+      this.AddSubWidget(new Button(buttonText, buttonAction, alignment: Alignment.Right));
     }
   }
 
   protected override string RawText { get; }
-  protected override int SingleLineWidth => int.MaxValue; // Always fill the available width.
-  protected override int SingleLineHeight { get; }
+  protected override int LineHeight { get; }
+  protected override MeasureWidth MeasureTextWidth { get; }
 
   internal Header(string text) : base(alignment: Alignment.Left, wrapLines: false) {
     this.RawText = text;
-    this.SingleLineHeight = SpriteText.getHeightOfString(text);
-  }
-
-  internal override Vector2 MeasureSingleLine(string text) {
-    return new(SpriteText.getWidthOfString(text), SpriteText.getHeightOfString(text));
+    this.LineHeight = SpriteText.getHeightOfString(text);
+    this.MeasureTextWidth = (string text) => SpriteText.getWidthOfString(text);
   }
 
   protected override void Draw(SpriteBatch sb, Vector2 position, string text) {

@@ -12,7 +12,7 @@ internal class Checkbox : OptionWidget<bool>, IClickable {
   private static readonly Rectangle CheckedSourceRect = new(236, 425, RawBoxSize, RawBoxSize);
   private static readonly Rectangle UncheckedSourceRect = new(227, 425, RawBoxSize, RawBoxSize);
 
-  public Action ClickAction { get; init; }
+  public Action ClickAction { get; }
   public string ClickSoundName => "drumkit6";
 
   internal Checkbox(
@@ -30,6 +30,6 @@ internal class Checkbox : OptionWidget<bool>, IClickable {
   }
 
   protected override void Draw(SpriteBatch sb, Vector2 position) {
-    this.DrawFromCursors(sb, position, this.Value ? CheckedSourceRect : UncheckedSourceRect);
+    DrawFromCursors(sb, position, this.Value ? CheckedSourceRect : UncheckedSourceRect);
   }
 }

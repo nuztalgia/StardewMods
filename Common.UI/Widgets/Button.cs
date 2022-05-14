@@ -10,8 +10,8 @@ internal class Button : Widget.Composite {
 
     private static readonly Rectangle SourceRect = new(432, 439, 9, 9);
 
-    public Action ClickAction { get; init; }
-    public string ClickSoundName => "wand";
+    public Action ClickAction { get; }
+    public string ClickSoundName => "bigSelect";
 
     public bool IsHovering { get; set; }
     private Color TintColor => this.IsHovering ? Color.Wheat : Color.White;
@@ -40,15 +40,14 @@ internal class Button : Widget.Composite {
   internal Button(
       string labelText,
       Action clickAction,
-      Alignment? alignment = null,
       int? minWidth = null,
       int? minHeight = null,
       int? maxWidth = null,
-      int? maxHeight = null) : base(alignment: alignment) {
+      int? maxHeight = null,
+      Alignment? alignment = null) : base(alignment) {
 
     StaticText label = StaticText.CreateButtonLabel(labelText);
-    Vector2 measuredText = label.MeasureSingleLine(labelText);
-    (int textWidth, int textHeight) = ((int) measuredText.X, (int) measuredText.Y);
+    (int textWidth, int textHeight) = GetTextDimensions(label);
 
     Background background = new(
         clickAction: clickAction,

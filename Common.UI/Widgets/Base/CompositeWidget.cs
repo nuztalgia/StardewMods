@@ -22,6 +22,8 @@ internal abstract partial class Widget {
     protected Composite(string? name = null, string? tooltip = null, Alignment? alignment = null)
         : base(name, tooltip, alignment) { }
 
+    protected Composite(Alignment? alignment) : this(name: null, tooltip: null, alignment) { }
+
     protected void AddSubWidget(
         Widget widget, AdjustPosition? preDraw = null, AdjustPosition? postDraw = null) {
       this.SubWidgets.Add(new SubWidget(widget, preDraw, postDraw));
@@ -51,6 +53,10 @@ internal abstract partial class Widget {
 
     protected override sealed void SaveState() {
       this.ForEachWidget((Widget widget) => widget.SaveState());
+    }
+
+    protected static (int width, int height) GetTextDimensions(TextWidget textWidget) {
+      return textWidget.UpdateDimensions(int.MaxValue);
     }
 
     private void ForEachWidget(Action<Widget> action) {

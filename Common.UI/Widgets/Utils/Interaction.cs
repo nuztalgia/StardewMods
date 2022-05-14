@@ -10,7 +10,7 @@ internal interface IHoverable {
 }
 
 internal interface IClickable {
-  Action ClickAction { get; init; }
+  Action ClickAction { get; }
   string? ClickSoundName => null;
 }
 

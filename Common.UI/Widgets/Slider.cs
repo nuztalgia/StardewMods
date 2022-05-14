@@ -66,7 +66,7 @@ internal class Slider : Widget.Composite {
 
       float valuePercent = (this.Value - min) / valueRange;
       position.X += valuePercent * (TrackWidth - ScaledBarWidth);
-      this.DrawFromCursors(sb, position, BarSourceRect);
+      DrawFromCursors(sb, position, BarSourceRect);
     }
   }
 
