@@ -14,7 +14,7 @@ internal class Image : Widget {
         Alignment? alignment = null) : base(alignment, LinearMode.Vertical) {
 
       this.AddSubWidget(new Image(sourceImage, sourceRect, scale, Alignment.CenterX));
-      this.AddSubWidget(new Spacing(height: 8));
+      this.AddSubWidget(Spacing.CreateVertical(height: 8));
       this.AddSubWidget(StaticText.CreateImageCaption(caption));
     }
   }

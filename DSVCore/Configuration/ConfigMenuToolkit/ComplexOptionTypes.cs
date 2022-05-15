@@ -10,7 +10,7 @@ namespace Nuztalgia.StardewMods.DSVCore;
 internal static class GMCMIntegrationExtensions {
 
   internal static Integration AddDefaultSpacing(this Integration configMenu) {
-    new Spacing().AddToConfigMenu(configMenu.Api, configMenu.Manifest);
+    Spacing.DefaultVertical.AddToConfigMenu(configMenu.Api, configMenu.Manifest);
     return configMenu;
   }
 

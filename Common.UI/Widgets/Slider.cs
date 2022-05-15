@@ -80,7 +80,7 @@ internal class Slider : Widget.Composite {
       Func<int>? getDynamicMaxValue = null,
       Func<int, string>? valueToString = null,
       Action<int>? onValueChanged = null,
-      string? tooltip = null) : base(name, tooltip) {
+      string? tooltip = null) : base(name, tooltip, LinearMode.Horizontal) {
 
     TrackBar trackBar = new(
         loadValue, saveValue,
@@ -88,8 +88,8 @@ internal class Slider : Widget.Composite {
         getDynamicMinValue, getDynamicMaxValue,
         valueToString, onValueChanged);
 
-    this.AddSubWidget(trackBar,
-        postDraw: (ref Vector2 position, int width, int _) => position.X += width + 24);
+    this.AddSubWidget(trackBar);
+    this.AddSubWidget(Spacing.DefaultHorizontal);
     this.AddSubWidget(DynamicText.CreateOptionLabel(trackBar.ValueToString));
   }
 }

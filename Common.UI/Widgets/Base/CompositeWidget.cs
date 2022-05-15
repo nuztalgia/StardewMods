@@ -33,10 +33,11 @@ internal abstract partial class Widget {
       this.Mode = linearMode;
     }
 
-    protected Composite(Alignment? alignment, LinearMode linearMode)
-        : this(name: null, tooltip: null, alignment, linearMode) { }
+    protected Composite(string? name, string? tooltip, LinearMode linearMode)
+        : this(name, tooltip, alignment: null, linearMode) { }
 
-    protected Composite(Alignment? alignment) : this(name: null, tooltip: null, alignment) { }
+    protected Composite(Alignment? alignment, LinearMode linearMode = LinearMode.Off)
+        : this(name: null, tooltip: null, alignment, linearMode) { }
 
     protected void AddSubWidget(
         Widget widget, AdjustPosition? preDraw = null, AdjustPosition? postDraw = null) {
