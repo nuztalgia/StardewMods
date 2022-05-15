@@ -11,7 +11,11 @@ internal class StaticText : SpriteFontWidget {
   }
 
   internal static StaticText CreateButtonLabel(string text) {
-    return new(text, Font.Small, drawShadow: false, wrapLines: false, Alignment.Center);
+    return new(text, Font.Small, drawShadow: false, wrapLines: false, Alignment.CenterXY);
+  }
+
+  internal static StaticText CreateImageCaption(string text) {
+    return new(text, Font.Regular, drawShadow: true, wrapLines: false, Alignment.CenterX);
   }
 
   internal static StaticText CreateParagraph(string text) {

@@ -14,7 +14,8 @@ internal class Alignment {
 
   internal static readonly Alignment Left = new(AlignmentX.Left, AlignmentY.None);
   internal static readonly Alignment Right = new(AlignmentX.Right, AlignmentY.None);
-  internal static readonly Alignment Center = new(AlignmentX.Center, AlignmentY.Center);
+  internal static readonly Alignment CenterX = new(AlignmentX.Center, AlignmentY.None);
+  internal static readonly Alignment CenterXY = new(AlignmentX.Center, AlignmentY.Center);
 
   private readonly AlignmentX AlignX;
   private readonly AlignmentY AlignY;
@@ -30,17 +31,21 @@ internal class Alignment {
       int height,
       int containerWidth,
       int containerHeight,
-      int? leftAdjustment = null,
-      int? rightAdjustment = null) {
+      int leftAdjustment,
+      int rightAdjustment,
+      bool isRoot) {
 
     switch (this.AlignX) {
       case AlignmentX.Left:
-        position.X -= leftAdjustment ?? (containerWidth / 2);
+        position.X -= leftAdjustment;
         break;
       case AlignmentX.Right:
-        position.X += (rightAdjustment ?? (containerWidth / 2)) - width;
+        position.X += rightAdjustment - width;
         break;
       case AlignmentX.Center:
+        if (isRoot) {
+          position.X -= containerWidth / 2;
+        }
         position.X += (containerWidth - width) / 2;
         break;
     }

@@ -9,6 +9,10 @@ internal abstract partial class Widget {
 
   internal abstract class Composite : Widget {
 
+    protected enum LinearMode {
+      Off, Horizontal, Vertical
+    }
+
     protected delegate void AdjustPosition(ref Vector2 position, int widgetWidth, int widgetHeight);
 
     private readonly record struct SubWidget(
@@ -18,9 +22,19 @@ internal abstract partial class Widget {
     );
 
     private readonly List<SubWidget> SubWidgets = new();
+    private readonly LinearMode Mode;
 
-    protected Composite(string? name = null, string? tooltip = null, Alignment? alignment = null)
-        : base(name, tooltip, alignment) { }
+    protected Composite(
+        string? name = null,
+        string? tooltip = null,
+        Alignment? alignment = null,
+        LinearMode linearMode = LinearMode.Off)
+            : base(name, tooltip, alignment) {
+      this.Mode = linearMode;
+    }
+
+    protected Composite(Alignment? alignment, LinearMode linearMode)
+        : this(name: null, tooltip: null, alignment, linearMode) { }
 
     protected Composite(Alignment? alignment) : this(name: null, tooltip: null, alignment) { }
 
@@ -30,13 +44,19 @@ internal abstract partial class Widget {
     }
 
     protected override sealed (int width, int height) UpdateDimensions(int totalWidth) {
-      (int maxWidth, int maxHeight) = (0, 0);
+      (int width, int height) = (0, 0);
       this.ForEachWidget((Widget widget) => {
         (widget.Width, widget.Height) = widget.UpdateDimensions(totalWidth);
-        maxWidth = Math.Max(widget.Width, maxWidth);
-        maxHeight = Math.Max(widget.Height, maxHeight);
+
+        width = (this.Mode == LinearMode.Horizontal)
+            ? width + widget.Width
+            : Math.Max(width, widget.Width);
+
+        height = (this.Mode == LinearMode.Vertical)
+            ? height + widget.Height
+            : Math.Max(height, widget.Height);
       });
-      return (maxWidth, maxHeight);
+      return (width, height);
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
@@ -44,6 +64,12 @@ internal abstract partial class Widget {
         preDraw?.Invoke(ref position, widget.Width, widget.Height);
         widget.Draw(sb, position, this.Width, this.Height);
         postDraw?.Invoke(ref position, widget.Width, widget.Height);
+
+        if (this.Mode == LinearMode.Horizontal) {
+          position.X += widget.Width;
+        } else if (this.Mode == LinearMode.Vertical) {
+          position.Y += widget.Height;
+        }
       }
     }
 

@@ -67,7 +67,7 @@ internal abstract partial class Widget {
     this.Alignable?.Align(
         ref position, this.Width, this.Height,
         containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
-        LeftAdjustment, RightAdjustment);
+        LeftAdjustment, RightAdjustment, (containerWidth == null) || (containerHeight == null));
     this.Interactable?.Update(position, this.Width, this.Height);
     this.Draw(sb, position);
   }

@@ -9,10 +9,15 @@ internal abstract partial class Widget {
 
   protected const int PixelZoom = Game1.pixelZoom;
 
-  protected static void DrawFromCursors(SpriteBatch sb, Vector2 position, Rectangle sourceRect) {
+  protected static void Draw(
+      SpriteBatch sb, Vector2 position, Texture2D texture, Rectangle sourceRect, int scale) {
     sb.Draw(
-        texture: Game1.mouseCursors, position, sourceRect, color: Color.White, rotation: 0f,
-        origin: Vector2.Zero, scale: PixelZoom, effects: SpriteEffects.None, layerDepth: 1f);
+        texture, position, sourceRect, color: Color.White, rotation: 0f,
+        origin: Vector2.Zero, scale, effects: SpriteEffects.None, layerDepth: 1f);
+  }
+
+  protected static void DrawFromCursors(SpriteBatch sb, Vector2 position, Rectangle sourceRect) {
+    Draw(sb, position, texture: Game1.mouseCursors, sourceRect, scale: PixelZoom);
   }
 
   protected void DrawFromCursors(
