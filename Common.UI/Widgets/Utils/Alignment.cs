@@ -16,6 +16,7 @@ internal class Alignment {
   internal static readonly Alignment Right = new(AlignmentX.Right, AlignmentY.None);
   internal static readonly Alignment CenterX = new(AlignmentX.Center, AlignmentY.None);
   internal static readonly Alignment CenterXY = new(AlignmentX.Center, AlignmentY.Center);
+  internal static readonly Alignment CenterY = new(AlignmentX.None, AlignmentY.Center);
 
   private readonly AlignmentX AlignX;
   private readonly AlignmentY AlignY;

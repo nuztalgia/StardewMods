@@ -14,6 +14,10 @@ internal class DynamicText : SpriteFontWidget {
     this.GetText = getText;
   }
 
+  internal static DynamicText CreateDropdownEntry(Func<string> getText) {
+    return new(getText, Font.Small, drawShadow: false, wrapLines: false, Alignment.CenterY);
+  }
+
   internal static DynamicText CreateOptionLabel(Func<string> getText) {
     return new(getText, Font.Regular, drawShadow: true, wrapLines: false);
   }
