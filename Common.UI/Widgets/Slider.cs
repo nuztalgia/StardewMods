@@ -22,28 +22,25 @@ internal class Slider : Widget.Composite {
 
     public bool IsDragging { get; set; }
 
-    internal readonly Func<string> ValueToString;
-
     private readonly Func<int> GetMinValue;
     private readonly Func<int> GetMaxValue;
 
     internal TrackBar(
         Func<int> loadValue,
         Action<int> saveValue,
+        Action<int>? onValueChanged = null,
         int? staticMinValue = null,
         int? staticMaxValue = null,
         Func<int>? getDynamicMinValue = null,
-        Func<int>? getDynamicMaxValue = null,
-        Func<int, string>? valueToString = null,
-        Action<int>? onValueChanged = null)
+        Func<int>? getDynamicMaxValue = null)
             : base(loadValue, saveValue, onValueChanged) {
-
-      this.ValueToString = (valueToString == null)
-          ? () => this.Value.ToString()
-          : () => valueToString(this.Value);
 
       this.GetMinValue = getDynamicMinValue ?? (() => staticMinValue ?? int.MinValue);
       this.GetMaxValue = getDynamicMaxValue ?? (() => staticMaxValue ?? int.MaxValue);
+    }
+
+    internal int GetValue() {
+      return this.Value;
     }
 
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
@@ -74,22 +71,25 @@ internal class Slider : Widget.Composite {
       string name,
       Func<int> loadValue,
       Action<int> saveValue,
+      Action<int>? onValueChanged = null,
       int? staticMinValue = null,
       int? staticMaxValue = null,
       Func<int>? getDynamicMinValue = null,
       Func<int>? getDynamicMaxValue = null,
-      Func<int, string>? valueToString = null,
-      Action<int>? onValueChanged = null,
+      Func<int, string>? formatValue = null,
       string? tooltip = null) : base(name, tooltip, LinearMode.Horizontal) {
 
     TrackBar trackBar = new(
-        loadValue, saveValue,
+        loadValue, saveValue, onValueChanged,
         staticMinValue, staticMaxValue,
-        getDynamicMinValue, getDynamicMaxValue,
-        valueToString, onValueChanged);
+        getDynamicMinValue, getDynamicMaxValue);
+
+    Func<string> getValueText = (formatValue == null)
+        ? () => trackBar.GetValue().ToString()
+        : () => formatValue(trackBar.GetValue());
 
     this.AddSubWidget(trackBar);
     this.AddSubWidget(Spacing.DefaultHorizontal);
-    this.AddSubWidget(DynamicText.CreateOptionLabel(trackBar.ValueToString));
+    this.AddSubWidget(DynamicText.CreateOptionLabel(getValueText));
   }
 }
