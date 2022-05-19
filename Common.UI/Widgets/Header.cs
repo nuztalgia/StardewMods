@@ -8,7 +8,9 @@ namespace Nuztalgia.StardewMods.Common.UI;
 internal class Header : TextWidget {
 
   internal class WithButton : Composite {
-    internal WithButton(string headerText, string buttonText, Action buttonAction) {
+
+    internal WithButton(string headerText, string buttonText, Action buttonAction)
+        : base(isFullWidth: true) {
       this.AddSubWidget(new Header(headerText),
           postDraw: (ref Vector2 position, int _, int _) => position.Y -= PixelZoom);
       this.AddSubWidget(new Button(buttonText, buttonAction, alignment: Alignment.Right));

@@ -23,14 +23,21 @@ internal abstract partial class Widget {
 
     private readonly List<SubWidget> SubWidgets = new();
     private readonly LinearMode Mode;
+    private readonly bool IsFullWidth;
+
+    protected int SubWidgetCount => this.SubWidgets.Count;
+    protected int CompositeWidth => this.Width;
+    protected int CompositeHeight => this.Height;
 
     protected Composite(
         string? name = null,
         string? tooltip = null,
         Alignment? alignment = null,
-        LinearMode linearMode = LinearMode.Off)
+        LinearMode linearMode = LinearMode.Off,
+        bool isFullWidth = false)
             : base(name, tooltip, alignment) {
       this.Mode = linearMode;
+      this.IsFullWidth = isFullWidth;
     }
 
     protected Composite(string? name, string? tooltip, LinearMode linearMode)
@@ -57,7 +64,7 @@ internal abstract partial class Widget {
             ? height + widget.Height
             : Math.Max(height, widget.Height);
       });
-      return (width, height);
+      return (this.IsFullWidth ? totalWidth : Math.Min(width, totalWidth), height);
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
@@ -74,11 +81,11 @@ internal abstract partial class Widget {
       }
     }
 
-    protected override sealed void ResetState() {
+    protected override void ResetState() {
       this.ForEachWidget((Widget widget) => widget.ResetState());
     }
 
-    protected override sealed void SaveState() {
+    protected override void SaveState() {
       this.ForEachWidget((Widget widget) => widget.SaveState());
     }
 
