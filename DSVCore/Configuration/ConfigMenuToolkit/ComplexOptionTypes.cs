@@ -90,21 +90,12 @@ internal static class GMCMIntegrationExtensions {
     return configMenu;
   }
 
-  internal static Integration AddCharacterPreview(
+  internal static Integration AddCharacterPreviews(
       this Integration configMenu,
-      BaseCharacterSection character,
+      CharacterConfigState characterState,
       string optionName,
-      CharacterConfigState.LoadImage loadGameImage,
-      CharacterConfigState.LoadImage loadModImage) {
+      string tooltip) {
 
-    var characterState = CharacterConfigState.Create(
-        character.Name,
-        loadGameImage,
-        loadModImage,
-        character.GetModImagePaths,
-        character.GetGameImagePaths,
-        character.GetPortraitRectsDelegate(),
-        character.GetSpriteRectsDelegate());
     CharacterPreviewImage characterPreview = new(characterState);
 
     configMenu.AddComplexOption(
@@ -113,10 +104,7 @@ internal static class GMCMIntegrationExtensions {
         drawAction: characterPreview.Draw,
         resetAction: characterState.ResetState,
         saveAction: characterState.SaveState,
-        tooltip: character.GetPreviewTooltip());
-
-    character.GetOptions().ForEach(item => CharacterConfigState.Update(item.UniqueId, item.Value));
-    characterState.SaveState();
+        tooltip: tooltip);
 
     return configMenu;
   }

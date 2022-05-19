@@ -112,12 +112,18 @@ internal sealed class ConfigMenuHelper {
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
       this.ConfigMenu.AddStaticHeader(character.GetDisplayName().CapitalizeFirstChar());
 
+      var characterState = CharacterConfigState.Create(
+          character.Name,
+          this.GameContentHelper.Load<Texture2D>,
+          contentPackPage.GetImageLoader(),
+          character.GetModImagePaths,
+          character.GetGameImagePaths,
+          character.GetPortraitRectsDelegate(),
+          character.GetSpriteRectsDelegate(),
+          character.GetOptions().Select(optionItem => (optionItem.UniqueId, optionItem.Value)));
+
       this.AddSectionOptions(character)
-          .AddCharacterPreview(
-              character,
-              PreviewLabel,
-              this.GameContentHelper.Load<Texture2D>,
-              contentPackPage.GetImageLoader())
+          .AddCharacterPreviews(characterState, PreviewLabel, character.GetPreviewTooltip())
           .AddDefaultSpacing();
     }
   }

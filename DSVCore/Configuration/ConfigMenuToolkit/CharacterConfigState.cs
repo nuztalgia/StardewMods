@@ -69,20 +69,20 @@ internal class CharacterConfigState {
       string characterName,
       LoadImage loadGameImage, LoadImage loadModImage,
       GetModImagePaths getModImagePaths, GetGameImagePaths getGameImagePaths,
-      GetImageRects? getPortraitRects, GetImageRects? getSpriteRects) {
+      GetImageRects? getPortraitRects, GetImageRects? getSpriteRects,
+      IEnumerable<(string fieldId, object? fieldValue)> initialValues) {
+
     Log.Verbose($"Initializing character config state for {characterName}.");
+
     CharacterConfigState characterState =
         new(loadGameImage, loadModImage, getModImagePaths,
             getGameImagePaths, getPortraitRects, getSpriteRects);
-    CharacterStates.Add(characterName, characterState);
-    return characterState;
-  }
 
-  internal static Texture2D[]? GetPortraitData(string characterName) {
-    return (CharacterStates.TryGetValue(characterName, out CharacterConfigState? characterState)
-            && (characterState.CurrentPortraits?.FirstOrDefault() is Texture2D[] portraitData))
-        ? portraitData
-        : null;
+    CharacterStates.Add(characterName, characterState);
+    initialValues.ForEach((string fieldId, object? fieldValue) => Update(fieldId, fieldValue));
+    characterState.SaveState();
+
+    return characterState;
   }
 
   internal static void Update(string fieldId, object? newValue) {
@@ -91,6 +91,13 @@ internal class CharacterConfigState {
     if (CharacterStates.TryGetValue(characterName, out CharacterConfigState? characterState)) {
       characterState.UpdateEphemeralState(stateKey, newValue);
     }
+  }
+
+  internal static Texture2D[]? GetPortraitData(string characterName) {
+    return (CharacterStates.TryGetValue(characterName, out CharacterConfigState? characterState)
+        && (characterState.CurrentPortraits?.FirstOrDefault() is Texture2D[] portraitData))
+            ? portraitData
+            : null;
   }
 
   internal void SaveState() {
