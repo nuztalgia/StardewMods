@@ -5,7 +5,9 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Spacing : Widget {
 
-  internal static readonly Spacing DefaultHorizontal = new(width: DefaultHeight / 2, height: 1);
+  private const int DefaultWidth = DefaultHeight / 2;
+
+  internal static readonly Spacing DefaultHorizontal = new(width: DefaultWidth, height: 1);
   internal static readonly Spacing DefaultVertical = new(width: 1, height: DefaultHeight);
 
   private readonly int Width;
@@ -16,12 +18,16 @@ internal class Spacing : Widget {
     this.Height = height;
   }
 
-  internal static Spacing CreateHorizontal(int width) {
-    return (width == DefaultHorizontal.Width) ? DefaultHorizontal : new Spacing(width, height: 1);
+  internal static Spacing CreateHorizontal(int? width = null) {
+    return (width is null or DefaultWidth)
+        ? DefaultHorizontal
+        : new Spacing((int) width, height: 1);
   }
 
-  internal static Spacing CreateVertical(int height) {
-    return (height == DefaultVertical.Height) ? DefaultVertical : new Spacing(width: 1, height);
+  internal static Spacing CreateVertical(int? height = null) {
+    return (height is null or DefaultHeight)
+        ? DefaultVertical
+        : new Spacing(width: 1, (int) height);
   }
 
   protected override (int width, int height) UpdateDimensions(int totalWidth) {

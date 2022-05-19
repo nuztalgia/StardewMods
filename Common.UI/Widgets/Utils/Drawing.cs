@@ -10,6 +10,13 @@ internal abstract partial class Widget {
   protected const int PixelZoom = Game1.pixelZoom;
 
   protected static void Draw(
+      SpriteBatch sb, Texture2D texture, Rectangle sourceRect, Rectangle destRect) {
+    sb.Draw(
+        texture, destRect, sourceRect, color: Color.White, rotation: 0f,
+        origin: Vector2.Zero, effects: SpriteEffects.None, layerDepth: 1f);
+  }
+
+  protected static void Draw(
       SpriteBatch sb, Vector2 position, Texture2D texture, Rectangle sourceRect, int scale) {
     sb.Draw(
         texture, position, sourceRect, color: Color.White, rotation: 0f,
