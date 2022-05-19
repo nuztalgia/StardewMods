@@ -12,13 +12,21 @@ internal static class Log {
     Monitor = monitor;
   }
 
-  internal static void Error(string message) => Monitor.Log(message, LogLevel.Error);
+  internal static void Error(string message) {
+    Monitor.Log(message, LogLevel.Error);
+  }
 
-  internal static void Warn(string message) => Monitor.Log(message, LogLevel.Warn);
+  internal static void Warn(string message) {
+    Monitor.Log(message, LogLevel.Warn);
+  }
 
-  internal static void Info(string message) => Monitor.Log(message, LogLevel.Info);
+  internal static void Info(string message) {
+    Monitor.Log(message, LogLevel.Info);
+  }
 
-  internal static void Debug(string message) => Monitor.Log(message, LogLevel.Debug);
+  internal static void Debug(string message) {
+    Monitor.Log(message, LogLevel.Debug);
+  }
 
   internal static void Trace(string message) {
 #if DEBUG
