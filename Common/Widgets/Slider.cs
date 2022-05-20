@@ -86,6 +86,6 @@ internal class Slider : Widget.Composite {
 
     this.AddSubWidget(trackBar);
     this.AddSubWidget(Spacing.DefaultHorizontal);
-    this.AddSubWidget(DynamicText.CreateOptionLabel(getValueText));
+    this.AddSubWidget(DynamicText.CreateSliderLabel(getValueText));
   }
 }

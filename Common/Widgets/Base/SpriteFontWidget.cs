@@ -13,7 +13,7 @@ internal abstract class SpriteFontWidget : TextWidget {
   protected SpriteFontWidget(Font font, bool drawShadow, bool wrapLines, Alignment? alignment)
       : base(wrapLines, alignment) {
 
-    this.SpriteFont = (font == Font.Small) ? Game1.smallFont : Game1.dialogueFont;
+    this.SpriteFont = GetSpriteFont(font);
     this.DrawShadow = drawShadow;
 
     // This type of widget's LineHeight is purely based on the Font that was specified.
@@ -30,5 +30,21 @@ internal abstract class SpriteFontWidget : TextWidget {
           rotation: 0f, origin: Vector2.Zero, scale: 1f,
           effects: SpriteEffects.None, layerDepth: 1f);
     }
+    this.PostDraw(sb);
+  }
+
+  protected virtual void PostDraw(SpriteBatch sb) { }
+
+  protected static string ParseText(string text, Font font, int width) {
+    text = text.Replace("\n", string.Empty);
+    return Game1.parseText(text, GetSpriteFont(font), width);
+  }
+
+  private static SpriteFont GetSpriteFont(Font font) {
+    return font switch {
+      Font.Regular => Game1.dialogueFont,
+      Font.Small => Game1.smallFont,
+      _ => throw new ArgumentException($"Invalid font: '{font}'.")
+    };
   }
 }

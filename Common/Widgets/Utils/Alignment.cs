@@ -30,16 +30,14 @@ internal class Alignment {
       int height,
       int containerWidth,
       int containerHeight,
-      int leftAdjustment,
-      int rightAdjustment,
       bool isRoot) {
 
     switch (this.AlignX) {
       case AlignmentX.Left:
-        position.X -= leftAdjustment;
+        position.X -= containerWidth / 2;
         break;
       case AlignmentX.Right:
-        position.X += rightAdjustment - width;
+        position.X += (containerWidth / 2) - width;
         break;
       case AlignmentX.Center:
         if (isRoot) {

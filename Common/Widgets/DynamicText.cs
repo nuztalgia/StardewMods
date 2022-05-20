@@ -7,7 +7,7 @@ internal class DynamicText : SpriteFontWidget {
   private readonly Func<string> GetText;
 
   protected DynamicText(
-      Func<string> getText, Font font, bool drawShadow, bool wrapLines, Alignment? alignment = null)
+      Func<string> getText, Font font, bool drawShadow, bool wrapLines, Alignment? alignment)
           : base(font, drawShadow, wrapLines, alignment) {
     this.GetText = getText;
   }
@@ -16,7 +16,7 @@ internal class DynamicText : SpriteFontWidget {
     return new(getText, Font.Small, drawShadow: false, wrapLines: false, Alignment.CenterY);
   }
 
-  internal static DynamicText CreateOptionLabel(Func<string> getText) {
-    return new(getText, Font.Regular, drawShadow: true, wrapLines: false);
+  internal static DynamicText CreateSliderLabel(Func<string> getText) {
+    return new(getText, Font.Regular, drawShadow: true, wrapLines: false, alignment: null);
   }
 }

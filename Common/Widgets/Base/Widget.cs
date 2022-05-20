@@ -10,11 +10,7 @@ internal abstract partial class Widget {
   private static int ViewportWidth;
   private static int TotalWidth;
 
-  private static int LeftAdjustment;
-  private static int RightAdjustment;
-
-  private readonly string Name;
-  private readonly string? Tooltip;
+  private readonly TextWidget? Label;
   private readonly Alignment? Alignable;
   private readonly Interaction? Interactable;
 
@@ -22,8 +18,10 @@ internal abstract partial class Widget {
   private int Height;
 
   protected Widget(string? name = null, string? tooltip = null, Alignment? alignment = null) {
-    this.Name = name ?? string.Empty;
-    this.Tooltip = tooltip;
+    if ((name != null) && (tooltip != null)) {
+      this.Label = StaticText.CreateWidgetLabel(labelText: name, tooltipText: tooltip);
+    }
+
     this.Alignable = alignment;
 
     if (this is IHoverable or IClickable or IDraggable) {
@@ -36,9 +34,8 @@ internal abstract partial class Widget {
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
     gmcmApi.AddComplexOption(
         mod: modManifest,
-        name: () => this.Name,
+        name: () => string.Empty,
         draw: (sb, position) => this.Draw(sb, position, null, null),
-        tooltip: (this.Tooltip is null) ? null : () => this.Tooltip,
         beforeMenuOpened: this.OnMenuOpening,
         beforeMenuClosed: this.RefreshStateAndSize,
         beforeReset: this.RefreshStateAndSize,
@@ -57,10 +54,11 @@ internal abstract partial class Widget {
 
   private void Draw(
       SpriteBatch sb, Vector2 position, int? containerWidth = null, int? containerHeight = null) {
+    this.Label?.Draw(sb, position, TotalWidth, this.Height);
     this.Alignable?.Align(
         ref position, this.Width, this.Height,
         containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
-        LeftAdjustment, RightAdjustment, (containerWidth == null) || (containerHeight == null));
+        (containerWidth == null) || (containerHeight == null));
     this.Interactable?.Update(position, this.Width, this.Height);
     this.Draw(sb, position);
   }
@@ -69,8 +67,6 @@ internal abstract partial class Widget {
     if (ViewportWidth != Game1.uiViewport.Width) {
       ViewportWidth = Game1.uiViewport.Width;
       TotalWidth = Math.Min(ViewportWidth - ViewportPadding, MinTotalWidth);
-      LeftAdjustment = (TotalWidth / 2) + 8;
-      RightAdjustment = (TotalWidth / 2) - 8;
     }
     this.RefreshStateAndSize();
   }
@@ -78,5 +74,10 @@ internal abstract partial class Widget {
   private void RefreshStateAndSize() {
     this.ResetState();
     (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
+
+    if (this.Label != null) {
+      (this.Label.Width, this.Label.Height) = this.Label.UpdateDimensions(TotalWidth);
+      this.Height = Math.Max(this.Height, DefaultHeight);
+    }
   }
 }
