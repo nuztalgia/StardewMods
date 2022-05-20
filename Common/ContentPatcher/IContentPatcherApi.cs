@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using StardewModdingAPI;
-
 namespace ContentPatcher;
 
 /// <summary>The Content Patcher API which other mods can access.</summary>

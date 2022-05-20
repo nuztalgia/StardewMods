@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.Common;
 
@@ -13,7 +8,7 @@ internal static class ModRegistryUtils {
   internal static IModRegistry SmapiModRegistry { get; private set; }
 #pragma warning restore CS8618
 
-  private readonly static Dictionary<string, IModContentHelper?> ContentHelperCache = new();
+  private static readonly Dictionary<string, IModContentHelper?> ContentHelperCache = new();
 
   internal static void Initialize(IModRegistry modRegistry) {
     SmapiModRegistry = modRegistry;

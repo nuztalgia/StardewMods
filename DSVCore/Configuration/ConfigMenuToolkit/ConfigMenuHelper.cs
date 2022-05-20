@@ -105,7 +105,7 @@ internal sealed class ConfigMenuHelper {
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
       this.ConfigMenu.AddStaticHeader(character.GetDisplayName().CapitalizeFirstChar());
 
-      var characterState = CharacterConfigState.Create(
+      CharacterConfigState characterState = CharacterConfigState.Create(
           character.Name,
           this.GameContentHelper.Load<Texture2D>,
           contentPackPage.GetImageLoader(),

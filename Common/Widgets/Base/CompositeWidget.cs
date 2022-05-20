@@ -8,12 +8,12 @@ internal abstract partial class Widget {
       Off, Horizontal, Vertical
     }
 
-    protected delegate void AdjustPosition(ref Vector2 position, int widgetWidth, int widgetHeight);
+    protected delegate void Adjustment(ref Vector2 position, int widgetWidth, int widgetHeight);
 
     private readonly record struct SubWidget(
         Widget Widget,
-        AdjustPosition? PreDraw,
-        AdjustPosition? PostDraw
+        Adjustment? PreDraw,
+        Adjustment? PostDraw
     );
 
     private readonly List<SubWidget> SubWidgets = new();
@@ -42,7 +42,7 @@ internal abstract partial class Widget {
         : this(name: null, tooltip: null, alignment, linearMode) { }
 
     protected void AddSubWidget(
-        Widget widget, AdjustPosition? preDraw = null, AdjustPosition? postDraw = null) {
+        Widget widget, Adjustment? preDraw = null, Adjustment? postDraw = null) {
       this.SubWidgets.Add(new SubWidget(widget, preDraw, postDraw));
     }
 
@@ -63,7 +63,7 @@ internal abstract partial class Widget {
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
-      foreach (var (widget, preDraw, postDraw) in this.SubWidgets) {
+      foreach ((Widget widget, Adjustment? preDraw, Adjustment? postDraw) in this.SubWidgets) {
         preDraw?.Invoke(ref position, widget.Width, widget.Height);
         widget.Draw(sb, position, this.Width, this.Height);
         postDraw?.Invoke(ref position, widget.Width, widget.Height);

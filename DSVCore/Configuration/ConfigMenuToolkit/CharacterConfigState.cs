@@ -145,7 +145,7 @@ internal class CharacterConfigState {
     }
 
     Texture2D[][] TryLoadImagesFromDirectory(string imageDirectory) {
-      var modImages = this.LoadModImages(imageDirectory);
+      Texture2D[][] modImages = this.LoadModImages(imageDirectory);
       return modImages.First().Any() ? modImages : this.LoadGameImages(imageDirectory);
     }
   }

@@ -1,4 +1,4 @@
-namespace Nuztalgia.StardewMods.Common.UI; 
+namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract partial class Widget {
 

@@ -6,9 +6,9 @@ internal class ImageGroup : Widget.Composite {
   private readonly Action? SaveAction;
   private readonly Spacing InnerPadding;
 
-  private readonly AdjustPosition? InitialPreDraw;
-  private readonly AdjustPosition? RegularPreDraw;
-  private readonly AdjustPosition? RegularPostDraw;
+  private readonly Adjustment? InitialPreDraw;
+  private readonly Adjustment? RegularPreDraw;
+  private readonly Adjustment? RegularPostDraw;
 
   private ImageGroup(
       string? name,

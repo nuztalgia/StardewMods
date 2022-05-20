@@ -82,7 +82,7 @@ internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {
       }
 
       private static IEnumerable<string[]> Combine(string[] firsts, string[] seconds) {
-        foreach (var (first, second) in firsts.Zip(seconds)) {
+        foreach ((string first, string second) in firsts.Zip(seconds)) {
           yield return new[] { first, second };
         }
       }
