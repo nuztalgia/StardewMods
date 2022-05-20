@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 using GenericModConfigMenu;
 using Microsoft.Xna.Framework;
@@ -25,33 +24,6 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
     return this;
   }
 
-  internal Integration AddSpacing() {
-    return this.AddParagraph("\n");
-  }
-
-  internal Integration AddSpacing(int size) {
-    return this.AddParagraph(string.Join(" ", Enumerable.Repeat('\n', size)));
-  }
-
-  internal Integration AddSectionTitle(string text) {
-    return this.AddSectionTitle(() => text);
-  }
-
-  internal Integration AddSectionTitle(Func<string> text) {
-    this.Api.AddSectionTitle(this.Manifest, text);
-    return this;
-  }
-
-  internal Integration AddParagraph(string text) {
-    this.AddParagraph(() => text);
-    return this;
-  }
-
-  internal Integration AddParagraph(Func<string> text) {
-    this.Api.AddParagraph(this.Manifest, text);
-    return this;
-  }
-
   internal Integration AddPage(string pageId, string pageTitle) {
     this.Api.AddPage(this.Manifest, pageId, () => pageTitle);
     return this;
@@ -59,6 +31,16 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
 
   internal Integration AddPageLink(string pageId, string text) {
     this.Api.AddPageLink(this.Manifest, pageId, () => text);
+    return this;
+  }
+
+  internal Integration AddSectionTitle(Func<string> text) {
+    this.Api.AddSectionTitle(this.Manifest, text);
+    return this;
+  }
+
+  internal Integration AddSpacing() {
+    this.Api.AddParagraph(this.Manifest, () => "\n");
     return this;
   }
 
@@ -77,48 +59,6 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
         setValue: value => property.SetValue(container, Enum.Parse(property.PropertyType, value)),
         allowedValues: Enum.GetNames(property.PropertyType),
         formatAllowedValue: formatValue,
-        tooltip: (tooltip is null) ? null : () => tooltip,
-        fieldId: fieldId
-    );
-
-    return this;
-  }
-
-  internal Integration AddBoolOption(
-      object container,
-      PropertyInfo property,
-      string optionName,
-      string? tooltip = null,
-      string? fieldId = null) {
-
-    this.Api.AddBoolOption(
-        mod: this.Manifest,
-        name: () => optionName,
-        getValue: () => ((bool?) property.GetValue(container)) ?? false,
-        setValue: value => property.SetValue(container, value),
-        tooltip: (tooltip is null) ? null : () => tooltip,
-        fieldId: fieldId
-    );
-
-    return this;
-  }
-
-  internal Integration AddIntOption(
-      object container,
-      PropertyInfo property,
-      string optionName, 
-      int? min = null,
-      int? max = null,
-      string? tooltip = null,
-      string? fieldId = null) {
-
-    this.Api.AddNumberOption(
-        mod: this.Manifest,
-        name: () => optionName,
-        getValue: () => ((int?) property.GetValue(container)) ?? 0,
-        setValue: value => property.SetValue(container, value),
-        min: min,
-        max: max,
         tooltip: (tooltip is null) ? null : () => tooltip,
         fieldId: fieldId
     );
