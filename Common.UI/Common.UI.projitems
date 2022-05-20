@@ -23,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\DynamicText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Header.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Image.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\ImageGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Spacing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\StaticText.cs" />
