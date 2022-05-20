@@ -100,6 +100,24 @@ internal class CharacterConfigState {
             : null;
   }
 
+  internal int GetNumberOfImages(string imageDirectory) {
+    GetImageRects? getRects =
+        (imageDirectory == PortraitsDirectory) ? this.GetPortraitRects : this.GetSpriteRects;
+    return Math.Max(CountImages(ContentSource.GameContent), CountImages(ContentSource.ModFolder));
+
+    int CountImages(ContentSource contentSource) {
+      return getRects?.Invoke(contentSource).Length ?? 0;
+    }
+  }
+
+  internal Texture2D[][]? GetSourceImages(string imageDirectory) {
+    return (imageDirectory == PortraitsDirectory) ? this.CurrentPortraits : this.CurrentSprites;
+  }
+
+  internal Rectangle[][]? GetSourceRects(string imageDirectory) {
+    return (imageDirectory == PortraitsDirectory) ? this.PortraitRects : this.SpriteRects;
+  }
+
   internal void SaveState() {
     this.SavedState = this.EphemeralState.ToImmutableDictionary();
     this.RefreshImages();
