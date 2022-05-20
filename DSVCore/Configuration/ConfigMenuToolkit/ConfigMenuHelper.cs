@@ -20,16 +20,17 @@ internal sealed class ConfigMenuHelper {
       IEnumerable<BaseContentPackPage> installedContentPackPages,
       IEnumerable<BaseContentPackPage> otherContentPackPages) {
 
+    this.ConfigMenu.OptionNamePrefix = ">";
+    this.ConfigMenu.PageLinkPrefix = ">";
+
+    this.ConfigMenu.OnFieldChanged = (string fieldId, object newValue) => {
+      Log.Trace($"Field '{fieldId}' was changed to: '{newValue}'.");
+      CharacterConfigState.Update(fieldId, newValue);
+    };
+
     this.SetUpMainPage(coreAndCompatPage, installedContentPackPages, otherContentPackPages);
     this.SetUpCoreAndCompatPage(coreAndCompatPage);
     installedContentPackPages.ForEach(page => this.SetUpContentPackPage(page));
-
-    this.ConfigMenu.OnFieldChanged(OnFieldChanged);
-  }
-
-  private static void OnFieldChanged(string fieldId, object newValue) {
-    Log.Trace($"Field '{fieldId}' was changed to: '{newValue}'.");
-    CharacterConfigState.Update(fieldId, newValue);
   }
 
   private void SetUpMainPage(
@@ -40,7 +41,7 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu
         .AddHeader(I18n.Main_Intro_Title)
         .AddParagraph(I18n.Main_Intro_Description)
-        .AddPageLink(coreAndCompatPage.Name, $" > {coreAndCompatPage.GetDisplayName()}")
+        .AddPageLink(coreAndCompatPage.Name, coreAndCompatPage.GetDisplayName())
         .AddSpacing()
         .AddHeader(I18n.Main_InstalledPacks_Title)
         .AddParagraph(installedContentPackPages.Any()
@@ -49,7 +50,7 @@ internal sealed class ConfigMenuHelper {
 
     foreach (BaseContentPackPage contentPackPage in installedContentPackPages) {
       Log.Trace($"'{contentPackPage.GetDisplayName()}' pack is installed. Adding config menu.");
-      this.ConfigMenu.AddPageLink(contentPackPage.Name, $" > {contentPackPage.GetDisplayName()}");
+      this.ConfigMenu.AddPageLink(contentPackPage.Name, contentPackPage.GetDisplayName());
     }
 
     this.ConfigMenu
@@ -61,7 +62,7 @@ internal sealed class ConfigMenuHelper {
 
     foreach (BaseContentPackPage contentPackPage in otherContentPackPages) {
       Log.Trace($"'{contentPackPage.GetDisplayName()}' pack is *NOT* installed.");
-      this.ConfigMenu.AddHeader($" * {contentPackPage.GetDisplayName()}");
+      this.ConfigMenu.AddHeaderWithPrefix(contentPackPage.GetDisplayName(), "*");
     }
   }
 
@@ -123,21 +124,20 @@ internal sealed class ConfigMenuHelper {
 
   private GenericModConfigMenuIntegration AddSectionOptions(BaseMenuSection section) {
     foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
-      string optionName = " >  " + item.Name;
       switch (item.Value) {
         case Enum: {
           this.ConfigMenu.AddEnumOption(
-              section, item.Property, optionName, FormatValue, item.Tooltip, item.UniqueId);
+              section, item.Property, item.Name, FormatValue, item.Tooltip, item.UniqueId);
           break;
         }
         case bool: {
           this.ConfigMenu.AddCheckbox(
-              section, item.Property, optionName, item.Tooltip, item.UniqueId);
+              section, item.Property, item.Name, item.Tooltip, item.UniqueId);
           break;
         }
         case int value: {
           this.ConfigMenu.AddSlider(
-              section, item.Property, optionName, item.Tooltip, item.UniqueId,
+              section, item.Property, item.Name, item.Tooltip, item.UniqueId,
               staticMinValue: section.GetMinValue(item.Property),
               getDynamicMaxValue: () => section.GetMaxValue(item.Property));
           break;

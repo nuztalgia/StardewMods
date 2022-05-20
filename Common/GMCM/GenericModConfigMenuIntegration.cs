@@ -5,7 +5,29 @@ namespace Nuztalgia.StardewMods.Common;
 
 internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConfigMenuApi> {
 
-  private Action<string, object>? HandleFieldChanged;
+  internal string OptionNamePrefix {
+    get => this.OptionNamePrefix_Field;
+    set => this.OptionNamePrefix_Field = $"{value.Trim()} ";
+  }
+
+  internal string PageLinkPrefix {
+    get => this.PageLinkPrefix_Field;
+    set => this.PageLinkPrefix_Field = value.Trim();
+  }
+
+  internal Action<string, object> OnFieldChanged {
+    get => this.OnFieldChanged_Field;
+    set {
+      this.Api.OnFieldChanged(this.Manifest, value);
+      this.OnFieldChanged_Field = value;
+    }
+  }
+
+  private string OptionNamePrefix_Field = string.Empty;
+  private string PageLinkPrefix_Field = string.Empty;
+
+  private Action<string, object> OnFieldChanged_Field =
+      (fieldId, newValue) => Log.Verbose($"Field '{fieldId}' was changed to: '{newValue}'.");
 
   [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification =
       "This class is only instantiated in BaseMod, which uses reflection to get this constructor.")]
@@ -17,18 +39,13 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     return this;
   }
 
-  internal GenericModConfigMenuIntegration OnFieldChanged(Action<string, object> onFieldChanged) {
-    this.HandleFieldChanged = onFieldChanged;
-    this.Api.OnFieldChanged(this.Manifest, onFieldChanged);
-    return this;
-  }
-
   internal GenericModConfigMenuIntegration AddPage(string pageId, string pageTitle) {
     this.Api.AddPage(this.Manifest, pageId, () => pageTitle);
     return this;
   }
 
   internal GenericModConfigMenuIntegration AddPageLink(string pageId, string text) {
+    text = FormatLabel(text, this.PageLinkPrefix);
     this.Api.AddPageLink(this.Manifest, pageId, () => text);
     return this;
   }
@@ -40,6 +57,8 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
       Func<string, string>? formatValue = null,
       string? tooltip = null,
       string? fieldId = null) {
+
+    optionName = FormatLabel(optionName, this.OptionNamePrefix);
 
     this.Api.AddTextOption(
         mod: this.Manifest,
@@ -103,6 +122,10 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     return this.AddHeader(getText());
   }
 
+  internal GenericModConfigMenuIntegration AddHeaderWithPrefix(string text, string prefix) {
+    return this.AddHeader(FormatLabel(text, prefix));
+  }
+
   internal GenericModConfigMenuIntegration AddHeaderWithButton(
       string headerText, string buttonText, Action buttonAction) {
 
@@ -120,12 +143,11 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
       string? fieldId = null) {
 
     new Checkbox(
-        name: optionName,
-        tooltip: tooltip,
-        loadValue: () => (bool) property.GetValue(container)!,
-        saveValue: (bool value) => property.SetValue(container, value),
-        onValueChanged: (fieldId == null) ? null
-            : (newValue) => this.HandleFieldChanged?.Invoke(fieldId, newValue)
+        name: FormatLabel(optionName, this.OptionNamePrefix),
+        loadValue: GetLoadValue<bool>(container, property),
+        saveValue: GetSaveValue<bool>(container, property),
+        onValueChanged: this.GetOnValueChanged<bool>(fieldId),
+        tooltip: tooltip
     ).AddToConfigMenu(this.Api, this.Manifest);
 
     return this;
@@ -144,19 +166,36 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
       Func<int, string>? formatValue = null) {
 
     new Slider(
-        name: optionName,
-        tooltip: tooltip,
-        loadValue: () => (int) property.GetValue(container)!,
-        saveValue: (int value) => property.SetValue(container, value),
-        onValueChanged: (fieldId == null) ? null
-            : (newValue) => this.HandleFieldChanged?.Invoke(fieldId, newValue),
+        name: FormatLabel(optionName, this.OptionNamePrefix),
+        loadValue: GetLoadValue<int>(container, property),
+        saveValue: GetSaveValue<int>(container, property),
+        onValueChanged: this.GetOnValueChanged<int>(fieldId),
         staticMinValue: staticMinValue,
         staticMaxValue: staticMaxValue,
         getDynamicMinValue: getDynamicMinValue,
         getDynamicMaxValue: getDynamicMaxValue,
-        formatValue: formatValue
+        formatValue: formatValue,
+        tooltip: tooltip
     ).AddToConfigMenu(this.Api, this.Manifest);
 
     return this;
+  }
+
+  private static string FormatLabel(string labelText, string prefix) {
+    return prefix.IsEmpty() ? labelText.Trim() : $" {prefix} {labelText.Trim()}";
+  }
+
+  private static Func<TValue> GetLoadValue<TValue>(object container, PropertyInfo property) {
+    return () => (TValue) property.GetValue(container)!;
+  }
+
+  private static Action<TValue> GetSaveValue<TValue>(object container, PropertyInfo property) {
+    return (TValue value) => property.SetValue(container, value);
+  }
+
+  private Action<TValue>? GetOnValueChanged<TValue>(string? fieldId) where TValue : notnull {
+    return (fieldId != null)
+        ? (TValue newValue) => this.OnFieldChanged.Invoke(fieldId, newValue)
+        : null;
   }
 }
