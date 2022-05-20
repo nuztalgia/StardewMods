@@ -14,8 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{D6BAE668-1
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = ".Common", "Common\.Common.shproj", "{D01808BC-BF83-4861-882B-7E792C3559E1}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = ".Common.UI", "Common.UI\.Common.UI.shproj", "{320810DF-59A0-4F8D-B592-2762B16E1D88}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSVCore", "DSVCore\DSVCore.csproj", "{71CF6D1F-55BF-4EBB-A1D4-F3418B176F75}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LazyComms", "LazyComms\LazyComms.csproj", "{78319FCD-1B61-4825-9763-66F56CEF596A}"
@@ -23,8 +21,6 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.projitems*{d01808bc-bf83-4861-882b-7e792c3559e1}*SharedItemsImports = 13
-		Common.UI\Common.UI.projitems*{320810df-59a0-4f8d-b592-2762b16e1d88}*SharedItemsImports = 13
-		Common.UI\Common.UI.projitems*{71cf6d1f-55bf-4ebb-a1d4-f3418b176f75}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

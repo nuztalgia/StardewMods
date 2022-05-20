@@ -12,7 +12,6 @@
     <TranslationClassBuilder_AddKeyMap>true</TranslationClassBuilder_AddKeyMap>
   </PropertyGroup>
 
-  <Import Project="..\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="..\common.targets" />
 
 </Project>

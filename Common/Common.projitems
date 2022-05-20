@@ -31,6 +31,9 @@
     <Using Include="Microsoft.Xna.Framework.Graphics" />
     <Compile Include="$(MSBuildThisFileDirectory)GMCM\GenericModConfigMenuIntegration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GMCM\IGenericModConfigMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\Utils\*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains('HARMONY'))">
