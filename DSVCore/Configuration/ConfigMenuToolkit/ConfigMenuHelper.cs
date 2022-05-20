@@ -38,12 +38,12 @@ internal sealed class ConfigMenuHelper {
       IEnumerable<BaseContentPackPage> otherContentPackPages) {
 
     this.ConfigMenu
-        .AddStaticHeader(I18n.Main_Intro_Title)
-        .AddStaticParagraph(I18n.Main_Intro_Description)
+        .AddHeader(I18n.Main_Intro_Title)
+        .AddParagraph(I18n.Main_Intro_Description)
         .AddPageLink(coreAndCompatPage.Name, $" > {coreAndCompatPage.GetDisplayName()}")
-        .AddDefaultSpacing()
-        .AddStaticHeader(I18n.Main_InstalledPacks_Title)
-        .AddStaticParagraph(installedContentPackPages.Any()
+        .AddSpacing()
+        .AddHeader(I18n.Main_InstalledPacks_Title)
+        .AddParagraph(installedContentPackPages.Any()
             ? I18n.Main_InstalledPacks_Description
             : I18n.Main_InstalledPacks_None);
 
@@ -53,15 +53,15 @@ internal sealed class ConfigMenuHelper {
     }
 
     this.ConfigMenu
-        .AddDefaultSpacing()
-        .AddStaticHeader(I18n.Main_OtherPacks_Title)
-        .AddStaticParagraph(otherContentPackPages.Any()
+        .AddSpacing()
+        .AddHeader(I18n.Main_OtherPacks_Title)
+        .AddParagraph(otherContentPackPages.Any()
             ? I18n.Main_OtherPacks_Description
             : I18n.Main_OtherPacks_None);
 
     foreach (BaseContentPackPage contentPackPage in otherContentPackPages) {
       Log.Trace($"'{contentPackPage.GetDisplayName()}' pack is *NOT* installed.");
-      this.ConfigMenu.AddStaticHeader($" * {contentPackPage.GetDisplayName()}");
+      this.ConfigMenu.AddHeader($" * {contentPackPage.GetDisplayName()}");
     }
   }
 
@@ -71,22 +71,22 @@ internal sealed class ConfigMenuHelper {
 
     this.ConfigMenu
         .AddPage(coreAndCompatPage.Name, coreAndCompatPage.GetDisplayName())
-        .AddStaticHeader(coreOptions.GetDisplayName())
-        .AddStaticParagraph(I18n.Core_Section_Description);
+        .AddHeader(coreOptions.GetDisplayName())
+        .AddParagraph(I18n.Core_Section_Description);
 
     this.AddSectionOptions(coreOptions)
-        .AddDefaultSpacing();
+        .AddSpacing();
 
     foreach (BaseCompatSection section in compatSections) {
       this.ConfigMenu
           .AddCompatSectionHeader(section)
-          .AddStaticParagraph(section.GetInfoText());
+          .AddParagraph(section.GetInfoText());
 
       if (section is BaseSyncedCompatSection syncedSection) {
         this.ConfigMenu.AddCharacterThumbnails(
             syncedSection, this.GameContentHelper.Load<Texture2D>);
       } else {
-        this.AddSectionOptions(section).AddDefaultSpacing();
+        this.AddSectionOptions(section).AddSpacing();
       }
     }
 
@@ -94,8 +94,8 @@ internal sealed class ConfigMenuHelper {
     if (!compatSections.Any()
         || (compatSections.Count() == 1 && compatSections.First().Name == "FlowerQueensCrown")) {
       this.ConfigMenu
-          .AddStaticHeader(I18n.Compat_Placeholder_Title)
-          .AddStaticParagraph(I18n.Compat_Placeholder_Description);
+          .AddHeader(I18n.Compat_Placeholder_Title)
+          .AddParagraph(I18n.Compat_Placeholder_Description);
     }
   }
 
@@ -103,7 +103,7 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu.AddPage(contentPackPage.Name, contentPackPage.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
-      this.ConfigMenu.AddStaticHeader(character.GetDisplayName().CapitalizeFirstChar());
+      this.ConfigMenu.AddHeader(character.GetDisplayName().CapitalizeFirstChar());
 
       CharacterConfigState characterState = CharacterConfigState.Create(
           character.Name,
@@ -117,7 +117,7 @@ internal sealed class ConfigMenuHelper {
 
       this.AddSectionOptions(character)
           .AddCharacterPreviews(characterState, PreviewLabel, character.GetPreviewTooltip())
-          .AddDefaultSpacing();
+          .AddSpacing();
     }
   }
 
@@ -132,12 +132,14 @@ internal sealed class ConfigMenuHelper {
         }
         case bool: {
           this.ConfigMenu.AddCheckbox(
-              section, item.Property, optionName, item.Tooltip, item.UniqueId, OnFieldChanged);
+              section, item.Property, optionName, item.Tooltip, item.UniqueId);
           break;
         }
         case int value: {
           this.ConfigMenu.AddSlider(
-              section, item.Property, optionName, item.Tooltip, item.UniqueId, OnFieldChanged);
+              section, item.Property, optionName, item.Tooltip, item.UniqueId,
+              staticMinValue: section.GetMinValue(item.Property),
+              getDynamicMaxValue: () => section.GetMaxValue(item.Property));
           break;
         }
         default: {

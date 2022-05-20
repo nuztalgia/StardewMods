@@ -45,7 +45,7 @@ internal static class ConfigHelper {
 
   private static void SetUpConfigMenu(GenericModConfigMenuIntegration gmcm) {
     // TODO: Make these actually configurable in the GMCM interface.
-    gmcm.AddSectionTitle(I18n.CommandAliases)
+    gmcm.AddHeader(I18n.CommandAliases)
         .AddComplexOption(
             optionName: string.Empty,
             getHeight: () => UIHelper.RowHeight * Config.Count,
