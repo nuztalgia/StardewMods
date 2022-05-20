@@ -20,6 +20,14 @@
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.1" />
+
+    <Using Include="System" />
+    <Using Include="System.Collections.Generic" />
+    <Using Include="System.Linq" />
+    <Using Include="System.Reflection" />
+
+    <Using Include="StardewModdingAPI" />
+    <Using Include="StardewValley" />
   </ItemGroup>
 
   <Import Project="Common\Common.projitems" />

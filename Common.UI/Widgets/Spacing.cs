@@ -1,6 +1,3 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Spacing : Widget {

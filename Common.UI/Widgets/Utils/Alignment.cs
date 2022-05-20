@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Alignment {

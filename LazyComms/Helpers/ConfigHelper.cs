@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using StardewModdingAPI;
-
 namespace Nuztalgia.StardewMods.LazyComms;
 
 internal static class ConfigHelper {

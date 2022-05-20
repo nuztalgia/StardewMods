@@ -1,5 +1,3 @@
-using System;
-
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal enum StandardVariant {

@@ -1,7 +1,3 @@
-using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Checkbox : OptionWidget<bool>, IClickable {

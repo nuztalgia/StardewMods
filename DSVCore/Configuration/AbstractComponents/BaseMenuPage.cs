@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Reflection;
-
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseMenuPage : BaseMenuComponent {

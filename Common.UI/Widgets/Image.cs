@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Image : Widget {

@@ -1,5 +1,3 @@
-using StardewModdingAPI;
-
 namespace Nuztalgia.StardewMods.Common;
 
 internal abstract class BaseIntegration<TInterface> where TInterface : class {

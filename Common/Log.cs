@@ -1,5 +1,3 @@
-using StardewModdingAPI;
-
 namespace Nuztalgia.StardewMods.Common;
 
 internal static class Log {

@@ -1,7 +1,3 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StardewValley;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract class SpriteFontWidget : TextWidget {

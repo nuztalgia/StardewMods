@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {

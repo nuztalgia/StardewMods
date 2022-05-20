@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using StardewModdingAPI;
-
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
 internal sealed class KrobusMermaidsWizardWitch : BaseContentPackPage {

@@ -1,5 +1,3 @@
-using System;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract class OptionWidget<TValue> : Widget where TValue : IEquatable<TValue> {

@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal sealed class CoreOptionsSection : BaseMenuSection {

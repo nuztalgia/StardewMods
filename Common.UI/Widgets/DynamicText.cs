@@ -1,5 +1,3 @@
-using System;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class DynamicText : SpriteFontWidget {

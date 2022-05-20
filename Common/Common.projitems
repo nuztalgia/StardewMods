@@ -20,16 +20,21 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains('CONTENT_PATCHER'))">
+    <Using Include="ContentPatcher" />
     <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\ContentPatcherIntegration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\IContentPatcherAPI.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains('GMCM'))">
+    <Using Include="GenericModConfigMenu" />
+    <Using Include="Microsoft.Xna.Framework" />
+    <Using Include="Microsoft.Xna.Framework.Graphics" />
     <Compile Include="$(MSBuildThisFileDirectory)GMCM\GenericModConfigMenuIntegration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GMCM\IGenericModConfigMenuApi.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains('HARMONY'))">
+    <Using Include="HarmonyLib" />
     <Compile Include="$(MSBuildThisFileDirectory)Toolkit\HarmonyPatcher.cs" />
   </ItemGroup>
 

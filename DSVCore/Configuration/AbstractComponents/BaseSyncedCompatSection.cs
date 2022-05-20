@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseSyncedCompatSection : BaseCompatSection {

@@ -1,10 +1,3 @@
-using System;
-using GenericModConfigMenu;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
-using StardewValley;
-
 namespace Nuztalgia.StardewMods.Common.UI; 
 
 internal abstract partial class Widget {
