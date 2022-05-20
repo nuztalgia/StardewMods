@@ -10,6 +10,8 @@ internal abstract partial class Widget {
   private static int ViewportWidth;
   private static int TotalWidth;
 
+  private readonly string Name;
+  private readonly string? Tooltip;
   private readonly TextWidget? Label;
   private readonly Alignment? Alignable;
   private readonly Interaction? Interactable;
@@ -18,10 +20,13 @@ internal abstract partial class Widget {
   private int Height;
 
   protected Widget(string? name = null, string? tooltip = null, Alignment? alignment = null) {
+    /* TODO: Uncomment this block and delete stuff below when tooltips are production-ready.
     if ((name != null) && (tooltip != null)) {
       this.Label = StaticText.CreateWidgetLabel(labelText: name, tooltipText: tooltip);
-    }
+    } */
 
+    this.Name = name ?? string.Empty;
+    this.Tooltip = tooltip;
     this.Alignable = alignment;
 
     if (this is IHoverable or IClickable or IDraggable) {
@@ -34,8 +39,9 @@ internal abstract partial class Widget {
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
     gmcmApi.AddComplexOption(
         mod: modManifest,
-        name: () => string.Empty,
+        name: () => this.Name,
         draw: (sb, position) => this.Draw(sb, position, null, null),
+        tooltip: (this.Tooltip is null) ? null : () => this.Tooltip,
         beforeMenuOpened: this.OnMenuOpening,
         beforeMenuClosed: this.RefreshStateAndSize,
         beforeReset: this.RefreshStateAndSize,
@@ -77,7 +83,7 @@ internal abstract partial class Widget {
 
     if (this.Label != null) {
       (this.Label.Width, this.Label.Height) = this.Label.UpdateDimensions(TotalWidth);
-      this.Height = Math.Max(this.Height, DefaultHeight);
+      this.Height = Math.Max(this.Height, this.Label.Height);
     }
   }
 }
