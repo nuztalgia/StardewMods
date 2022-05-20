@@ -34,10 +34,10 @@ internal abstract class BaseMenuSection : BaseMenuComponent {
   }
 
   protected virtual string? GetOptionName(PropertyInfo property) {
-    return Globals.GetI18nString($"Option_{property.Name}");
+    return I18nHelper.GetStringByKeyName($"Option_{property.Name}");
   }
 
   protected virtual string? GetTooltip(PropertyInfo property) {
-    return Globals.GetI18nString($"Tooltip_{this.Name}_{property.Name}");
+    return I18nHelper.GetStringByKeyName($"Tooltip_{this.Name}_{property.Name}");
   }
 }

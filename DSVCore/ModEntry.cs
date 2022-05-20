@@ -4,10 +4,6 @@ internal class ModEntry : BaseMod {
 
   private ModConfig ModConfig = new();
 
-  protected override void OnModEntry() {
-    I18n.Init(this.Helper.Translation);
-  }
-
   protected override void OnGameLaunched() {
     if (!this.TryIntegrateWithCP(out ContentPatcherIntegration? cpIntegration)) {
       Log.Error("Could not retrieve the Content Patcher API. This mod will not function at all.");

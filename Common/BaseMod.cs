@@ -8,6 +8,10 @@ internal abstract class BaseMod : Mod {
   public override sealed void Entry(IModHelper helper) {
     Log.Initialize(this.Monitor);
 
+#if I18N
+    I18nHelper.Initialize(helper.Translation);
+#endif
+
 #if MOD_REGISTRY
     ModRegistryUtils.Initialize(helper.ModRegistry);
 #endif

@@ -4,7 +4,7 @@ internal sealed class ConfigMenuHelper {
 
   private static readonly string PreviewLabel = " =  " + I18n.Option_Preview();
   private static readonly Func<string, string> FormatValue =
-      value => Globals.GetI18nString($"Value_{value}") ?? value;
+      value => I18nHelper.GetStringByKeyName($"Value_{value}") ?? value;
 
   private readonly GenericModConfigMenuIntegration ConfigMenu;
   private readonly IGameContentHelper GameContentHelper;

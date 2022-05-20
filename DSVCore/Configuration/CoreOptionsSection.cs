@@ -29,6 +29,6 @@ internal sealed class CoreOptionsSection : BaseMenuSection {
   }
 
   protected override string? GetTooltip(PropertyInfo property) {
-    return Globals.GetI18nString($"Tooltip_{property.Name}");
+    return I18nHelper.GetStringByKeyName($"Tooltip_{property.Name}");
   }
 }

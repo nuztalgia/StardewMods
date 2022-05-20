@@ -4,12 +4,7 @@
     <AssemblyName>DSVCore</AssemblyName>
     <Version>0.6.0</Version>
     <RootNamespace>Nuztalgia.StardewMods.DSVCore</RootNamespace>
-    <DefineConstants>CONTENT_PATCHER; GMCM; MOD_REGISTRY</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
-    <TranslationClassBuilder_AddKeyMap>true</TranslationClassBuilder_AddKeyMap>
+    <DefineConstants>CONTENT_PATCHER; GMCM; I18N; I18N_KEYS; MOD_REGISTRY</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\common.targets" />

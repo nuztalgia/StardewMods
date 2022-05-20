@@ -15,7 +15,7 @@ internal abstract class BaseContentPackPage : BaseMenuPage {
   }
 
   internal override string GetDisplayName() {
-    return Globals.GetI18nString($"Page_{this.Name}") ?? this.Name;
+    return I18nHelper.GetStringByKeyName($"Page_{this.Name}") ?? this.Name;
   }
 
   internal override bool IsAvailable() {

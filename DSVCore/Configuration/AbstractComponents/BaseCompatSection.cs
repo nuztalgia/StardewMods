@@ -35,11 +35,11 @@ internal abstract class BaseCompatSection : BaseMenuSection {
   }
 
   internal string GetInfoText() {
-    return Globals.GetI18nString($"Info_{this.Name}");
+    return I18nHelper.GetStringByKeyName($"Info_{this.Name}");
   }
 
   protected override sealed string? GetOptionName(PropertyInfo property) {
-    return Globals.GetI18nString($"Option_{this.Name}_{property.Name}");
+    return I18nHelper.GetStringByKeyName($"Option_{this.Name}_{property.Name}");
   }
 
   protected abstract void RegisterCompatTokens(ContentPatcherIntegration contentPatcher);
