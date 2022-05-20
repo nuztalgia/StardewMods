@@ -4,15 +4,35 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class GMCMIntegrationExtensions {
 
-  internal static GenericModConfigMenuIntegration AddCompatSectionHeader(
-      this GenericModConfigMenuIntegration configMenu, BaseCompatSection section) {
+  private static readonly Func<string, string> FormatEnumValue =
+      value => I18nHelper.GetStringByKeyName($"Value_{value}") ?? value;
 
-    return ((section as BaseSyncedCompatSection)?.GetModManifest() is not IManifest modManifest)
-        ? configMenu.AddHeader(section.GetDisplayName())
-        : configMenu.AddHeaderWithButton(
-            headerText: modManifest.Name,
-            buttonText: I18n.Compat_Synced_OpenMenu(),
-            buttonAction: () => configMenu.Api.OpenModMenu(modManifest));
+  internal static GenericModConfigMenuIntegration AddSectionOptions(
+      this GenericModConfigMenuIntegration configMenu,
+      BaseMenuSection section) {
+
+    foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
+      switch (item.Value) {
+        case bool:
+          configMenu.AddCheckbox(section, item.Property, item.Name, item.Tooltip, item.UniqueId);
+          break;
+        case int:
+          configMenu.AddSlider(
+              section, item.Property, item.Name, item.Tooltip, item.UniqueId,
+              staticMinValue: section.GetMinValue(item.Property),
+              getDynamicMaxValue: () => section.GetMaxValue(item.Property));
+          break;
+        case Enum:
+          // TODO: Finish implementing the Dropdown widget and change this case to use it.
+          configMenu.AddEnumOption(
+              section, item.Property, item.Name, FormatEnumValue, item.Tooltip, item.UniqueId);
+          break;
+        default:
+          Log.Error($"Unexpected type '{item.Value?.GetType()}' for option '{item.UniqueId}'.");
+          break;
+      }
+    }
+    return configMenu;
   }
 
   internal static GenericModConfigMenuIntegration AddCharacterPreviews(

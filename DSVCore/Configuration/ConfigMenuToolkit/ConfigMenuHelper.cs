@@ -3,8 +3,6 @@ namespace Nuztalgia.StardewMods.DSVCore;
 internal sealed class ConfigMenuHelper {
 
   private static readonly string PreviewLabel = " =  " + I18n.Option_Preview();
-  private static readonly Func<string, string> FormatValue =
-      value => I18nHelper.GetStringByKeyName($"Value_{value}") ?? value;
 
   private readonly GenericModConfigMenuIntegration ConfigMenu;
   private readonly IGameContentHelper GameContentHelper;
@@ -73,30 +71,41 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu
         .AddPage(coreAndCompatPage.Name, coreAndCompatPage.GetDisplayName())
         .AddHeader(coreOptions.GetDisplayName())
-        .AddParagraph(I18n.Core_Section_Description);
-
-    this.AddSectionOptions(coreOptions)
+        .AddParagraph(I18n.Core_Section_Description)
+        .AddSectionOptions(coreOptions)
         .AddSpacing();
 
     foreach (BaseCompatSection section in compatSections) {
-      this.ConfigMenu
-          .AddCompatSectionHeader(section)
-          .AddParagraph(section.GetInfoText());
+      string headerText = section.GetDisplayName();
+      string infoText = section.GetInfoText();
 
       if (section is BaseSyncedCompatSection syncedSection) {
-        this.ConfigMenu.AddCharacterThumbnails(
-            syncedSection, this.GameContentHelper.Load<Texture2D>);
+        this.ConfigMenu
+            .AddHeaderWithButton(
+                headerText: headerText,
+                buttonText: I18n.Compat_Synced_OpenMenu(),
+                buttonAction: () => this.ConfigMenu.OpenMenuForMod(section.GetModManifest()!))
+            .AddParagraph(infoText)
+            .AddCharacterThumbnails(syncedSection, this.GameContentHelper.Load<Texture2D>);
       } else {
-        this.AddSectionOptions(section).AddSpacing();
+        this.ConfigMenu
+            .AddHeader(headerText)
+            .AddParagraph(infoText)
+            .AddSectionOptions(section)
+            .AddSpacing();
       }
     }
 
-    // Show the placeholder if there are no compat mods or if the only one is Flower Queen's Crown.
-    if (!compatSections.Any()
-        || (compatSections.Count() == 1 && compatSections.First().Name == "FlowerQueensCrown")) {
+    if (compatSections.IsEmpty() || OnlyCompatSectionIsFlowerQueensCrown(compatSections)) {
       this.ConfigMenu
           .AddHeader(I18n.Compat_Placeholder_Title)
-          .AddParagraph(I18n.Compat_Placeholder_Description);
+          .AddParagraph(I18n.Compat_Placeholder_Description)
+          .AddSpacing();
+    }
+
+    static bool OnlyCompatSectionIsFlowerQueensCrown(IEnumerable<BaseCompatSection> sections) {
+      return (sections.Count() == 1)
+          && (sections.First().GetInfoText() == I18n.Info_FlowerQueensCrown());
     }
   }
 
@@ -104,8 +113,6 @@ internal sealed class ConfigMenuHelper {
     this.ConfigMenu.AddPage(contentPackPage.Name, contentPackPage.GetDisplayName());
 
     foreach (BaseCharacterSection character in contentPackPage.GetAllSections()) {
-      this.ConfigMenu.AddHeader(character.GetDisplayName().CapitalizeFirstChar());
-
       CharacterConfigState characterState = CharacterConfigState.Create(
           character.Name,
           this.GameContentHelper.Load<Texture2D>,
@@ -116,38 +123,11 @@ internal sealed class ConfigMenuHelper {
           character.GetSpriteRectsDelegate(),
           character.GetOptions().Select(optionItem => (optionItem.UniqueId, optionItem.Value)));
 
-      this.AddSectionOptions(character)
+      this.ConfigMenu
+          .AddHeader(character.GetDisplayName().CapitalizeFirstChar())
+          .AddSectionOptions(character)
           .AddCharacterPreviews(characterState, PreviewLabel, character.GetPreviewTooltip())
           .AddSpacing();
     }
-  }
-
-  private GenericModConfigMenuIntegration AddSectionOptions(BaseMenuSection section) {
-    foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
-      switch (item.Value) {
-        case Enum: {
-          this.ConfigMenu.AddEnumOption(
-              section, item.Property, item.Name, FormatValue, item.Tooltip, item.UniqueId);
-          break;
-        }
-        case bool: {
-          this.ConfigMenu.AddCheckbox(
-              section, item.Property, item.Name, item.Tooltip, item.UniqueId);
-          break;
-        }
-        case int value: {
-          this.ConfigMenu.AddSlider(
-              section, item.Property, item.Name, item.Tooltip, item.UniqueId,
-              staticMinValue: section.GetMinValue(item.Property),
-              getDynamicMaxValue: () => section.GetMaxValue(item.Property));
-          break;
-        }
-        default: {
-          Log.Error($"Unexpected type '{item.Value?.GetType()}' for option '{item.UniqueId}'.");
-          break;
-        }
-      }
-    }
-    return this.ConfigMenu;
   }
 }

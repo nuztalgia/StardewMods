@@ -181,6 +181,10 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     return this;
   }
 
+  internal void OpenMenuForMod(IManifest modManifest) {
+    this.Api.OpenModMenu(modManifest);
+  }
+
   private static string FormatLabel(string labelText, string prefix) {
     return prefix.IsEmpty() ? labelText.Trim() : $" {prefix} {labelText.Trim()}";
   }
