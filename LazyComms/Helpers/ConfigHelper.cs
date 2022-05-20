@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.GenericModConfigMenu;
 using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.LazyComms;
@@ -10,7 +8,7 @@ internal static class ConfigHelper {
 
   private static readonly Dictionary<string, string> Config = new();
 
-  internal static void Initialize(IModHelper modHelper, Integration? gmcm) {
+  internal static void Initialize(IModHelper modHelper, GenericModConfigMenuIntegration? gmcm) {
     LoadConfig(modHelper);
 
     if (gmcm is null) {
@@ -49,7 +47,7 @@ internal static class ConfigHelper {
     }
   }
 
-  private static void SetUpConfigMenu(Integration gmcm) {
+  private static void SetUpConfigMenu(GenericModConfigMenuIntegration gmcm) {
     // TODO: Make these actually configurable in the GMCM interface.
     gmcm.AddSectionTitle(I18n.CommandAliases)
         .AddComplexOption(

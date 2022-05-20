@@ -1,5 +1,3 @@
-using Nuztalgia.StardewMods.Common.ContentPatcher;
-
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseMenuComponent {
@@ -10,7 +8,7 @@ internal abstract class BaseMenuComponent {
     this.Name = this.GetType().Name;
   }
 
-  internal abstract void RegisterTokens(Integration contentPatcher);
+  internal abstract void RegisterTokens(ContentPatcherIntegration contentPatcher);
 
   internal abstract string GetDisplayName();
 

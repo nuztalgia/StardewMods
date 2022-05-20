@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 
-namespace Nuztalgia.StardewMods.Common.ModRegistry;
+namespace Nuztalgia.StardewMods.Common;
 
-internal static class ModRegistry {
+internal static class ModRegistryUtils {
 
 #pragma warning disable CS8618 // Non-nullable field must contain non-null value. Set in Initialize.
   internal static IModRegistry SmapiModRegistry { get; private set; }

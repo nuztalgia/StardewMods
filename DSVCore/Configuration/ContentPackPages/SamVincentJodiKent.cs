@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -23,7 +21,7 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
         return this.HasElahoOutfit("NorwegianWeddingSuit") ? 4 : 3;
       }
 
-      protected override void RegisterExtraTokens(Integration contentPatcher) {
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Sam>("Binder", () => this.Binder);
         contentPatcher.RegisterEnumToken(
             "SamEyes",
@@ -73,7 +71,7 @@ internal sealed class SamVincentJodiKent : BaseContentPackPage {
         return "Summer_2_Rain";
       }
 
-      protected override void RegisterExtraTokens(Integration contentPatcher) {
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
         contentPatcher.RegisterBoolToken(
             "JodiGiftTastesChange", () => this.Variant.IsModded() && this.GiftTastesChange);
       }

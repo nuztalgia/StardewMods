@@ -1,9 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nuztalgia.StardewMods.Common;
-
-using CPIntegration = Nuztalgia.StardewMods.Common.ContentPatcher.Integration;
-using GMCMIntegration = Nuztalgia.StardewMods.Common.GenericModConfigMenu.Integration;
 
 namespace Nuztalgia.StardewMods.DSVCore;
 
@@ -16,7 +12,7 @@ internal class ModEntry : BaseMod {
   }
 
   protected override void OnGameLaunched() {
-    if (!this.TryIntegrateWithCP(out CPIntegration? cpIntegration)) {
+    if (!this.TryIntegrateWithCP(out ContentPatcherIntegration? cpIntegration)) {
       Log.Error("Could not retrieve the Content Patcher API. This mod will not function at all.");
       return;
     }
@@ -32,7 +28,7 @@ internal class ModEntry : BaseMod {
       menuPage.RegisterTokens(cpIntegration);
     }
 
-    if (!this.TryIntegrateWithGMCM(out GMCMIntegration? gmcmIntegration)) {
+    if (!this.TryIntegrateWithGMCM(out GenericModConfigMenuIntegration? gmcmIntegration)) {
       Log.Warn(
           "Could not retrieve the Generic Mod Config Menu API. " +
           "A significant portion of the functionality of this mod will be unavailable.");

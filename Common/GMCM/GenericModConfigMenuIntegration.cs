@@ -6,45 +6,46 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 
-namespace Nuztalgia.StardewMods.Common.GenericModConfigMenu;
+namespace Nuztalgia.StardewMods.Common;
 
-internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
+internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGenericModConfigMenuApi> {
 
   [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification =
       "This class is only instantiated in BaseMod, which uses reflection to get this constructor.")]
-  private Integration(IGenericModConfigMenuApi api, IManifest manifest) : base(api, manifest) { }
+  private GenericModConfigMenuIntegration(IGenericModConfigMenuApi api, IManifest manifest)
+      : base(api, manifest) { }
 
-  internal Integration Register(Action resetAction, Action saveAction) {
+  internal GenericModConfigMenuIntegration Register(Action resetAction, Action saveAction) {
     this.Api.Register(this.Manifest, resetAction, saveAction);
     return this;
   }
 
-  internal Integration OnFieldChanged(Action<string, object> onFieldChanged) {
+  internal GenericModConfigMenuIntegration OnFieldChanged(Action<string, object> onFieldChanged) {
     this.Api.OnFieldChanged(this.Manifest, onFieldChanged);
     return this;
   }
 
-  internal Integration AddPage(string pageId, string pageTitle) {
+  internal GenericModConfigMenuIntegration AddPage(string pageId, string pageTitle) {
     this.Api.AddPage(this.Manifest, pageId, () => pageTitle);
     return this;
   }
 
-  internal Integration AddPageLink(string pageId, string text) {
+  internal GenericModConfigMenuIntegration AddPageLink(string pageId, string text) {
     this.Api.AddPageLink(this.Manifest, pageId, () => text);
     return this;
   }
 
-  internal Integration AddSectionTitle(Func<string> text) {
+  internal GenericModConfigMenuIntegration AddSectionTitle(Func<string> text) {
     this.Api.AddSectionTitle(this.Manifest, text);
     return this;
   }
 
-  internal Integration AddSpacing() {
+  internal GenericModConfigMenuIntegration AddSpacing() {
     this.Api.AddParagraph(this.Manifest, () => "\n");
     return this;
   }
 
-  internal Integration AddEnumOption(
+  internal GenericModConfigMenuIntegration AddEnumOption(
       object container,
       PropertyInfo property,
       string optionName,
@@ -66,7 +67,7 @@ internal sealed class Integration : BaseIntegration<IGenericModConfigMenuApi> {
     return this;
   }
 
-  internal Integration AddComplexOption(
+  internal GenericModConfigMenuIntegration AddComplexOption(
       string optionName,
       Func<int> getHeight,
       Action<SpriteBatch, Vector2> drawAction,

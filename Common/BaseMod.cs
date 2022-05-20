@@ -13,8 +13,9 @@ internal abstract class BaseMod : Mod {
   public override sealed void Entry(IModHelper helper) {
     Log.Initialize(this.Monitor);
 
-    // I heard you like ModRegistry, so I put a ModRegistry in your ModRegistry...
-    ModRegistry.ModRegistry.Initialize(helper.ModRegistry);
+#if MOD_REGISTRY
+    ModRegistryUtils.Initialize(helper.ModRegistry);
+#endif
 
     this.OnModEntry();
 
@@ -26,19 +27,23 @@ internal abstract class BaseMod : Mod {
 
   protected virtual void OnGameLaunched() { }
 
+#if CONTENT_PATCHER
   protected bool TryIntegrateWithCP(
-      [NotNullWhen(true)] out ContentPatcher.Integration? integration) {
+      [NotNullWhen(true)] out ContentPatcherIntegration? integration) {
     Log.Trace("Initializing Content Patcher integration.");
-    return this.TryIntegrate<IContentPatcherAPI, ContentPatcher.Integration>(
+    return this.TryIntegrate<IContentPatcherAPI, ContentPatcherIntegration>(
         "Pathoschild.ContentPatcher", out integration);
   }
+#endif
 
+#if GMCM
   protected bool TryIntegrateWithGMCM(
-      [NotNullWhen(true)] out GenericModConfigMenu.Integration? integration) {
+      [NotNullWhen(true)] out GenericModConfigMenuIntegration? integration) {
     Log.Trace("Initializing Generic Mod Config Menu integration.");
-    return this.TryIntegrate<IGenericModConfigMenuApi, GenericModConfigMenu.Integration>(
+    return this.TryIntegrate<IGenericModConfigMenuApi, GenericModConfigMenuIntegration>(
         "spacechase0.GenericModConfigMenu", out integration);
   }
+#endif
 
   private bool TryIntegrate<TInterface, TInteg>(string modId, [NotNullWhen(true)] out TInteg? integ)
       where TInterface : class

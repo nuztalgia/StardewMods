@@ -1,8 +1,6 @@
 using System;
 using System.Reflection;
 using Microsoft.Xna.Framework;
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.GenericModConfigMenu;
 using Nuztalgia.StardewMods.Common.UI;
 using StardewModdingAPI;
 
@@ -10,31 +8,36 @@ namespace Nuztalgia.StardewMods.DSVCore;
 
 internal static class GMCMIntegrationExtensions {
 
-  internal static Integration AddDefaultSpacing(this Integration configMenu) {
+  internal static GenericModConfigMenuIntegration AddDefaultSpacing(
+      this GenericModConfigMenuIntegration configMenu) {
     Spacing.DefaultVertical.AddToConfigMenu(configMenu.Api, configMenu.Manifest);
     return configMenu;
   }
 
-  internal static Integration AddStaticParagraph(this Integration configMenu, Func<string> getText) {
+  internal static GenericModConfigMenuIntegration AddStaticParagraph(
+      this GenericModConfigMenuIntegration configMenu, Func<string> getText) {
     return configMenu.AddStaticParagraph(getText());
   }
 
-  internal static Integration AddStaticParagraph(this Integration configMenu, string text) {
+  internal static GenericModConfigMenuIntegration AddStaticParagraph(
+      this GenericModConfigMenuIntegration configMenu, string text) {
     StaticText.CreateParagraph(text).AddToConfigMenu(configMenu.Api, configMenu.Manifest);
     return configMenu;
   }
 
-  internal static Integration AddStaticHeader(this Integration configMenu, Func<string> getText) {
+  internal static GenericModConfigMenuIntegration AddStaticHeader(
+      this GenericModConfigMenuIntegration configMenu, Func<string> getText) {
     return configMenu.AddStaticHeader(getText());
   }
 
-  internal static Integration AddStaticHeader(this Integration configMenu, string text) {
+  internal static GenericModConfigMenuIntegration AddStaticHeader(
+      this GenericModConfigMenuIntegration configMenu, string text) {
     new Header(text).AddToConfigMenu(configMenu.Api, configMenu.Manifest);
     return configMenu;
   }
 
-  internal static Integration AddCompatSectionHeader(
-      this Integration configMenu, BaseCompatSection section) {
+  internal static GenericModConfigMenuIntegration AddCompatSectionHeader(
+      this GenericModConfigMenuIntegration configMenu, BaseCompatSection section) {
 
     if ((section as BaseSyncedCompatSection)?.GetModManifest() is not IManifest modManifest) {
       return configMenu.AddStaticHeader(section.GetDisplayName());
@@ -49,8 +52,8 @@ internal static class GMCMIntegrationExtensions {
     return configMenu;
   }
 
-  internal static Integration AddCheckbox(
-      this Integration configMenu,
+  internal static GenericModConfigMenuIntegration AddCheckbox(
+      this GenericModConfigMenuIntegration configMenu,
       BaseMenuSection section,
       PropertyInfo property,
       string optionName,
@@ -69,8 +72,8 @@ internal static class GMCMIntegrationExtensions {
     return configMenu;
   }
 
-  internal static Integration AddSlider(
-      this Integration configMenu,
+  internal static GenericModConfigMenuIntegration AddSlider(
+      this GenericModConfigMenuIntegration configMenu,
       BaseMenuSection section,
       PropertyInfo property,
       string optionName,
@@ -91,8 +94,8 @@ internal static class GMCMIntegrationExtensions {
     return configMenu;
   }
 
-  internal static Integration AddCharacterPreviews(
-      this Integration configMenu,
+  internal static GenericModConfigMenuIntegration AddCharacterPreviews(
+      this GenericModConfigMenuIntegration configMenu,
       CharacterConfigState charState,
       string optionName,
       string tooltip) {
@@ -109,8 +112,8 @@ internal static class GMCMIntegrationExtensions {
     return configMenu;
   }
 
-  internal static Integration AddCharacterThumbnails(
-      this Integration configMenu,
+  internal static GenericModConfigMenuIntegration AddCharacterThumbnails(
+      this GenericModConfigMenuIntegration configMenu,
       BaseSyncedCompatSection syncedSection,
       CharacterConfigState.LoadImage loadGameImage) {
 

@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using HarmonyLib;
 
-namespace Nuztalgia.StardewMods.Common.Patching;
+namespace Nuztalgia.StardewMods.Common;
 
 internal class HarmonyPatcher {
 

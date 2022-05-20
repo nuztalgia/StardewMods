@@ -1,5 +1,3 @@
-using Nuztalgia.StardewMods.Common.ModRegistry;
-
 namespace Nuztalgia.StardewMods.DSVCore;
 
 internal abstract class BaseContentPackPage : BaseMenuPage {
@@ -13,7 +11,7 @@ internal abstract class BaseContentPackPage : BaseMenuPage {
   }
 
   internal CharacterConfigState.LoadImage GetImageLoader() {
-    return imagePath => ModRegistry.LoadImageFromContentPack(this.ContentPackId, imagePath);
+    return imagePath => ModRegistryUtils.LoadImageFromContentPack(this.ContentPackId, imagePath);
   }
 
   internal override string GetDisplayName() {
@@ -21,6 +19,6 @@ internal abstract class BaseContentPackPage : BaseMenuPage {
   }
 
   internal override bool IsAvailable() {
-    return ModRegistry.IsLoaded(this.ContentPackId);
+    return ModRegistryUtils.IsLoaded(this.ContentPackId);
   }
 }

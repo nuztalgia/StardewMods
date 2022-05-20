@@ -4,6 +4,7 @@
     <AssemblyName>DSVCore</AssemblyName>
     <Version>0.6.0</Version>
     <RootNamespace>Nuztalgia.StardewMods.DSVCore</RootNamespace>
+    <DefineConstants>CONTENT_PATCHER; GMCM; MOD_REGISTRY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,7 +12,6 @@
     <TranslationClassBuilder_AddKeyMap>true</TranslationClassBuilder_AddKeyMap>
   </PropertyGroup>
 
-  <Import Project="..\Common\Common.projitems" Label="Shared" />
   <Import Project="..\Common.UI\Common.UI.projitems" Label="Shared" />
   <Import Project="..\common.targets" />
 

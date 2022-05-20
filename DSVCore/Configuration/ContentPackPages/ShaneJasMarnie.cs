@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -23,7 +21,7 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
         return $"{variant}/{((this.SelfCare == ShaneSelfCare.Messy) ? "Messy" : "Neat")}";
       }
 
-      protected override void RegisterExtraTokens(Integration contentPatcher) {
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
         // TODO: Determine what should happen if Immersion is Ultralight and SelfCare is Dynamic.
         contentPatcher.RegisterEnumToken("ShaneSelfCare", () => this.SelfCare);
       }
@@ -43,7 +41,7 @@ internal sealed class ShaneJasMarnie : BaseContentPackPage {
         return "Spring_1_Sun";
       }
 
-      protected override void RegisterExtraTokens(Integration contentPatcher) {
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
         contentPatcher.RegisterBoolToken(
             "MarnieCharacterSmile",
             () => (this.Variant is StandardVariant.Vanilla) && this.SpriteSmile,

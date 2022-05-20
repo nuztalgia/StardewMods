@@ -1,5 +1,3 @@
-using Nuztalgia.StardewMods.Common.ContentPatcher;
-
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
 internal sealed class RidgesideVillage : BaseCompatSection {
@@ -29,7 +27,7 @@ internal sealed class RidgesideVillage : BaseCompatSection {
       tokenNames: new string[] { BertTokenName, TrinnieTokenName, LennyTokenName }
   ) { }
 
-  protected override void RegisterCompatTokens(Integration contentPatcher) {
+  protected override void RegisterCompatTokens(ContentPatcherIntegration contentPatcher) {
     contentPatcher.RegisterEnumToken(BertTokenName, () => this.BertVariant);
     contentPatcher.RegisterEnumToken(TrinnieTokenName, () => this.TrinnieVariant);
     contentPatcher.RegisterEnumToken(LennyTokenName, () => this.LennyVariant);

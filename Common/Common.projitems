@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
     <SharedGUID>d01808bc-bf83-4861-882b-7e792c3559e1</SharedGUID>
   </PropertyGroup>
+
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>Nuztalgia.StardewMods.Common</Import_RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)External\IContentPatcherApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)External\IGenericModConfigMenuApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ContentPatcherIntegration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\GenericModConfigMenuIntegration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utilities\ModRegistry.cs" />
+    <Using Include="$(Import_RootNamespace)" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseIntegration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseMod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
   </ItemGroup>
+
+  <ItemGroup Condition="$(DefineConstants.Contains('CONTENT_PATCHER'))">
+    <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\ContentPatcherIntegration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContentPatcher\IContentPatcherAPI.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DefineConstants.Contains('GMCM'))">
+    <Compile Include="$(MSBuildThisFileDirectory)GMCM\GenericModConfigMenuIntegration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GMCM\IGenericModConfigMenuApi.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DefineConstants.Contains('HARMONY'))">
+    <Compile Include="$(MSBuildThisFileDirectory)Toolkit\HarmonyPatcher.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DefineConstants.Contains('MOD_REGISTRY'))">
+    <Compile Include="$(MSBuildThisFileDirectory)Toolkit\ModRegistryUtils.cs" />
+  </ItemGroup>
+
 </Project>

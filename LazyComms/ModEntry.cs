@@ -1,6 +1,3 @@
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.GenericModConfigMenu;
-
 namespace Nuztalgia.StardewMods.LazyComms;
 
 internal class ModEntry : BaseMod {
@@ -11,7 +8,7 @@ internal class ModEntry : BaseMod {
   }
 
   protected override void OnGameLaunched() {
-    this.TryIntegrateWithGMCM(out Integration? gmcm);
+    this.TryIntegrateWithGMCM(out GenericModConfigMenuIntegration? gmcm);
     ConfigHelper.Initialize(this.Helper, gmcm);
   }
 }

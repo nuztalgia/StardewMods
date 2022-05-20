@@ -1,5 +1,3 @@
-using Nuztalgia.StardewMods.Common.ContentPatcher;
-
 namespace Nuztalgia.StardewMods.DSVCore.CompatSections;
 
 internal sealed class MakeGuntherReal : BaseCompatSection {
@@ -14,7 +12,7 @@ internal sealed class MakeGuntherReal : BaseCompatSection {
       tokenNames: new string[] { TokenName }
   ) { }
 
-  protected override void RegisterCompatTokens(Integration contentPatcher) {
+  protected override void RegisterCompatTokens(ContentPatcherIntegration contentPatcher) {
     contentPatcher.RegisterBoolToken(TokenName, () => this.AlternateCecily);
   }
 }

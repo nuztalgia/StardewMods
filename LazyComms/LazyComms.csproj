@@ -4,14 +4,9 @@
     <AssemblyName>LazyComms</AssemblyName>
     <Version>0.3.0</Version>
     <RootNamespace>Nuztalgia.StardewMods.LazyComms</RootNamespace>
+    <DefineConstants>GMCM; HARMONY; MOD_REGISTRY</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <EnableHarmony>true</EnableHarmony>
-  </PropertyGroup>
-
-  <Import Project="..\Common\Common.projitems" Label="Shared" />
-  <Import Project="..\Common.Patching\Common.Patching.projitems" Label="Shared" />
   <Import Project="..\common.targets" />
 
 </Project>

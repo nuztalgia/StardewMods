@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.ContentPatcher;
 
 namespace Nuztalgia.StardewMods.DSVCore.Pages;
 
@@ -20,7 +18,7 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
         return this.HasElahoOutfit("DutchRomanianOrDutchVietnameseWeddingOutfits") ? 6 : 4;
       }
 
-      protected override void RegisterExtraTokens(Integration contentPatcher) {
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Sebastian>("Helmet", () => this.Helmet);
         contentPatcher.RegisterAutoNamedBoolToken<Sebastian>(
             "Piercings", () => this.Immersion.IsNotUltralight() && this.Piercings);
@@ -58,7 +56,7 @@ internal sealed class SebastianMaruRobinDemetrius : BaseContentPackPage {
         return this.HasElahoOutfit("MaruDutchXhosaWeddingDress") ? 6 : 5;
       }
 
-      protected override void RegisterExtraTokens(Integration contentPatcher) {
+      protected override void RegisterExtraTokens(ContentPatcherIntegration contentPatcher) {
         contentPatcher.RegisterAutoNamedBoolToken<Maru>("Scrubs", () => this.Scrubs);
         contentPatcher.RegisterBoolToken(
             "MaruCharacterGlasses",

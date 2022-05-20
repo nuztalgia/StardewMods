@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.GenericModConfigMenu;
 using StardewModdingAPI;
 
 namespace Nuztalgia.StardewMods.DSVCore;
@@ -14,11 +12,12 @@ internal sealed class ConfigMenuHelper {
   private static readonly Func<string, string> FormatValue =
       value => Globals.GetI18nString($"Value_{value}") ?? value;
 
-  private readonly Integration ConfigMenu;
+  private readonly GenericModConfigMenuIntegration ConfigMenu;
   private readonly IGameContentHelper GameContentHelper;
 
-  internal ConfigMenuHelper(Integration genModConfigMenu, IGameContentHelper gameContentHelper) {
-    this.ConfigMenu = genModConfigMenu;
+  internal ConfigMenuHelper(
+      GenericModConfigMenuIntegration configMenu, IGameContentHelper gameContentHelper) {
+    this.ConfigMenu = configMenu;
     this.GameContentHelper = gameContentHelper;
   }
 
@@ -128,7 +127,7 @@ internal sealed class ConfigMenuHelper {
     }
   }
 
-  private Integration AddSectionOptions(BaseMenuSection section) {
+  private GenericModConfigMenuIntegration AddSectionOptions(BaseMenuSection section) {
     foreach (BaseMenuSection.OptionItem item in section.GetOptions()) {
       string optionName = " >  " + item.Name;
       switch (item.Value) {

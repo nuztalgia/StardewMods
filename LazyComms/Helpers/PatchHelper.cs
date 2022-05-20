@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nuztalgia.StardewMods.Common;
-using Nuztalgia.StardewMods.Common.ModRegistry;
-using Nuztalgia.StardewMods.Common.Patching;
 
 namespace Nuztalgia.StardewMods.LazyComms;
 
@@ -21,7 +18,7 @@ internal static class PatchHelper {
     patcher.ForMethod("StardewModdingAPI.Framework.ModHelpers.CommandHelper", "Trigger")?
         .ApplyPrefixPatch(type, nameof(CommandHelper_Trigger_Prefix));
 
-    if (ModRegistry.IsLoaded(ChatCommandsModId)) {
+    if (ModRegistryUtils.IsLoaded(ChatCommandsModId)) {
       patcher.ForMethod("ChatCommands.CommandValidator", "IsValidCommand")?
           .ApplyPrefixPatch(type, nameof(CommandValidator_IsValidCommand_Prefix));
     }

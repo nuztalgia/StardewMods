@@ -5,13 +5,14 @@ using System.Linq;
 using ContentPatcher;
 using StardewModdingAPI;
 
-namespace Nuztalgia.StardewMods.Common.ContentPatcher;
+namespace Nuztalgia.StardewMods.Common;
 
-internal sealed class Integration : BaseIntegration<IContentPatcherAPI> {
+internal sealed class ContentPatcherIntegration : BaseIntegration<IContentPatcherAPI> {
 
   [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification =
       "This class is only instantiated in BaseMod, which uses reflection to get this constructor.")]
-  private Integration(IContentPatcherAPI api, IManifest manifest) : base(api, manifest) { }
+  private ContentPatcherIntegration(IContentPatcherAPI api, IManifest manifest)
+      : base(api, manifest) { }
 
   internal void RegisterConstantToken(string tokenName, string tokenValue) {
     Log.Verbose($"Registering token '{tokenName}' with constant value '{tokenValue}'.");

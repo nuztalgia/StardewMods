@@ -10,14 +10,18 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
 
+    <EnableHarmony Condition="$(DefineConstants.Contains('HARMONY'))">true</EnableHarmony>
+
     <EnableModZip Condition="$(Configuration) != 'Release'">False</EnableModZip>
-    <ModZipPath>$(SolutionDir)\_releases</ModZipPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ModZipPath>$(SolutionDir)\_releases</ModZipPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.1" />
   </ItemGroup>
+
+  <Import Project="Common\Common.projitems" />
 
 </Project>
