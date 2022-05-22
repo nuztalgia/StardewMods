@@ -2,6 +2,12 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract partial class Widget {
 
+  protected interface IOverlayable {
+    void SetOverlayStatus(bool isActive) {
+      Widget.SetOverlayStatus(this, isActive);
+    }
+  }
+
   protected const int DefaultHeight = 48;
 
   private const int MinTotalWidth = 1200;
@@ -10,24 +16,33 @@ internal abstract partial class Widget {
   private static int ViewportWidth;
   private static int TotalWidth;
 
-  protected static Widget? ActiveOverlay { get; private set; }
+  private static Widget? ActiveOverlay;
+  private static Vector2 ActiveOverlayPosition;
 
   private readonly Widget? NameLabel;
   private readonly Alignment? Alignable;
   private readonly Interaction? Interactable;
+  private readonly Func<bool> IsDrawable;
 
   private int Width;
   private int Height;
 
-  protected Widget(string? name = null, string? tooltip = null, Alignment? alignment = null) {
+  protected Widget(
+      string? name = null,
+      string? tooltip = null,
+      Alignment? alignment = null) {
+
     this.NameLabel = Label.Create(labelText: name, tooltipText: tooltip);
     this.Alignable = alignment;
+
     if (this is IHoverable or IClickable or IDraggable) {
       this.Interactable = new(this as IHoverable, this as IClickable, this as IDraggable);
     }
-  }
 
-  protected Widget(Alignment? alignment) : this(name: null, tooltip: null, alignment) { }
+    this.IsDrawable = (this is IOverlayable)
+        ? () => this == ActiveOverlay
+        : () => true;
+  }
 
   // TODO: Move this to MenuPage after existing menus are migrated to the new framework.
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
@@ -43,18 +58,6 @@ internal abstract partial class Widget {
     );
   }
 
-  protected void SetOverlayStatus(bool isActive) {
-    if (isActive) {
-      if ((ActiveOverlay != null) && (ActiveOverlay != this)) {
-        Log.Verbose("Tried to set widget as overlay, but there's already another active overlay.");
-      } else {
-        ActiveOverlay = this;
-      }
-    } else if (ActiveOverlay == this) {
-      ActiveOverlay = null;
-    }
-  }
-
   protected virtual void ResetState() { }
 
   protected virtual void SaveState() { }
@@ -65,12 +68,14 @@ internal abstract partial class Widget {
 
   private void Draw(
       SpriteBatch sb, Vector2 position, int? containerWidth = null, int? containerHeight = null) {
-    this.Alignable?.Align(
-        ref position, this.Width, this.Height,
-        containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
-        (containerWidth == null) || (containerHeight == null));
-    this.Interactable?.Update(position, this.Width, this.Height);
-    this.Draw(sb, position);
+    if (this.IsDrawable()) {
+      this.Alignable?.Align(
+          ref position, this.Width, this.Height,
+          containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
+          (containerWidth == null) || (containerHeight == null));
+      this.Interactable?.Update(position, this.Width, this.Height);
+      this.Draw(sb, position);
+    }
   }
 
   private void OnMenuOpening() {
@@ -84,5 +89,20 @@ internal abstract partial class Widget {
   private void RefreshStateAndSize() {
     this.ResetState();
     (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
+  }
+
+  private static void SetOverlayStatus(IOverlayable widget, bool isActive) {
+    if (isActive) {
+      if (ActiveOverlay == widget) {
+        return;
+      } else if (ActiveOverlay == null) {
+        ActiveOverlay = (Widget) widget;
+      } else {
+        Log.Verbose("Tried to set widget as overlay, but there's already another active overlay.");
+      }
+    } else if (ActiveOverlay == widget) {
+      ActiveOverlay = null;
+      ActiveOverlayPosition = default;
+    }
   }
 }

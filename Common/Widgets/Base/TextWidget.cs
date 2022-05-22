@@ -12,7 +12,8 @@ internal abstract class TextWidget : Widget {
 
   private string[]? SplitLines;
 
-  protected TextWidget(bool wrapLines, Alignment? alignment) : base(alignment) {
+  protected TextWidget(bool wrapLines, Alignment? alignment)
+      : base(name: null, tooltip: null, alignment) {
     this.WrapLines = wrapLines;
   }
 

@@ -2,7 +2,7 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Label : StaticText {
 
-  private class Tooltip : Widget {
+  private class Tooltip : Widget, IOverlayable {
 
     private readonly string TooltipText;
     private readonly string TooltipTitle;
@@ -13,7 +13,7 @@ internal class Label : StaticText {
     }
 
     internal void SetHoverState(bool isHovering) {
-      this.SetOverlayStatus(isActive: isHovering);
+      (this as IOverlayable).SetOverlayStatus(isActive: isHovering);
     }
 
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
@@ -21,9 +21,7 @@ internal class Label : StaticText {
     }
 
     protected override void Draw(SpriteBatch sb, Vector2 position) {
-      if (this == ActiveOverlay) {
-        DrawTooltip(sb, this.TooltipText, this.TooltipTitle);
-      }
+      DrawTooltip(sb, this.TooltipText, this.TooltipTitle);
     }
   }
 

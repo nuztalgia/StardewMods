@@ -77,19 +77,18 @@ internal abstract partial class Widget {
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
-      Vector2? overlayPosition = null;
 
       foreach ((Widget widget, Adjustment? preDraw, Adjustment? postDraw) in this.SubWidgets) {
         if (widget == ActiveOverlay) {
-          overlayPosition = new(position.X, position.Y);
+          ActiveOverlayPosition = new(position.X, position.Y);
         } else if (!ShouldHideWidget(widget)) {
           DrawSubWidget(widget, preDraw, postDraw);
           AdjustPosition(widget);
         }
       }
 
-      if (this.CanDrawOverlay) {
-        ActiveOverlay?.Draw(sb, overlayPosition ?? position);
+      if (this.CanDrawOverlay && (ActiveOverlayPosition != default)) {
+        ActiveOverlay?.Draw(sb, ActiveOverlayPosition);
       }
 
       bool ShouldHideWidget(Widget widget) {
