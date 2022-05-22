@@ -51,6 +51,13 @@ internal abstract partial class Widget {
       this.ForEachWidget((Widget widget) => {
         (widget.Width, widget.Height) = widget.UpdateDimensions(totalWidth);
 
+        if (widget.NameLabel is Widget label) {
+          (label.Width, label.Height) = label.UpdateDimensions(totalWidth);
+          widget.Height = Math.Max(widget.Height, label.Height);
+        }
+
+        widget.Height = Math.Max(widget.Height, DefaultHeight);
+
         width = (this.Mode == LinearMode.Horizontal)
             ? width + widget.Width
             : Math.Max(width, widget.Width);
@@ -63,9 +70,22 @@ internal abstract partial class Widget {
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
+      Vector2? overlayPosition = null;
+
       foreach ((Widget widget, Adjustment? preDraw, Adjustment? postDraw) in this.SubWidgets) {
+        if (widget == ActiveOverlay) {
+          overlayPosition = new(position.X, position.Y);
+        } else {
+          DrawSubWidget(widget, preDraw, postDraw);
+        }
+      }
+
+      this.PostDraw(sb, overlayPosition ?? position);
+
+      void DrawSubWidget(Widget widget, Adjustment? preDraw, Adjustment? postDraw) {
         preDraw?.Invoke(ref position, widget.Width, widget.Height);
         widget.Draw(sb, position, this.Width, this.Height);
+        widget.NameLabel?.Draw(sb, position, this.Width, this.Height);
         postDraw?.Invoke(ref position, widget.Width, widget.Height);
 
         if (this.Mode == LinearMode.Horizontal) {
@@ -84,12 +104,16 @@ internal abstract partial class Widget {
       this.ForEachWidget((Widget widget) => widget.SaveState());
     }
 
+    protected virtual void PostDraw(SpriteBatch sb, Vector2 position) { }
+
     protected static (int width, int height) GetTextDimensions(TextWidget textWidget) {
       return textWidget.UpdateDimensions(int.MaxValue);
     }
 
     private void ForEachWidget(Action<Widget> action) {
-      this.SubWidgets.ForEach((SubWidget subWidget) => action(subWidget.Widget));
+      foreach (SubWidget subWidget in this.SubWidgets) {
+        action(subWidget.Widget);
+      }
     }
   }
 }

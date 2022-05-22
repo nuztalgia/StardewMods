@@ -29,12 +29,12 @@ internal abstract partial class Widget {
 
   protected Widget(Alignment? alignment) : this(name: null, tooltip: null, alignment) { }
 
+  // TODO: Move this to MenuPage after existing menus are migrated to the new framework.
   internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
     gmcmApi.AddComplexOption(
         mod: modManifest,
-        name: () => this.Name,
+        name: () => string.Empty,
         draw: (sb, position) => this.Draw(sb, position, null, null),
-        tooltip: (this.Tooltip is null) ? null : () => this.Tooltip,
         beforeMenuOpened: this.OnMenuOpening,
         beforeMenuClosed: this.RefreshStateAndSize,
         beforeReset: this.RefreshStateAndSize,
