@@ -2,15 +2,26 @@ namespace Nuztalgia.StardewMods.Common;
 
 internal interface IConfigPageBuilder {
 
-  IConfigPageBuilder AddSpacing();
+  IConfigMenuBuilder PublishPage();
 
-  IConfigPageBuilder AddParagraph(string text);
+  IConfigPageBuilder AddStaticHeader(string text);
 
-  IConfigPageBuilder AddHeader(string text);
+  IConfigPageBuilder AddStaticHeader(Func<string> getText);
 
-  IConfigPageBuilder AddHeaderWithButton(string headerText, string buttonText, Action buttonAction);
+  IConfigPageBuilder AddStaticText(string text);
 
-  IConfigPageBuilder AddCheckbox(
+  IConfigPageBuilder AddStaticText(Func<string> getText);
+
+  IConfigPageBuilder AddVerticalSpacing();
+
+  IConfigPageBuilder AddVerticalSpacing(int height);
+
+  IConfigPageBuilder AddStaticHeaderWithButton(
+      string headerText,
+      string buttonText,
+      Action buttonAction);
+
+  IConfigPageBuilder AddCheckboxOption(
       string name,
       Func<bool> loadValue,
       Action<bool> saveValue,
@@ -18,7 +29,7 @@ internal interface IConfigPageBuilder {
       string? tooltip = null,
       Func<bool>? hideWhen = null);
 
-  IConfigPageBuilder AddSlider(
+  IConfigPageBuilder AddSliderOption(
       string name,
       Func<int> loadValue,
       Action<int> saveValue,
@@ -30,6 +41,4 @@ internal interface IConfigPageBuilder {
       Func<int, string>? formatValue = null,
       string? tooltip = null,
       Func<bool>? hideWhen = null);
-
-  IConfigMenuBuilder PublishPage();
 }

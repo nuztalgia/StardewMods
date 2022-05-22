@@ -17,27 +17,59 @@ internal sealed record ConfigPageBuilder(
 
   private bool IsPublished = false;
 
-  public IConfigPageBuilder AddSpacing() {
-    return this.AddWidget("vertical spacing", Spacing.DefaultVertical);
+  public IConfigMenuBuilder PublishPage() {
+    if (this.IsPublished) {
+      return this.Publish(null);
+    }
+
+    Widget.MenuPage menuPageWidget = new(
+        this.WidgetsInOrder.ToImmutableArray(),
+        this.WidgetsHideWhen.ToImmutableDictionary()); ;
+
+    this.WidgetsInOrder.Clear();
+    this.WidgetsHideWhen.Clear();
+    this.IsPublished = true;
+
+    return this.Publish(menuPageWidget);
   }
 
-  public IConfigPageBuilder AddParagraph(string text) {
-    return this.AddWidget("static paragraph text", StaticText.CreateParagraph(text));
-  }
-
-  public IConfigPageBuilder AddHeader(string text) {
+  public IConfigPageBuilder AddStaticHeader(string text) {
     return this.AddWidget("static header text", new Header(text));
   }
 
-  public IConfigPageBuilder AddHeaderWithButton(
-      string headerText, string buttonText, Action buttonAction) {
+  public IConfigPageBuilder AddStaticHeader(Func<string> getText) {
+    return this.AddStaticHeader(getText());
+  }
+
+  public IConfigPageBuilder AddStaticText(string text) {
+    return this.AddWidget("static body text", StaticText.CreateParagraph(text));
+  }
+
+  public IConfigPageBuilder AddStaticText(Func<string> getText) {
+    return this.AddStaticText(getText());
+  }
+
+  public IConfigPageBuilder AddVerticalSpacing() {
+    return this.AddWidget("vertical spacing", Spacing.DefaultVertical);
+  }
+
+  public IConfigPageBuilder AddVerticalSpacing(int height) {
+    return this.AddWidget(
+        $"vertical spacing (custom height: {height})",
+        Spacing.CreateVertical(height));
+  }
+
+  public IConfigPageBuilder AddStaticHeaderWithButton(
+      string headerText,
+      string buttonText,
+      Action buttonAction) {
 
     return this.AddWidget(
         "static header text with action button",
         new Header.WithButton(headerText, buttonText, buttonAction));
   }
 
-  public IConfigPageBuilder AddCheckbox(
+  public IConfigPageBuilder AddCheckboxOption(
       string name,
       Func<bool> loadValue,
       Action<bool> saveValue,
@@ -51,7 +83,7 @@ internal sealed record ConfigPageBuilder(
         hideWhen);
   }
 
-  public IConfigPageBuilder AddSlider(
+  public IConfigPageBuilder AddSliderOption(
       string name,
       Func<int> loadValue,
       Action<int> saveValue,
@@ -70,22 +102,6 @@ internal sealed record ConfigPageBuilder(
             name, loadValue, saveValue, onValueChanged, staticMinValue, staticMaxValue,
             getDynamicMinValue, getDynamicMaxValue, formatValue, tooltip),
         hideWhen);
-  }
-
-  public IConfigMenuBuilder PublishPage() {
-    if (this.IsPublished) {
-      return this.Publish(null);
-    }
-
-    Widget.MenuPage menuPageWidget = new(
-        this.WidgetsInOrder.ToImmutableArray(),
-        this.WidgetsHideWhen.ToImmutableDictionary()); ;
-
-    this.WidgetsInOrder.Clear();
-    this.WidgetsHideWhen.Clear();
-    this.IsPublished = true;
-
-    return this.Publish(menuPageWidget);
   }
 
   private IConfigPageBuilder AddWidget(string logName, Widget widget, Func<bool>? hideWhen = null) {
