@@ -139,11 +139,23 @@ internal sealed record ConfigPageBuilder(
       string? tooltip = null,
       Func<bool>? hideWhen = null) {
 
-    return this.AddWidget(
-        "dropdown selection",
-        Dropdown.CreateFromEnum(
-            name, enumType, loadValue, saveValue, onValueChanged, formatValue, tooltip),
-        hideWhen);
+    return enumType.IsEnum
+        ? this.AddDropdownOption(
+            name: name,
+            allowedValues: Enum.GetNames(enumType),
+            loadValue: () => loadValue().ToString() ?? string.Empty,
+            saveValue: (value) => saveValue(Parse(value)),
+            onValueChanged: (onValueChanged == null) ? null : value => onValueChanged(Parse(value)),
+            formatValue: (formatValue == null) ? null : value => formatValue(Parse(value)),
+            tooltip: tooltip,
+            hideWhen: hideWhen)
+        : throw new ArgumentException($"Type '{enumType.Name}' is not an enum type.");
+
+    object Parse(string value) {
+      return (Enum.TryParse(enumType, value, out object? result) && (result?.GetType() == enumType))
+          ? result
+          : throw new FormatException($"Could not parse '{value}' as type '{enumType.Name}'.");
+    }
   }
 
   public IConfigPageBuilder AddDropdownOption<TEnum>(
@@ -155,10 +167,15 @@ internal sealed record ConfigPageBuilder(
       string? tooltip = null,
       Func<bool>? hideWhen = null) where TEnum : Enum {
 
-    return this.AddWidget(
-        "dropdown selection",
-        Dropdown.CreateFromEnum(name, loadValue, saveValue, onValueChanged, formatValue, tooltip),
-        hideWhen);
+    return this.AddDropdownOption(
+        name: name,
+        enumType: typeof(TEnum),
+        loadValue: () => loadValue(),
+        saveValue: (value) => saveValue((TEnum) value),
+        onValueChanged: (onValueChanged == null) ? null : value => onValueChanged((TEnum) value),
+        formatValue: (formatValue == null) ? null : value => formatValue((TEnum) value),
+        tooltip: tooltip,
+        hideWhen: hideWhen);
   }
 
   private IConfigPageBuilder AddWidget(string logName, Widget widget, Func<bool>? hideWhen = null) {
