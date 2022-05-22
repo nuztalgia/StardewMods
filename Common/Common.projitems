@@ -26,8 +26,7 @@
     <Using Include="GenericModConfigMenu" />
     <Using Include="Microsoft.Xna.Framework" />
     <Using Include="Microsoft.Xna.Framework.Graphics" />
-    <Compile Include="$(MSBuildThisFileDirectory)GMCM\GenericModConfigMenuIntegration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GMCM\IGenericModConfigMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GMCM\*.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\*.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Base\*.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\Utils\*.cs" />
