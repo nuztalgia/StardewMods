@@ -2,7 +2,7 @@ namespace Nuztalgia.StardewMods.Common;
 
 internal interface IConfigPageBuilder {
 
-  IConfigMenuBuilder PublishPage();
+  IConfigMenuBuilder EndPage();
 
   IConfigPageBuilder AddStaticHeader(string text);
 

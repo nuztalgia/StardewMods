@@ -11,15 +11,13 @@ internal sealed record ConfigMenuBuilder(
     Action<string> LogVerbose)
         : IConfigMenuBuilder {
 
-  internal delegate void RegisterDelegate(
-      Action onReset, Action onSave, Action<string, object> onFieldChanged);
+  internal delegate void RegisterDelegate(Action onReset, Action onSave);
 
-  internal delegate void AddPageDelegate(
-      string pageId, string pageTitle, Widget.MenuPage menuPageWidget);
+  internal delegate void AddPageDelegate(string pageId, string pageTitle, MenuPage menuPageWidget);
 
-  private readonly record struct MenuPage(string Title, Widget.MenuPage Widget);
+  private readonly record struct MenuPageContent(string Title, MenuPage Widget);
 
-  private readonly Dictionary<string, MenuPage> MenuPages = new();
+  private readonly Dictionary<string, MenuPageContent> MenuPageData = new();
 
   private bool IsPublished = false;
 
@@ -33,7 +31,7 @@ internal sealed record ConfigMenuBuilder(
       throw new ArgumentException($"Invalid page ID.", nameof(pageId));
     }
 
-    if (this.MenuPages.ContainsKey(pageId)) {
+    if (this.MenuPageData.ContainsKey(pageId)) {
       this.LogWarning("Page IDs must be unique within a single menu.");
       throw new ArgumentException($"Invalid page ID: '{pageId}'", nameof(pageId));
     }
@@ -42,17 +40,14 @@ internal sealed record ConfigMenuBuilder(
 
     pageBuilder = new ConfigPageBuilder(
         PageId: pageId,
-        Publish: (menuPageWidget) => this.PublishPage(menuPageWidget, pageId, pageTitle),
+        End: (menuPageWidget) => this.EndPage(menuPageWidget, pageId, pageTitle),
         LogWarning: this.LogWarning,
         LogVerbose: this.LogVerbose);
 
     return this;
   }
 
-  public void PublishMenu(
-      Action? onReset = null,
-      Action? onSave = null,
-      Action<string, object>? onFieldChanged = null) {
+  public void PublishMenu(Action? onReset = null, Action? onSave = null) {
 
     this.LogVerbose($"Attempting to publish the config menu...");
 
@@ -65,25 +60,22 @@ internal sealed record ConfigMenuBuilder(
         onReset ?? (() =>
             this.LogTrace($"Config was reset, but a reset handler was not provided.")),
         onSave ?? (() =>
-            this.LogTrace($"Config was saved, but a save handler was not provided.")),
-        onFieldChanged ?? ((fieldId, newValue) =>
-            this.LogVerbose($"Field '{fieldId}' was changed to: '{newValue}'.")));
+            this.LogTrace($"Config was saved, but a save handler was not provided.")));
 
-    this.MenuPages.ForEach((pageId, menuPage) =>
-        this.AddPage(pageId, menuPage.Title, menuPage.Widget));
+    this.MenuPageData.ForEach((pageId, pageContent) =>
+        this.AddPage(pageId, pageContent.Title, pageContent.Widget));
 
-    this.MenuPages.Clear();
+    this.MenuPageData.Clear();
     this.IsPublished = true;
     this.LogTrace($"Successfully published the config menu!");
   }
 
-  private IConfigMenuBuilder PublishPage(
-      Widget.MenuPage? menuPage, string pageId, string? pageTitle) {
-    if (menuPage == null) {
-      this.LogWarning($"Cannot re-publish an already-published menu page: '{pageId}'.");
+  private IConfigMenuBuilder EndPage(MenuPage? menuPageWidget, string pageId, string? pageTitle) {
+    if (menuPageWidget == null) {
+      this.LogWarning($"Tried to end menu page '{pageId}', but it has already been ended.");
     } else { 
-      this.LogVerbose($"Publishing page '{pageId}' and adding it to the in-progress config menu.");
-      this.MenuPages.Add(pageId, new MenuPage(pageTitle ?? pageId, menuPage));
+      this.LogVerbose($"Ending menu page '{pageId}' and adding it to the in-progress config menu.");
+      this.MenuPageData.Add(pageId, new MenuPageContent(pageTitle ?? pageId, menuPageWidget));
     }
     return this;
   }

@@ -1,19 +1,14 @@
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal abstract partial class Widget {
+internal sealed class MenuPage : Widget.Composite {
 
-  internal sealed class MenuPage : Composite {
+  private const int VerticalSpacing = 16;
 
-    internal MenuPage(
-        IEnumerable<Widget> widgetsInOrder, IDictionary<Widget, Func<bool>?> widgetsHideWhen)
-            : base(linearMode: LinearMode.Vertical, isFullWidth: true) {
+  internal MenuPage(
+      IEnumerable<Widget> widgetsInOrder, IDictionary<Widget, Func<bool>>? hideableWidgets)
+          : base(hideableWidgets, canDrawOverlay: true) {
 
-      widgetsInOrder.ForEach((Widget widget) => this.AddSubWidget(widget));
-      // TODO: Prevent subwidgets from being drawn if their "hideWhen" is true.
-    }
-
-    protected override void PostDraw(SpriteBatch sb, Vector2 position) {
-      ActiveOverlay?.Draw(sb, position);
-    }
+    widgetsInOrder.ForEach((Widget widget) => this.AddSubWidget(widget,
+        postDraw: (ref Vector2 position, int _, int _) => position.Y += VerticalSpacing));
   }
 }

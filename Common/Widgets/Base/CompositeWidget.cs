@@ -16,9 +16,11 @@ internal abstract partial class Widget {
         Adjustment? PostDraw
     );
 
-    private readonly List<SubWidget> SubWidgets = new();
+    private readonly IList<SubWidget> SubWidgets = new List<SubWidget>();
+    private readonly IDictionary<Widget, Func<bool>>? HideableWidgets;
     private readonly LinearMode Mode;
     private readonly bool IsFullWidth;
+    private readonly bool CanDrawOverlay;
 
     protected int SubWidgetCount => this.SubWidgets.Count;
     protected int CompositeWidth => this.Width;
@@ -33,6 +35,13 @@ internal abstract partial class Widget {
             : base(name, tooltip, alignment) {
       this.Mode = linearMode;
       this.IsFullWidth = isFullWidth;
+    }
+
+    protected Composite(IDictionary<Widget, Func<bool>>? hideableWidgets, bool canDrawOverlay)
+        : this(linearMode: LinearMode.Vertical, isFullWidth: true) {
+      // More "powerful" constructor, only used by MenuPage (for now).
+      this.HideableWidgets = hideableWidgets;
+      this.CanDrawOverlay = canDrawOverlay;
     }
 
     protected Composite(string? name, string? tooltip, LinearMode linearMode)
@@ -56,8 +65,6 @@ internal abstract partial class Widget {
           widget.Height = Math.Max(widget.Height, label.Height);
         }
 
-        widget.Height = Math.Max(widget.Height, DefaultHeight);
-
         width = (this.Mode == LinearMode.Horizontal)
             ? width + widget.Width
             : Math.Max(width, widget.Width);
@@ -75,19 +82,30 @@ internal abstract partial class Widget {
       foreach ((Widget widget, Adjustment? preDraw, Adjustment? postDraw) in this.SubWidgets) {
         if (widget == ActiveOverlay) {
           overlayPosition = new(position.X, position.Y);
-        } else {
+        } else if (!ShouldHideWidget(widget)) {
           DrawSubWidget(widget, preDraw, postDraw);
+          AdjustPosition(widget);
         }
       }
 
-      this.PostDraw(sb, overlayPosition ?? position);
+      if (this.CanDrawOverlay) {
+        ActiveOverlay?.Draw(sb, overlayPosition ?? position);
+      }
+
+      bool ShouldHideWidget(Widget widget) {
+        return (this.HideableWidgets != null)
+            && this.HideableWidgets.TryGetValue(widget, out Func<bool>? shouldHide)
+            && shouldHide();
+      }
 
       void DrawSubWidget(Widget widget, Adjustment? preDraw, Adjustment? postDraw) {
         preDraw?.Invoke(ref position, widget.Width, widget.Height);
         widget.Draw(sb, position, this.Width, this.Height);
         widget.NameLabel?.Draw(sb, position, this.Width, this.Height);
         postDraw?.Invoke(ref position, widget.Width, widget.Height);
+      }
 
+      void AdjustPosition(Widget widget) {
         if (this.Mode == LinearMode.Horizontal) {
           position.X += widget.Width;
         } else if (this.Mode == LinearMode.Vertical) {
@@ -103,8 +121,6 @@ internal abstract partial class Widget {
     protected override void SaveState() {
       this.ForEachWidget((Widget widget) => widget.SaveState());
     }
-
-    protected virtual void PostDraw(SpriteBatch sb, Vector2 position) { }
 
     protected static (int width, int height) GetTextDimensions(TextWidget textWidget) {
       return textWidget.UpdateDimensions(int.MaxValue);

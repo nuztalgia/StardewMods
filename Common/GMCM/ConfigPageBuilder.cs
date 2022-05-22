@@ -5,32 +5,40 @@ namespace Nuztalgia.StardewMods.Common;
 
 internal sealed record ConfigPageBuilder(
     string PageId,
-    ConfigPageBuilder.PublishDelegate Publish,
+    ConfigPageBuilder.EndDelegate End,
     Action<string> LogWarning,
     Action<string> LogVerbose)
         : IConfigPageBuilder {
 
-  internal delegate IConfigMenuBuilder PublishDelegate(Widget.MenuPage? menuPageWidget);
+  internal delegate IConfigMenuBuilder EndDelegate(MenuPage? menuPageWidget);
 
   private readonly List<Widget> WidgetsInOrder = new();
   private readonly Dictionary<Widget, Func<bool>?> WidgetsHideWhen = new();
 
-  private bool IsPublished = false;
+  private bool IsEnded = false;
 
-  public IConfigMenuBuilder PublishPage() {
-    if (this.IsPublished) {
-      return this.Publish(null);
+  public IConfigMenuBuilder EndPage() {
+    if (this.IsEnded) {
+      return this.End(null);
     }
 
-    Widget.MenuPage menuPageWidget = new(
+    Dictionary<Widget, Func<bool>> hideableWidgets = new();
+
+    this.WidgetsHideWhen.ForEach((Widget widget, Func<bool>? hideWhen) => {
+      if (hideWhen != null) {
+        hideableWidgets.Add(widget, hideWhen);
+      }
+    });
+
+    MenuPage menuPageWidget = new(
         this.WidgetsInOrder.ToImmutableArray(),
-        this.WidgetsHideWhen.ToImmutableDictionary()); ;
+        hideableWidgets.Any() ? hideableWidgets.ToImmutableDictionary() : null);
 
     this.WidgetsInOrder.Clear();
     this.WidgetsHideWhen.Clear();
-    this.IsPublished = true;
+    this.IsEnded = true;
 
-    return this.Publish(menuPageWidget);
+    return this.End(menuPageWidget);
   }
 
   public IConfigPageBuilder AddStaticHeader(string text) {
@@ -154,8 +162,9 @@ internal sealed record ConfigPageBuilder(
   }
 
   private IConfigPageBuilder AddWidget(string logName, Widget widget, Func<bool>? hideWhen = null) {
-    if (this.IsPublished) {
-      this.LogWarning($"Cannot add new components to already-published menu page '{this.PageId}'.");
+    if (this.IsEnded) {
+      this.LogWarning(
+          $"Cannot add new items to menu page '{this.PageId}' because it has already been ended.");
     } else {
       this.LogVerbose($"Adding {logName} to in-progress menu page '{this.PageId}'.");
       this.WidgetsInOrder.Add(widget);
