@@ -91,6 +91,23 @@ internal sealed record ConfigPageBuilder(
         hideWhen);
   }
 
+  public IConfigPageBuilder AddCheckboxOption(
+      string name,
+      object propertyHolder,
+      PropertyInfo propertyInfo,
+      Action<bool>? onValueChanged = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null) {
+
+    return this.AddCheckboxOption(
+        name: name,
+        loadValue: () => ((bool?) propertyInfo.GetValue(propertyHolder)) ?? default,
+        saveValue: (value) => propertyInfo.SetValue(propertyHolder, value),
+        onValueChanged: onValueChanged,
+        tooltip: tooltip,
+        hideWhen: hideWhen);
+  }
+
   public IConfigPageBuilder AddSliderOption(
       string name,
       Func<int> loadValue,
@@ -110,6 +127,33 @@ internal sealed record ConfigPageBuilder(
             name, loadValue, saveValue, onValueChanged, staticMinValue, staticMaxValue,
             getDynamicMinValue, getDynamicMaxValue, formatValue, tooltip),
         hideWhen);
+  }
+
+  public IConfigPageBuilder AddSliderOption(
+      string name,
+      object propertyHolder,
+      PropertyInfo propertyInfo,
+      Action<int>? onValueChanged = null,
+      int? staticMinValue = null,
+      int? staticMaxValue = null,
+      Func<int>? getDynamicMinValue = null,
+      Func<int>? getDynamicMaxValue = null,
+      Func<int, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null) {
+
+    return this.AddSliderOption(
+        name: name,
+        loadValue: () => ((int?) propertyInfo.GetValue(propertyHolder)) ?? default,
+        saveValue: (value) => propertyInfo.SetValue(propertyHolder, value),
+        onValueChanged: onValueChanged,
+        staticMinValue: staticMinValue,
+        staticMaxValue: staticMaxValue,
+        getDynamicMinValue: getDynamicMinValue,
+        getDynamicMaxValue: getDynamicMaxValue,
+        formatValue: formatValue,
+        tooltip: tooltip,
+        hideWhen: hideWhen);
   }
 
   public IConfigPageBuilder AddDropdownOption(
@@ -156,6 +200,26 @@ internal sealed record ConfigPageBuilder(
           ? result
           : throw new FormatException($"Could not parse '{value}' as type '{enumType.Name}'.");
     }
+  }
+
+  public IConfigPageBuilder AddDropdownOption(
+      string name,
+      object propertyHolder,
+      PropertyInfo propertyInfo,
+      Action<object>? onValueChanged = null,
+      Func<object, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null) {
+
+    return this.AddDropdownOption(
+        name: name,
+        enumType: propertyInfo.PropertyType,
+        loadValue: () => propertyInfo.GetValue(propertyHolder)?.ToString() ?? string.Empty,
+        saveValue: (value) => propertyInfo.SetValue(propertyHolder, value),
+        onValueChanged: onValueChanged,
+        formatValue: formatValue,
+        tooltip: tooltip,
+        hideWhen: hideWhen);
   }
 
   public IConfigPageBuilder AddDropdownOption<TEnum>(

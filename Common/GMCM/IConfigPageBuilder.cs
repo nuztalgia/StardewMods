@@ -29,10 +29,31 @@ internal interface IConfigPageBuilder {
       string? tooltip = null,
       Func<bool>? hideWhen = null);
 
+  IConfigPageBuilder AddCheckboxOption(
+      string name,
+      object propertyHolder,
+      PropertyInfo propertyInfo,
+      Action<bool>? onValueChanged = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null);
+
   IConfigPageBuilder AddSliderOption(
       string name,
       Func<int> loadValue,
       Action<int> saveValue,
+      Action<int>? onValueChanged = null,
+      int? staticMinValue = null,
+      int? staticMaxValue = null,
+      Func<int>? getDynamicMinValue = null,
+      Func<int>? getDynamicMaxValue = null,
+      Func<int, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null);
+
+  IConfigPageBuilder AddSliderOption(
+      string name,
+      object propertyHolder,
+      PropertyInfo propertyInfo,
       Action<int>? onValueChanged = null,
       int? staticMinValue = null,
       int? staticMaxValue = null,
@@ -57,6 +78,15 @@ internal interface IConfigPageBuilder {
       Type enumType,
       Func<object> loadValue,
       Action<object> saveValue,
+      Action<object>? onValueChanged = null,
+      Func<object, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null);
+
+  IConfigPageBuilder AddDropdownOption(
+      string name,
+      object propertyHolder,
+      PropertyInfo propertyInfo,
       Action<object>? onValueChanged = null,
       Func<object, string>? formatValue = null,
       string? tooltip = null,
