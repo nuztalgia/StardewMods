@@ -104,6 +104,55 @@ internal sealed record ConfigPageBuilder(
         hideWhen);
   }
 
+  public IConfigPageBuilder AddDropdownOption(
+      string name,
+      IEnumerable<string> allowedValues,
+      Func<string> loadValue,
+      Action<string> saveValue,
+      Action<string>? onValueChanged = null,
+      Func<string, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null) {
+
+    return this.AddWidget(
+        "dropdown selection",
+        new Dropdown(
+            name, allowedValues, loadValue, saveValue, onValueChanged, formatValue, tooltip),
+        hideWhen);
+  }
+
+  public IConfigPageBuilder AddDropdownOption(
+      string name,
+      Type enumType,
+      Func<object> loadValue,
+      Action<object> saveValue,
+      Action<object>? onValueChanged = null,
+      Func<object, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null) {
+
+    return this.AddWidget(
+        "dropdown selection",
+        Dropdown.CreateFromEnum(
+            name, enumType, loadValue, saveValue, onValueChanged, formatValue, tooltip),
+        hideWhen);
+  }
+
+  public IConfigPageBuilder AddDropdownOption<TEnum>(
+      string name,
+      Func<TEnum> loadValue,
+      Action<TEnum> saveValue,
+      Action<TEnum>? onValueChanged = null,
+      Func<TEnum, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null) where TEnum : Enum {
+
+    return this.AddWidget(
+        "dropdown selection",
+        Dropdown.CreateFromEnum(name, loadValue, saveValue, onValueChanged, formatValue, tooltip),
+        hideWhen);
+  }
+
   private IConfigPageBuilder AddWidget(string logName, Widget widget, Func<bool>? hideWhen = null) {
     if (this.IsPublished) {
       this.LogWarning($"Cannot add new components to already-published menu page '{this.PageId}'.");

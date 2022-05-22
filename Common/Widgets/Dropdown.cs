@@ -42,12 +42,12 @@ internal class Dropdown : Widget.Composite {
   private static readonly Vector2 TextAdjustment = new(x: 10, y: 1);
 
   internal Dropdown(
+      string name,
       IEnumerable<string> allowedValues,
       Func<string> loadValue,
       Action<string> saveValue,
       Action<string>? onValueChanged = null,
       Func<string, string>? formatValue = null,
-      string? name = null,
       string? tooltip = null) : base(name, tooltip) {
 
     List<string> uniqueValues = new();
@@ -72,22 +72,22 @@ internal class Dropdown : Widget.Composite {
   }
 
   internal static Dropdown CreateFromEnum(
+      string name,
       Type enumType,
       Func<object> loadValue,
       Action<object> saveValue,
       Action<object>? onValueChanged = null,
       Func<object, string>? formatValue = null,
-      string? name = null,
       string? tooltip = null) {
 
     return enumType.IsEnum
         ? new Dropdown(
+            name: name,
             allowedValues: Enum.GetNames(enumType),
             loadValue: () => loadValue().ToString() ?? string.Empty,
             saveValue: value => saveValue(Parse(value)),
             onValueChanged: (onValueChanged == null) ? null : value => onValueChanged(Parse(value)),
             formatValue: (formatValue == null) ? null : value => formatValue(Parse(value)),
-            name: name,
             tooltip: tooltip)
         : throw new ArgumentException($"Type '{enumType.Name}' is not an enum type.");
 
@@ -99,20 +99,20 @@ internal class Dropdown : Widget.Composite {
   }
 
   internal static Dropdown CreateFromEnum<TEnum>(
+      string name,
       Func<TEnum> loadValue,
       Action<TEnum> saveValue,
       Action<TEnum>? onValueChanged = null,
       Func<TEnum, string>? formatValue = null,
-      string? name = null,
       string? tooltip = null) where TEnum : Enum {
 
     return CreateFromEnum(
+        name: name,
         enumType: typeof(TEnum),
         loadValue: () => loadValue(),
         saveValue: value => saveValue((TEnum) value),
         onValueChanged: (onValueChanged == null) ? null : value => onValueChanged((TEnum) value),
         formatValue: (formatValue == null) ? null : value => formatValue((TEnum) value),
-        name: name,
         tooltip: tooltip);
   }
 }

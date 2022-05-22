@@ -41,4 +41,33 @@ internal interface IConfigPageBuilder {
       Func<int, string>? formatValue = null,
       string? tooltip = null,
       Func<bool>? hideWhen = null);
+
+  IConfigPageBuilder AddDropdownOption(
+      string name,
+      IEnumerable<string> allowedValues,
+      Func<string> loadValue,
+      Action<string> saveValue,
+      Action<string>? onValueChanged = null,
+      Func<string, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null);
+
+  IConfigPageBuilder AddDropdownOption(
+      string name,
+      Type enumType,
+      Func<object> loadValue,
+      Action<object> saveValue,
+      Action<object>? onValueChanged = null,
+      Func<object, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null);
+
+  IConfigPageBuilder AddDropdownOption<TEnum>(
+      string name,
+      Func<TEnum> loadValue,
+      Action<TEnum> saveValue,
+      Action<TEnum>? onValueChanged = null,
+      Func<TEnum, string>? formatValue = null,
+      string? tooltip = null,
+      Func<bool>? hideWhen = null) where TEnum : Enum;
 }
