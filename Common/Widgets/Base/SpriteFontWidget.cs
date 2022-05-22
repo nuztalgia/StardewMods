@@ -30,10 +30,7 @@ internal abstract class SpriteFontWidget : TextWidget {
           rotation: 0f, origin: Vector2.Zero, scale: 1f,
           effects: SpriteEffects.None, layerDepth: 1f);
     }
-    this.PostDraw(sb);
   }
-
-  protected virtual void PostDraw(SpriteBatch sb) { }
 
   protected static string ParseText(string text, Font font, int width) {
     text = text.Replace("\n", string.Empty);

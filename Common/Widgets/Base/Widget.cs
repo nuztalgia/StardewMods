@@ -10,9 +10,9 @@ internal abstract partial class Widget {
   private static int ViewportWidth;
   private static int TotalWidth;
 
-  private readonly string Name;
-  private readonly string? Tooltip;
-  private readonly TextWidget? Label;
+  protected static Widget? ActiveOverlay { get; private set; }
+
+  private readonly Widget? NameLabel;
   private readonly Alignment? Alignable;
   private readonly Interaction? Interactable;
 
@@ -20,15 +20,8 @@ internal abstract partial class Widget {
   private int Height;
 
   protected Widget(string? name = null, string? tooltip = null, Alignment? alignment = null) {
-    /* TODO: Uncomment this block and delete stuff below when tooltips are production-ready.
-    if ((name != null) && (tooltip != null)) {
-      this.Label = StaticText.CreateWidgetLabel(labelText: name, tooltipText: tooltip);
-    } */
-
-    this.Name = name ?? string.Empty;
-    this.Tooltip = tooltip;
+    this.NameLabel = Label.Create(labelText: name, tooltipText: tooltip);
     this.Alignable = alignment;
-
     if (this is IHoverable or IClickable or IDraggable) {
       this.Interactable = new(this as IHoverable, this as IClickable, this as IDraggable);
     }
@@ -50,6 +43,18 @@ internal abstract partial class Widget {
     );
   }
 
+  protected void SetOverlayStatus(bool isActive) {
+    if (isActive) {
+      if ((ActiveOverlay != null) && (ActiveOverlay != this)) {
+        Log.Verbose("Tried to set widget as overlay, but there's already another active overlay.");
+      } else {
+        ActiveOverlay = this;
+      }
+    } else if (ActiveOverlay == this) {
+      ActiveOverlay = null;
+    }
+  }
+
   protected virtual void ResetState() { }
 
   protected virtual void SaveState() { }
@@ -60,7 +65,6 @@ internal abstract partial class Widget {
 
   private void Draw(
       SpriteBatch sb, Vector2 position, int? containerWidth = null, int? containerHeight = null) {
-    this.Label?.Draw(sb, position, TotalWidth, this.Height);
     this.Alignable?.Align(
         ref position, this.Width, this.Height,
         containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
@@ -80,10 +84,5 @@ internal abstract partial class Widget {
   private void RefreshStateAndSize() {
     this.ResetState();
     (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
-
-    if (this.Label != null) {
-      (this.Label.Width, this.Label.Height) = this.Label.UpdateDimensions(TotalWidth);
-      this.Height = Math.Max(this.Height, this.Label.Height);
-    }
   }
 }
