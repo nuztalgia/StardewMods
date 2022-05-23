@@ -50,18 +50,27 @@ internal class Dropdown : Widget.Composite {
       }
     }
 
+    public IClickable? ClickableTrigger { get; }
+
     private bool IsExpanded = false;
 
-    internal Expansion(IEnumerable<string> values) {
+    internal Expansion(IClickable clickableTrigger, IEnumerable<string> values) {
+      this.ClickableTrigger = clickableTrigger;
+
       this.AddSubWidget(
           new Background((ScaledHeight * values.Count()) + PixelZoom),
-          postDraw: MainTextPreDrawAdjustment);
+          preDraw: (ref Vector2 position, int _, int _) => position.Y += ScaledHeight - PixelZoom,
+          postDraw: TextOffsetAdjustment);
 
       foreach (string value in values) {
         this.AddSubWidget(
             StaticText.CreateDropdownEntry(value),
-            postDraw: ExpandedTextPostDrawAdjustment);
+            postDraw: (ref Vector2 position, int _, int _) => position.Y += ScaledHeight);
       }
+    }
+
+    public void OnDismissed() {
+      this.IsExpanded = false;
     }
 
     internal void ToggleExpandedState() {
@@ -81,12 +90,12 @@ internal class Dropdown : Widget.Composite {
   private static readonly Rectangle BackgroundSourceRect = new(433, 451, 3, 3);
 
   private static readonly Vector2 TextOffset = new(x: 12, y: 9);
-  private static readonly Adjustment MainTextPreDrawAdjustment =
-      (ref Vector2 position, int width, int height) => position += TextOffset;
-  private static readonly Adjustment ExpandedTextPostDrawAdjustment =
-      (ref Vector2 position, int width, int height) => position.Y += ScaledHeight;
+  private static readonly Adjustment TextOffsetAdjustment =
+      (ref Vector2 position, int _, int _) => position += TextOffset;
 
   private static int BackgroundWidth;
+
+  private readonly Action OnSelectionClicked;
 
   internal Dropdown(
       string name,
@@ -98,15 +107,18 @@ internal class Dropdown : Widget.Composite {
       string? tooltip = null) : base(name, tooltip) {
 
     IEnumerable<string> values = GetUniqueValues(allowedValues);
-    Expansion expansion = new(
-        (formatValue == null) ? values : values.Select(value => formatValue(value)));
 
-    Selection selection = new(loadValue, saveValue, onValueChanged, expansion.ToggleExpandedState);
+    Selection selection = new(
+        loadValue, saveValue, onValueChanged, () => this.OnSelectionClicked?.Invoke());
     Func<string> getValueText = GetValueTextFunction(values, selection.GetValue, formatValue);
+
+    Expansion expansion = new(
+        selection, (formatValue == null) ? values : values.Select(value => formatValue(value)));
+    this.OnSelectionClicked = expansion.ToggleExpandedState;
 
     this.AddSubWidget(expansion);
     this.AddSubWidget(selection);
-    this.AddSubWidget(DynamicText.CreateDropdownEntry(getValueText), MainTextPreDrawAdjustment);
+    this.AddSubWidget(DynamicText.CreateDropdownEntry(getValueText), preDraw: TextOffsetAdjustment);
   }
 
   private static IEnumerable<string> GetUniqueValues(IEnumerable<string> allValues) {

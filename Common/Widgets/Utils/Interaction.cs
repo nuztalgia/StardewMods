@@ -41,6 +41,9 @@ internal abstract partial class Widget {
       if (this.Clickable != null) {
         if (isHovering && (oldMouseButtonState == ButtonState.Pressed)
             && (this.MouseButtonState == ButtonState.Released)) {
+          if (this.Clickable != ActiveOverlay?.ClickableTrigger) {
+            ClearActiveOverlay();
+          }
           TryPlaySound(this.Clickable.ClickSoundName);
           this.Clickable.ClickAction();
         }

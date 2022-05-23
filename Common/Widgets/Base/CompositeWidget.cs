@@ -92,7 +92,7 @@ internal abstract partial class Widget {
       }
 
       if (this.CanDrawOverlay && (ActiveOverlayPosition != default)) {
-        ActiveOverlay?.Draw(sb, ActiveOverlayPosition);
+        (ActiveOverlay as Widget)?.Draw(sb, ActiveOverlayPosition);
       }
 
       bool ShouldHideWidget(Widget widget) {

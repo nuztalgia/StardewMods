@@ -3,9 +3,13 @@ namespace Nuztalgia.StardewMods.Common.UI;
 internal abstract partial class Widget {
 
   protected interface IOverlayable {
+    IClickable? ClickableTrigger => null;
+
     void SetOverlayStatus(bool isActive) {
       Widget.SetOverlayStatus(this, isActive);
     }
+
+    void OnDismissed() { }
   }
 
   protected const int DefaultHeight = 48;
@@ -16,7 +20,7 @@ internal abstract partial class Widget {
   private static int ViewportWidth;
   private static int TotalWidth;
 
-  private static Widget? ActiveOverlay;
+  private static IOverlayable? ActiveOverlay;
   private static Vector2 ActiveOverlayPosition;
 
   private readonly Widget? NameLabel;
@@ -87,6 +91,7 @@ internal abstract partial class Widget {
   }
 
   private void RefreshStateAndSize() {
+    ClearActiveOverlay();
     this.ResetState();
     (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
   }
@@ -95,14 +100,18 @@ internal abstract partial class Widget {
     if (isActive) {
       if (ActiveOverlay == widget) {
         return;
-      } else if (ActiveOverlay == null) {
-        ActiveOverlay = (Widget) widget;
-      } else {
-        Log.Verbose("Tried to set widget as overlay, but there's already another active overlay.");
+      } else if (ActiveOverlay != null) {
+        ActiveOverlay?.OnDismissed();
       }
+      ActiveOverlay = widget;
     } else if (ActiveOverlay == widget) {
-      ActiveOverlay = null;
-      ActiveOverlayPosition = default;
+      ClearActiveOverlay();
     }
+  }
+
+  private static void ClearActiveOverlay() {
+    ActiveOverlay?.OnDismissed();
+    ActiveOverlay = null;
+    ActiveOverlayPosition = default;
   }
 }
