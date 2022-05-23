@@ -57,6 +57,7 @@ internal abstract partial class Widget {
 
     protected override sealed (int width, int height) UpdateDimensions(int totalWidth) {
       (int width, int height) = (0, 0);
+
       this.ForEachWidget((Widget widget) => {
         (widget.Width, widget.Height) = widget.UpdateDimensions(totalWidth);
 
@@ -73,7 +74,10 @@ internal abstract partial class Widget {
             ? height + widget.Height
             : Math.Max(height, widget.Height);
       });
-      return (this.IsFullWidth ? totalWidth : Math.Min(width, totalWidth), height);
+
+      return (this is IOverlayable)
+          ? (0, 0)
+          : (this.IsFullWidth ? totalWidth : Math.Min(width, totalWidth), height);
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {

@@ -13,7 +13,7 @@ internal class DynamicText : SpriteFontWidget {
   }
 
   internal static DynamicText CreateDropdownEntry(Func<string> getText) {
-    return new(getText, Font.Small, drawShadow: false, wrapLines: false, Alignment.CenterY);
+    return new(getText, Font.Small, drawShadow: false, wrapLines: false, alignment: null);
   }
 
   internal static DynamicText CreateSliderLabel(Func<string> getText) {

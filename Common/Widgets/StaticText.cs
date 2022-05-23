@@ -14,6 +14,10 @@ internal class StaticText : SpriteFontWidget {
     return new(text, Font.Small, drawShadow: false, wrapLines: false, Alignment.CenterXY);
   }
 
+  internal static StaticText CreateDropdownEntry(string text) {
+    return new(text, Font.Small, drawShadow: false, wrapLines: false, alignment: null);
+  }
+
   internal static StaticText CreateImageCaption(string text) {
     return new(text, Font.Regular, drawShadow: true, wrapLines: false, Alignment.CenterX);
   }
