@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework.Input;
-
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal interface IHoverable {
@@ -17,16 +15,9 @@ internal interface IDraggable {
 
 internal abstract partial class Widget {
 
-  protected static int MousePositionX;
-  protected static int MousePositionY;
-
   private record Interaction(IHoverable? Hoverable, IClickable? Clickable, IDraggable? Draggable) {
 
-    private ButtonState MouseButtonState;
-
     internal void Update(Vector2 position, int width, int height) {
-      MousePositionX = Game1.getOldMouseX();
-      MousePositionY = Game1.getOldMouseY();
 
       bool isHovering = (position.X < MousePositionX) && (MousePositionX < (position.X + width))
           && (position.Y < MousePositionY) && (MousePositionY < (position.Y + height));
@@ -35,24 +26,16 @@ internal abstract partial class Widget {
         this.Hoverable.IsHovering = isHovering;
       }
 
-      ButtonState oldMouseButtonState = this.MouseButtonState;
-      this.MouseButtonState = Mouse.GetState().LeftButton;
-
-      if (this.Clickable != null) {
-        if (isHovering && (oldMouseButtonState == ButtonState.Pressed)
-            && (this.MouseButtonState == ButtonState.Released)) {
-          if (this.Clickable != ActiveOverlay?.ClickableTrigger) {
-            ClearActiveOverlay();
-          }
-          TryPlaySound(this.Clickable.ClickSoundName);
-          this.Clickable.ClickAction();
-        }
+      if ((this.Clickable != null) && (!WasClickConsumed)
+          && isHovering && WasMousePressed && !IsMousePressed) {
+        TryPlaySound(this.Clickable.ClickSoundName);
+        this.Clickable.ClickAction();
       }
 
       if (this.Draggable != null) {
-        if (this.MouseButtonState == ButtonState.Released) {
+        if (!IsMousePressed) {
           this.Draggable.IsDragging = false;
-        } else if (isHovering && (oldMouseButtonState == ButtonState.Released)) {
+        } else if (isHovering && !WasMousePressed) {
           this.Draggable.IsDragging = true;
         }
       }

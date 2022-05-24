@@ -13,9 +13,10 @@ internal sealed record ConfigMenuBuilder(
 
   internal delegate void RegisterDelegate(Action onReset, Action onSave);
 
-  internal delegate void AddPageDelegate(string pageId, string pageTitle, MenuPage menuPageWidget);
+  internal delegate void AddPageDelegate(
+      string pageId, string pageTitle, Widget.MenuPage menuPageWidget);
 
-  private readonly record struct MenuPageContent(string Title, MenuPage Widget);
+  private readonly record struct MenuPageContent(string Title, Widget.MenuPage Widget);
 
   private readonly Dictionary<string, MenuPageContent> MenuPageData = new();
 
@@ -70,7 +71,8 @@ internal sealed record ConfigMenuBuilder(
     this.LogTrace($"Successfully published the config menu!");
   }
 
-  private IConfigMenuBuilder EndPage(MenuPage? menuPageWidget, string pageId, string? pageTitle) {
+  private IConfigMenuBuilder EndPage(
+      Widget.MenuPage? menuPageWidget, string pageId, string? pageTitle) {
     if (menuPageWidget == null) {
       this.LogWarning($"Tried to end menu page '{pageId}', but it has already been ended.");
     } else { 

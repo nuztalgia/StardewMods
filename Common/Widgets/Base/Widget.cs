@@ -3,7 +3,10 @@ namespace Nuztalgia.StardewMods.Common.UI;
 internal abstract partial class Widget {
 
   protected interface IOverlayable {
-    IClickable? ClickableTrigger => null;
+
+    bool TryConsumeClick() {
+      return false;
+    }
 
     void SetOverlayStatus(bool isActive) {
       Widget.SetOverlayStatus(this, isActive);
@@ -22,6 +25,13 @@ internal abstract partial class Widget {
 
   private static IOverlayable? ActiveOverlay;
   private static Vector2 ActiveOverlayPosition;
+
+  protected static float MousePositionX { get; private set; }
+  protected static float MousePositionY { get; private set; }
+
+  private static bool WasClickConsumed;
+  private static bool WasMousePressed;
+  private static bool IsMousePressed;
 
   private readonly Widget? NameLabel;
   private readonly Alignment? Alignable;
@@ -48,20 +58,6 @@ internal abstract partial class Widget {
         : () => true;
   }
 
-  // TODO: Move this to MenuPage after existing menus are migrated to the new framework.
-  internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
-    gmcmApi.AddComplexOption(
-        mod: modManifest,
-        name: () => string.Empty,
-        draw: (sb, position) => this.Draw(sb, position, null, null),
-        beforeMenuOpened: this.OnMenuOpening,
-        beforeMenuClosed: this.RefreshStateAndSize,
-        beforeReset: this.RefreshStateAndSize,
-        beforeSave: this.SaveState,
-        height: () => this.Height
-    );
-  }
-
   protected virtual void ResetState() { }
 
   protected virtual void SaveState() { }
@@ -80,20 +76,6 @@ internal abstract partial class Widget {
       this.Interactable?.Update(position, this.Width, this.Height);
       this.Draw(sb, position);
     }
-  }
-
-  private void OnMenuOpening() {
-    if (ViewportWidth != Game1.uiViewport.Width) {
-      ViewportWidth = Game1.uiViewport.Width;
-      TotalWidth = Math.Min(ViewportWidth - ViewportPadding, MinTotalWidth);
-    }
-    this.RefreshStateAndSize();
-  }
-
-  private void RefreshStateAndSize() {
-    ClearActiveOverlay();
-    this.ResetState();
-    (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
   }
 
   private static void SetOverlayStatus(IOverlayable widget, bool isActive) {

@@ -1,14 +1,59 @@
+using Microsoft.Xna.Framework.Input;
+
 namespace Nuztalgia.StardewMods.Common.UI;
 
-internal sealed class MenuPage : Widget.Composite {
+internal abstract partial class Widget {
 
-  private const int VerticalSpacing = 16;
+  internal sealed class MenuPage : Composite {
 
-  internal MenuPage(
-      IEnumerable<Widget> widgetsInOrder, IDictionary<Widget, Func<bool>>? hideableWidgets)
-          : base(hideableWidgets, canDrawOverlay: true) {
+    private const int VerticalSpacing = 16;
 
-    widgetsInOrder.ForEach((Widget widget) => this.AddSubWidget(widget,
-        postDraw: (ref Vector2 position, int _, int _) => position.Y += VerticalSpacing));
+    internal MenuPage(
+        IEnumerable<Widget> widgetsInOrder, IDictionary<Widget, Func<bool>>? hideableWidgets)
+            : base(hideableWidgets, canDrawOverlay: true) {
+
+      widgetsInOrder.ForEach((Widget widget) => this.AddSubWidget(widget,
+          postDraw: (ref Vector2 position, int _, int _) => position.Y += VerticalSpacing));
+    }
+
+    internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
+      gmcmApi.AddComplexOption(
+          mod: modManifest,
+          name: () => string.Empty,
+          draw: this.OnMenuDraw,
+          beforeMenuOpened: this.OnMenuOpening,
+          beforeMenuClosed: this.RefreshStateAndSize,
+          beforeReset: this.RefreshStateAndSize,
+          beforeSave: this.SaveState,
+          height: () => this.Height);
+    }
+
+    private void OnMenuDraw(SpriteBatch sb, Vector2 position) {
+      MousePositionX = Game1.getOldMouseX();
+      MousePositionY = Game1.getOldMouseY();
+
+      WasMousePressed = IsMousePressed;
+      IsMousePressed = Mouse.GetState().LeftButton == ButtonState.Pressed;
+
+      // We register a click when the mouse is released - not when it's first pressed.
+      WasClickConsumed = WasMousePressed && !IsMousePressed
+          && (ActiveOverlay?.TryConsumeClick() == true);
+
+      this.Draw(sb, position, null, null);
+    }
+
+    private void OnMenuOpening() {
+      if (ViewportWidth != Game1.uiViewport.Width) {
+        ViewportWidth = Game1.uiViewport.Width;
+        TotalWidth = Math.Min(ViewportWidth - ViewportPadding, MinTotalWidth);
+      }
+      this.RefreshStateAndSize();
+    }
+
+    private void RefreshStateAndSize() {
+      ClearActiveOverlay();
+      this.ResetState();
+      (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
+    }
   }
 }

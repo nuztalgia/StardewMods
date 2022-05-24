@@ -19,6 +19,10 @@ internal class Dropdown : Widget.Composite {
       return this.Value;
     }
 
+    internal void SetValue(string value) {
+      this.Value = value;
+    }
+
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
       BackgroundWidth = (totalWidth / 2) - (ScaledButtonWidth * 2) - BackgroundPadding;
       return (BackgroundWidth + ScaledButtonWidth, DefaultHeight);
@@ -33,32 +37,77 @@ internal class Dropdown : Widget.Composite {
 
   private class Expansion : Composite, IOverlayable {
 
-    private class Background : Widget {
+    private class Background : Widget, IHoverable, IClickable {
 
+      private const int HighlightHeight = ScaledHeight - PixelZoom;
+
+      private static int HighlightWidth;
+
+      public Action ClickAction { get; }
+      public bool IsHovering { get; set; }
+
+      private readonly int ItemCount;
       private readonly int Height;
 
-      internal Background(int height) {
-        this.Height = height;
+      private int HoverIndex;
+      private bool IsHoveringOnItem;
+
+      private Rectangle HighlightBounds;
+      private Rectangle InteractionBounds;
+
+      internal Background(Action clickAction, int itemCount) {
+        this.ClickAction = clickAction;
+        this.ItemCount = itemCount;
+        this.Height = (itemCount * ScaledHeight) + PixelZoom;
+
+        this.HighlightBounds.Height = HighlightHeight;
+        this.InteractionBounds.Height = this.Height + ScaledHeight;
+      }
+
+      internal int? GetHoverInfo() {
+        return this.IsHoveringOnItem ? this.HoverIndex : null;
+      }
+
+      internal bool HandlesCurrentMousePosition() {
+        return this.InteractionBounds.Contains(MousePositionX, MousePositionY);
       }
 
       protected override (int width, int height) UpdateDimensions(int totalWidth) {
+        HighlightWidth = BackgroundWidth - (PixelZoom * 2);
+        this.HighlightBounds.Width = HighlightWidth;
+        this.InteractionBounds.Width = BackgroundWidth;
         return (BackgroundWidth, this.Height);
       }
 
       protected override void Draw(SpriteBatch sb, Vector2 position) {
         this.DrawFromCursors(sb, position, BackgroundSourceRect, BackgroundWidth, this.Height);
+
+        this.HoverIndex = ((int) (MousePositionY - position.Y)) / ScaledHeight;
+        this.IsHoveringOnItem =
+            this.IsHovering && (0 <= this.HoverIndex) && (this.HoverIndex < this.ItemCount);
+
+        this.InteractionBounds.X = (int) position.X;
+        this.InteractionBounds.Y = (int) position.Y - ScaledHeight;
+
+        if (this.IsHoveringOnItem) {
+          this.HighlightBounds.X = (int) position.X + PixelZoom;
+          this.HighlightBounds.Y = (int) position.Y + (this.HoverIndex * ScaledHeight) + PixelZoom;
+          DrawRectangle(sb, this.HighlightBounds, Color.Wheat);
+        }
       }
     }
 
-    public IClickable? ClickableTrigger { get; }
+    private readonly Background BackgroundWidget;
+    private readonly Action<int> ClickAction;
 
     private bool IsExpanded = false;
 
-    internal Expansion(IClickable clickableTrigger, IEnumerable<string> values) {
-      this.ClickableTrigger = clickableTrigger;
+    internal Expansion(IEnumerable<string> values, Action<int> clickAction) {
+      this.ClickAction = clickAction;
+      this.BackgroundWidget = new Background(() => this.TryConsumeClick(), values.Count());
 
       this.AddSubWidget(
-          new Background((ScaledHeight * values.Count()) + PixelZoom),
+          this.BackgroundWidget,
           preDraw: (ref Vector2 position, int _, int _) => position.Y += ScaledHeight - PixelZoom,
           postDraw: TextOffsetAdjustment);
 
@@ -69,12 +118,22 @@ internal class Dropdown : Widget.Composite {
       }
     }
 
+    public bool TryConsumeClick() {
+      if (this.BackgroundWidget.GetHoverInfo() is int hoverIndex) {
+        this.ClickAction(hoverIndex);
+        return true;
+      } else {
+        this.ToggleExpandedState(forceValue: false);
+        return this.BackgroundWidget.HandlesCurrentMousePosition();
+      }
+    }
+
     public void OnDismissed() {
       this.IsExpanded = false;
     }
 
-    internal void ToggleExpandedState() {
-      this.IsExpanded = !this.IsExpanded;
+    internal void ToggleExpandedState(bool? forceValue = null) {
+      this.IsExpanded = forceValue ?? !this.IsExpanded;
       (this as IOverlayable).SetOverlayStatus(isActive: this.IsExpanded);
     }
   }
@@ -96,6 +155,7 @@ internal class Dropdown : Widget.Composite {
   private static int BackgroundWidth;
 
   private readonly Action OnSelectionClicked;
+  private readonly Action<int> OnExpansionClicked;
 
   internal Dropdown(
       string name,
@@ -106,19 +166,27 @@ internal class Dropdown : Widget.Composite {
       Func<string, string>? formatValue = null,
       string? tooltip = null) : base(name, tooltip) {
 
-    IEnumerable<string> values = GetUniqueValues(allowedValues);
+    string[] values = GetUniqueValues(allowedValues).ToArray();
 
     Selection selection = new(
         loadValue, saveValue, onValueChanged, () => this.OnSelectionClicked?.Invoke());
-    Func<string> getValueText = GetValueTextFunction(values, selection.GetValue, formatValue);
 
     Expansion expansion = new(
-        selection, (formatValue == null) ? values : values.Select(value => formatValue(value)));
-    this.OnSelectionClicked = expansion.ToggleExpandedState;
+        values: (formatValue == null) ? values : values.Select(value => formatValue(value)),
+        clickAction: (value) => this.OnExpansionClicked?.Invoke(value));
+
+    TextWidget selectionText = DynamicText.CreateDropdownEntry(
+        GetValueTextFunction(values, selection.GetValue, formatValue));
+
+    this.OnSelectionClicked = () => expansion.ToggleExpandedState();
+    this.OnExpansionClicked = (index) => {
+      selection.SetValue(values[index]);
+      expansion.ToggleExpandedState(forceValue: false);
+    };
 
     this.AddSubWidget(expansion);
     this.AddSubWidget(selection);
-    this.AddSubWidget(DynamicText.CreateDropdownEntry(getValueText), preDraw: TextOffsetAdjustment);
+    this.AddSubWidget(selectionText, preDraw: TextOffsetAdjustment);
   }
 
   private static IEnumerable<string> GetUniqueValues(IEnumerable<string> allValues) {

@@ -10,7 +10,7 @@ internal sealed record ConfigPageBuilder(
     Action<string> LogVerbose)
         : IConfigPageBuilder {
 
-  internal delegate IConfigMenuBuilder EndDelegate(MenuPage? menuPageWidget);
+  internal delegate IConfigMenuBuilder EndDelegate(Widget.MenuPage? menuPageWidget);
 
   private readonly List<Widget> WidgetsInOrder = new();
   private readonly Dictionary<Widget, Func<bool>?> WidgetsHideWhen = new();
@@ -30,7 +30,7 @@ internal sealed record ConfigPageBuilder(
       }
     });
 
-    MenuPage menuPageWidget = new(
+    Widget.MenuPage menuPageWidget = new(
         this.WidgetsInOrder.ToImmutableArray(),
         hideableWidgets.Any() ? hideableWidgets.ToImmutableDictionary() : null);
 

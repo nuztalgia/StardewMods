@@ -20,6 +20,12 @@ internal abstract partial class Widget {
         origin: Vector2.Zero, scale, effects: SpriteEffects.None, layerDepth: 1f);
   }
 
+  protected static void DrawRectangle(SpriteBatch sb, Rectangle destRect, Color? color = null) {
+    sb.Draw(
+        texture: Game1.staminaRect, destRect, sourceRectangle: null, color ?? Color.White,
+        rotation: 0f, origin: Vector2.Zero, effects: SpriteEffects.None, layerDepth: 1f);
+  }
+
   protected static void DrawTooltip(SpriteBatch sb, string text, string? title = null) {
     IClickableMenu.drawToolTip(sb, hoverText: text, hoverTitle: title, hoveredItem: null);
   }
