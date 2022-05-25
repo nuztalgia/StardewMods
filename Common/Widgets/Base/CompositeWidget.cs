@@ -84,15 +84,15 @@ internal abstract partial class Widget {
 
       foreach ((Widget widget, Adjustment? preDraw, Adjustment? postDraw) in this.SubWidgets) {
         if (widget == ActiveOverlay) {
-          ActiveOverlayPosition = new(position.X, position.Y);
+          ActiveOverlayDrawPosition = new(position.X, position.Y);
         } else if (!ShouldHideWidget(widget)) {
           DrawSubWidget(widget, preDraw, postDraw);
           AdjustPosition(widget);
         }
       }
 
-      if (this.CanDrawOverlay && (ActiveOverlayPosition != default)) {
-        (ActiveOverlay as Widget)?.Draw(sb, ActiveOverlayPosition);
+      if (this.CanDrawOverlay && (ActiveOverlayDrawPosition != default)) {
+        (ActiveOverlay as Widget)?.Draw(sb, ActiveOverlayDrawPosition);
       }
 
       bool ShouldHideWidget(Widget widget) {

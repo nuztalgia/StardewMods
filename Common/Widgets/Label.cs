@@ -2,29 +2,6 @@ namespace Nuztalgia.StardewMods.Common.UI;
 
 internal class Label : StaticText {
 
-  private class Tooltip : Widget, IOverlayable {
-
-    private readonly string TooltipText;
-    private readonly string TooltipTitle;
-
-    internal Tooltip(string tooltipText, string tooltipTitle) {
-      this.TooltipText = tooltipText;
-      this.TooltipTitle = tooltipTitle;
-    }
-
-    internal void SetHoverState(bool isHovering) {
-      (this as IOverlayable).SetOverlayStatus(isActive: isHovering);
-    }
-
-    protected override (int width, int height) UpdateDimensions(int totalWidth) {
-      return (0, 0); // Tooltip does not occupy any "real estate" on the page.
-    }
-
-    protected override void Draw(SpriteBatch sb, Vector2 position) {
-      DrawTooltip(sb, this.TooltipText, this.TooltipTitle);
-    }
-  }
-
   private class WithTooltip : Composite, IHoverable {
 
     private const int TooltipWidth = 800;
@@ -45,8 +22,8 @@ internal class Label : StaticText {
         : base(Alignment.Left) {
 
       this.Tooltip = new(
-          tooltipText: ParseText(tooltipText, Font.Small, TooltipWidth),
-          tooltipTitle: ParseText(tooltipTitle ?? labelText, Font.Regular, TooltipWidth));
+          text: ParseText(tooltipText, Font.Small, TooltipWidth),
+          title: ParseText(tooltipTitle ?? labelText, Font.Regular, TooltipWidth));
 
       this.AddSubWidget(new Label(labelText));
       this.AddSubWidget(this.Tooltip);

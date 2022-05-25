@@ -134,7 +134,7 @@ internal class Dropdown : Widget.Composite {
 
     internal void ToggleExpandedState(bool? forceValue = null) {
       this.IsExpanded = forceValue ?? !this.IsExpanded;
-      (this as IOverlayable).SetOverlayStatus(isActive: this.IsExpanded);
+      this.SetOverlayStatus(isActive: this.IsExpanded);
     }
   }
 

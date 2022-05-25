@@ -26,10 +26,6 @@ internal abstract partial class Widget {
         rotation: 0f, origin: Vector2.Zero, effects: SpriteEffects.None, layerDepth: 1f);
   }
 
-  protected static void DrawTooltip(SpriteBatch sb, string text, string? title = null) {
-    IClickableMenu.drawToolTip(sb, hoverText: text, hoverTitle: title, hoveredItem: null);
-  }
-
   protected static void DrawFromCursors(SpriteBatch sb, Vector2 position, Rectangle sourceRect) {
     Draw(sb, position, texture: Game1.mouseCursors, sourceRect, scale: PixelZoom);
   }
