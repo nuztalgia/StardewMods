@@ -12,6 +12,10 @@ internal class Tooltip : Widget, IOverlayable {
     this.Title = title;
   }
 
+  public bool TryConsumeClick() {
+    return false; // Tooltips are never clickable.
+  }
+
   internal void SetHoverState(bool isHovering) {
     this.SetOverlayStatus(isActive: isHovering);
   }

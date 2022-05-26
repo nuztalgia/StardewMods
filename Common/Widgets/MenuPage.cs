@@ -47,6 +47,8 @@ internal abstract partial class Widget {
       if (ActiveOverlayDrawPosition != default) {
         (ActiveOverlay as Widget)?.Draw(sb, ActiveOverlayDrawPosition);
       }
+
+      (ActiveTooltip as Widget)?.Draw(sb, default); // Tooltips don't need a draw position.
     }
 
     private void OnMenuOpening() {
