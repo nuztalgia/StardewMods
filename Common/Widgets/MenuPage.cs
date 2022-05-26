@@ -1,10 +1,15 @@
 using Microsoft.Xna.Framework.Input;
+using StardewModdingAPI.Events;
 
 namespace Nuztalgia.StardewMods.Common.UI;
 
 internal abstract partial class Widget {
 
   internal sealed class MenuPage : Composite {
+
+#pragma warning disable CS8618 // Non-nullable field must contain non-null value. Set in Initialize.
+    internal static IInputEvents InputEvents { get; private set; }
+#pragma warning restore CS8618
 
     private const int VerticalSpacing = 16;
 
@@ -17,13 +22,17 @@ internal abstract partial class Widget {
           postDraw: (ref Vector2 position, int _, int _) => position.Y += VerticalSpacing));
     }
 
+    internal static void Initialize(IInputEvents inputEvents) {
+      InputEvents = inputEvents;
+    }
+
     internal void AddToConfigMenu(IGenericModConfigMenuApi gmcmApi, IManifest modManifest) {
       gmcmApi.AddComplexOption(
           mod: modManifest,
           name: () => string.Empty,
           draw: this.OnMenuDraw,
           beforeMenuOpened: this.OnMenuOpening,
-          beforeMenuClosed: this.RefreshStateAndSize,
+          beforeMenuClosed: this.OnMenuClosing,
           beforeReset: this.RefreshStateAndSize,
           beforeSave: this.SaveState,
           height: () => this.Height);
@@ -52,17 +61,18 @@ internal abstract partial class Widget {
     }
 
     private void OnMenuOpening() {
-      if (ViewportWidth != Game1.uiViewport.Width) {
-        ViewportWidth = Game1.uiViewport.Width;
-        TotalWidth = Math.Min(ViewportWidth - ViewportPadding, MinTotalWidth);
-      }
+      UpdateStaticWidths();
+      this.RefreshStateAndSize();
+      InputEvents.MouseWheelScrolled += OnMouseWheelScrolled;
+    }
+
+    private void OnMenuClosing() {
+      InputEvents.MouseWheelScrolled -= OnMouseWheelScrolled;
       this.RefreshStateAndSize();
     }
 
-    private void RefreshStateAndSize() {
-      ClearActiveOverlay();
-      this.ResetState();
-      (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
+    private static void OnMouseWheelScrolled(object? sender, MouseWheelScrolledEventArgs args) {
+      ActiveOverlay?.OnScrolled(scrollDelta: args.Delta);
     }
   }
 }

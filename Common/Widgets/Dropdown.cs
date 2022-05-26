@@ -87,6 +87,8 @@ internal class Dropdown : Widget.Composite {
       }
     }
 
+    private const int ScrollDeltaPerItem = 120;
+
     private readonly Background BackgroundWidget;
     private readonly Action<int> ClickAction;
 
@@ -122,6 +124,11 @@ internal class Dropdown : Widget.Composite {
         // click (because the expected behavior is to close the dropdown, which was already done).
         return SelectionBounds.Contains(MousePositionX, MousePositionY);
       }
+    }
+
+    public void OnScrolled(int scrollDelta) {
+      int itemsScrolled = scrollDelta / ScrollDeltaPerItem;
+      // TODO: Implement this!
     }
 
     public void OnDismissed() {

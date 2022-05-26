@@ -7,6 +7,8 @@ internal interface IOverlayable {
 
   bool TryConsumeClick();
 
+  void OnScrolled(int scrollDelta) { }
+
   void OnDismissed() { }
 }
 

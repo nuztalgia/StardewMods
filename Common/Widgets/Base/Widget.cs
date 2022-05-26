@@ -61,4 +61,17 @@ internal abstract partial class Widget {
       this.Draw(sb, position);
     }
   }
+
+  private void RefreshStateAndSize() {
+    ClearActiveOverlay();
+    this.ResetState();
+    (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
+  }
+
+  private static void UpdateStaticWidths() {
+    if (ViewportWidth != Game1.uiViewport.Width) {
+      ViewportWidth = Game1.uiViewport.Width;
+      TotalWidth = Math.Min(ViewportWidth - ViewportPadding, MinTotalWidth);
+    }
+  }
 }

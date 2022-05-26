@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Nuztalgia.StardewMods.Common.UI;
 using StardewModdingAPI.Events;
 
 namespace Nuztalgia.StardewMods.Common;
@@ -39,6 +40,7 @@ internal abstract class BaseMod : Mod {
   protected bool TryIntegrateWithGMCM(
       [NotNullWhen(true)] out GenericModConfigMenuIntegration? integration) {
     Log.Trace("Initializing Generic Mod Config Menu integration.");
+    Widget.MenuPage.Initialize(this.Helper.Events.Input);
     return this.TryIntegrate<IGenericModConfigMenuApi, GenericModConfigMenuIntegration>(
         "spacechase0.GenericModConfigMenu", out integration);
   }
