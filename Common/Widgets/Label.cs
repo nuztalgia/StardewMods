@@ -19,7 +19,7 @@ internal class Label : StaticText {
     private bool IsHovering_Field = false;
 
     internal WithTooltip(string labelText, string tooltipText, string? tooltipTitle)
-        : base(Alignment.Left) {
+        : base(alignment: Alignment.Left) {
 
       this.Tooltip = new(
           text: ParseText(tooltipText, Font.Small, TooltipWidth),

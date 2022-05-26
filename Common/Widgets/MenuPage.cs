@@ -15,8 +15,8 @@ internal abstract partial class Widget {
 
     internal MenuPage(
         IEnumerable<Widget> orderedWidgets,
-        IDictionary<Widget, Func<bool>>? hideableWidgets)
-            : base(hideableWidgets) {
+        IDictionary<Widget, Func<bool>>? hideableWidgets) : base(
+            hideableWidgets: hideableWidgets, linearMode: LinearMode.Vertical, isFullWidth: true) {
 
       orderedWidgets.ForEach((Widget widget) => this.AddSubWidget(widget,
           postDraw: (ref Vector2 position, int _, int _) => position.Y += VerticalSpacing));

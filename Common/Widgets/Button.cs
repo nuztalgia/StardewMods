@@ -40,7 +40,8 @@ internal class Button : Widget.Composite {
       int? minHeight = null,
       int? maxWidth = null,
       int? maxHeight = null,
-      Alignment? alignment = null) : base(alignment) {
+      Alignment? alignment = null)
+          : base(alignment: alignment) {
 
     StaticText label = StaticText.CreateButtonLabel(labelText);
     (int textWidth, int textHeight) = GetTextDimensions(label);

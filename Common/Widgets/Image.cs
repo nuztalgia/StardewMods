@@ -17,7 +17,7 @@ internal class Image : Widget {
         Action? resetAction = null,
         Action? saveAction = null,
         Alignment? alignment = null)
-            : base(alignment, LinearMode.Vertical) {
+            : base(alignment: alignment, linearMode: LinearMode.Vertical) {
 
       this.AddSubWidget(new Image(getSourceImages, getSourceRects, getDestRects, scale,
           fixedWidth, fixedHeight, resetAction, saveAction, alignment: Alignment.CenterX));

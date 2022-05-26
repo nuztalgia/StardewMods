@@ -29,23 +29,15 @@ internal abstract partial class Widget {
         string? name = null,
         string? tooltip = null,
         Alignment? alignment = null,
+        IDictionary<Widget, Func<bool>>? hideableWidgets = null,
         LinearMode linearMode = LinearMode.Off,
         bool isFullWidth = false)
             : base(name, tooltip, alignment) {
+
+      this.HideableWidgets = hideableWidgets;
       this.Mode = linearMode;
       this.IsFullWidth = isFullWidth;
     }
-
-    protected Composite(IDictionary<Widget, Func<bool>>? hideableWidgets)
-        : this(linearMode: LinearMode.Vertical, isFullWidth: true) {
-      this.HideableWidgets = hideableWidgets;
-    }
-
-    protected Composite(string? name, string? tooltip, LinearMode linearMode)
-        : this(name, tooltip, alignment: null, linearMode) { }
-
-    protected Composite(Alignment? alignment, LinearMode linearMode = LinearMode.Off)
-        : this(name: null, tooltip: null, alignment, linearMode) { }
 
     protected void AddSubWidget(
         Widget widget, Adjustment? preDraw = null, Adjustment? postDraw = null) {

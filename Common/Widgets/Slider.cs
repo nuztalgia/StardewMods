@@ -73,7 +73,8 @@ internal class Slider : Widget.Composite {
       Func<int>? getDynamicMinValue = null,
       Func<int>? getDynamicMaxValue = null,
       Func<int, string>? formatValue = null,
-      string? tooltip = null) : base(name, tooltip, LinearMode.Horizontal) {
+      string? tooltip = null)
+          : base(name, tooltip, linearMode: LinearMode.Horizontal) {
 
     TrackBar trackBar = new(
         loadValue, saveValue, onValueChanged,

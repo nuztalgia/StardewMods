@@ -19,7 +19,7 @@ internal class ImageGroup : Widget.Composite {
       LinearMode linearMode,
       Spacing innerPadding,
       bool reverseBaseline)
-          : base(name, tooltip, alignment, linearMode) {
+          : base(name, tooltip, alignment, linearMode: linearMode) {
 
     this.ResetAction = resetAction;
     this.SaveAction = saveAction;
@@ -75,10 +75,13 @@ internal class ImageGroup : Widget.Composite {
       Func<Rectangle[]>? getDestRects = null,
       int? scale = null,
       int? fixedWidth = null,
-      int? fixedHeight = null) {
+      int? fixedHeight = null,
+      string? caption = null) {
 
-    this.AddSubWidgetAndSpacing(
-        new Image(getSourceImages, getSourceRects, getDestRects, scale, fixedWidth, fixedHeight));
+    this.AddSubWidgetAndSpacing((caption != null)
+        ? new Image.WithCaption(
+            caption, getSourceImages, getSourceRects, getDestRects, scale, fixedWidth, fixedHeight)
+        : new Image(getSourceImages, getSourceRects, getDestRects, scale, fixedWidth, fixedHeight));
   }
 
   protected override void ResetState() {
