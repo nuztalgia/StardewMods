@@ -10,12 +10,12 @@ internal abstract partial class Widget {
   private static int ViewportWidth;
   private static int TotalWidth;
 
-  protected static float MousePositionX { get; private set; }
-  protected static float MousePositionY { get; private set; }
-
   private static bool WasClickConsumed;
   private static bool WasMousePressed;
   private static bool IsMousePressed;
+
+  protected static float MousePositionX { get; private set; }
+  protected static float MousePositionY { get; private set; }
 
   private readonly Widget? NameLabel;
   private readonly Alignment? Alignable;

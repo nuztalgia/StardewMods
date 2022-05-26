@@ -20,7 +20,6 @@ internal abstract partial class Widget {
     private readonly IDictionary<Widget, Func<bool>>? HideableWidgets;
     private readonly LinearMode Mode;
     private readonly bool IsFullWidth;
-    private readonly bool CanDrawOverlay;
 
     protected int SubWidgetCount => this.SubWidgets.Count;
     protected int CompositeWidth => this.Width;
@@ -37,11 +36,9 @@ internal abstract partial class Widget {
       this.IsFullWidth = isFullWidth;
     }
 
-    protected Composite(IDictionary<Widget, Func<bool>>? hideableWidgets, bool canDrawOverlay)
+    protected Composite(IDictionary<Widget, Func<bool>>? hideableWidgets)
         : this(linearMode: LinearMode.Vertical, isFullWidth: true) {
-      // More "powerful" constructor, only used by MenuPage (for now).
       this.HideableWidgets = hideableWidgets;
-      this.CanDrawOverlay = canDrawOverlay;
     }
 
     protected Composite(string? name, string? tooltip, LinearMode linearMode)
@@ -76,7 +73,7 @@ internal abstract partial class Widget {
       });
 
       return (this is IOverlayable)
-          ? (0, 0)
+          ? IOverlayable.Dimensions
           : (this.IsFullWidth ? totalWidth : Math.Min(width, totalWidth), height);
     }
 
@@ -89,10 +86,6 @@ internal abstract partial class Widget {
           DrawSubWidget(widget, preDraw, postDraw);
           AdjustPosition(widget);
         }
-      }
-
-      if (this.CanDrawOverlay && (ActiveOverlayDrawPosition != default)) {
-        (ActiveOverlay as Widget)?.Draw(sb, ActiveOverlayDrawPosition);
       }
 
       bool ShouldHideWidget(Widget widget) {

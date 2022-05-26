@@ -184,8 +184,8 @@ internal class Dropdown : Widget.Composite {
       expansion.ToggleExpandedState(forceValue: false);
     };
 
-    this.AddSubWidget(expansion);
     this.AddSubWidget(selection);
+    this.AddSubWidget(expansion);
     this.AddSubWidget(selectionText, preDraw: TextOffsetAdjustment);
   }
 

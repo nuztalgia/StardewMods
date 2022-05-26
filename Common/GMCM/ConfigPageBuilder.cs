@@ -12,8 +12,8 @@ internal sealed record ConfigPageBuilder(
 
   internal delegate IConfigMenuBuilder EndDelegate(Widget.MenuPage? menuPageWidget);
 
-  private readonly List<Widget> WidgetsInOrder = new();
-  private readonly Dictionary<Widget, Func<bool>?> WidgetsHideWhen = new();
+  private readonly List<Widget> OrderedWidgets = new();
+  private readonly Dictionary<Widget, Func<bool>?> HideableWidgets = new();
 
   private bool IsEnded = false;
 
@@ -24,18 +24,18 @@ internal sealed record ConfigPageBuilder(
 
     Dictionary<Widget, Func<bool>> hideableWidgets = new();
 
-    this.WidgetsHideWhen.ForEach((Widget widget, Func<bool>? hideWhen) => {
+    this.HideableWidgets.ForEach((Widget widget, Func<bool>? hideWhen) => {
       if (hideWhen != null) {
         hideableWidgets.Add(widget, hideWhen);
       }
     });
 
     Widget.MenuPage menuPageWidget = new(
-        this.WidgetsInOrder.ToImmutableArray(),
+        this.OrderedWidgets.ToImmutableArray(),
         hideableWidgets.Any() ? hideableWidgets.ToImmutableDictionary() : null);
 
-    this.WidgetsInOrder.Clear();
-    this.WidgetsHideWhen.Clear();
+    this.OrderedWidgets.Clear();
+    this.HideableWidgets.Clear();
     this.IsEnded = true;
 
     return this.End(menuPageWidget);
@@ -248,8 +248,8 @@ internal sealed record ConfigPageBuilder(
           $"Cannot add new items to menu page '{this.PageId}' because it has already been ended.");
     } else {
       this.LogVerbose($"Adding {logName} to in-progress menu page '{this.PageId}'.");
-      this.WidgetsInOrder.Add(widget);
-      this.WidgetsHideWhen.Add(widget, hideWhen);
+      this.OrderedWidgets.Add(widget);
+      this.HideableWidgets.Add(widget, hideWhen);
     }
     return this;
   }

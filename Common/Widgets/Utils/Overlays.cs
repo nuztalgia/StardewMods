@@ -14,7 +14,7 @@ internal interface IOverlayable {
 
 internal static class IOverlayableExtensions {
 
-  internal static IOverlayable? ActiveOverlay;
+  internal static IOverlayable? ActiveOverlay { get; private set; }
 
   internal static void SetOverlayStatus<TOverlay>(this TOverlay widget, bool isActive)
       where TOverlay : Widget, IOverlayable {
@@ -44,6 +44,5 @@ internal abstract partial class Widget {
 
   private static void ClearActiveOverlay() {
     IOverlayableExtensions.ClearActiveOverlay();
-    ActiveOverlayDrawPosition = default;
   }
 }

@@ -9,10 +9,11 @@ internal abstract partial class Widget {
     private const int VerticalSpacing = 16;
 
     internal MenuPage(
-        IEnumerable<Widget> widgetsInOrder, IDictionary<Widget, Func<bool>>? hideableWidgets)
-            : base(hideableWidgets, canDrawOverlay: true) {
+        IEnumerable<Widget> orderedWidgets,
+        IDictionary<Widget, Func<bool>>? hideableWidgets)
+            : base(hideableWidgets) {
 
-      widgetsInOrder.ForEach((Widget widget) => this.AddSubWidget(widget,
+      orderedWidgets.ForEach((Widget widget) => this.AddSubWidget(widget,
           postDraw: (ref Vector2 position, int _, int _) => position.Y += VerticalSpacing));
     }
 
@@ -39,7 +40,13 @@ internal abstract partial class Widget {
       WasClickConsumed = WasMousePressed && !IsMousePressed
           && (ActiveOverlay?.TryConsumeClick() == true);
 
+      ActiveOverlayDrawPosition = default;
+
       this.Draw(sb, position, null, null);
+
+      if (ActiveOverlayDrawPosition != default) {
+        (ActiveOverlay as Widget)?.Draw(sb, ActiveOverlayDrawPosition);
+      }
     }
 
     private void OnMenuOpening() {
