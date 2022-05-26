@@ -25,7 +25,8 @@ internal class Dropdown : Widget.Composite {
 
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
       BackgroundWidth = (totalWidth / 2) - (ScaledButtonWidth * 2) - BackgroundPadding;
-      return (BackgroundWidth + ScaledButtonWidth, DefaultHeight);
+      SelectionBounds.Width = BackgroundWidth + ScaledButtonWidth;
+      return (SelectionBounds.Width, DefaultHeight);
     }
 
     protected override void Draw(SpriteBatch sb, Vector2 position) {
@@ -41,8 +42,6 @@ internal class Dropdown : Widget.Composite {
 
       private const int HighlightHeight = ScaledHeight - PixelZoom;
 
-      private static int HighlightWidth;
-
       public Action ClickAction { get; }
       public bool IsHovering { get; set; }
 
@@ -51,43 +50,34 @@ internal class Dropdown : Widget.Composite {
 
       private int HoverIndex;
       private bool IsHoveringOnItem;
-
       private Rectangle HighlightBounds;
-      private Rectangle InteractionBounds;
 
       internal Background(Action clickAction, int itemCount) {
         this.ClickAction = clickAction;
         this.ItemCount = itemCount;
         this.Height = (itemCount * ScaledHeight) + PixelZoom;
-
         this.HighlightBounds.Height = HighlightHeight;
-        this.InteractionBounds.Height = this.Height + ScaledHeight;
       }
 
-      internal int? GetHoverInfo() {
+      internal int? GetHoverStatus() {
         return this.IsHoveringOnItem ? this.HoverIndex : null;
       }
 
-      internal bool HandlesCurrentMousePosition() {
-        return this.InteractionBounds.Contains(MousePositionX, MousePositionY);
-      }
-
       protected override (int width, int height) UpdateDimensions(int totalWidth) {
-        HighlightWidth = BackgroundWidth - (PixelZoom * 2);
-        this.HighlightBounds.Width = HighlightWidth;
-        this.InteractionBounds.Width = BackgroundWidth;
+        this.HighlightBounds.Width = BackgroundWidth - (PixelZoom * 2);
         return (BackgroundWidth, this.Height);
       }
 
       protected override void Draw(SpriteBatch sb, Vector2 position) {
+        // We only care about the selection bounds while the expansion is open (i.e. being drawn).
+        SelectionBounds.X = (int) position.X;
+        SelectionBounds.Y = (int) position.Y - ScaledHeight;
+
         this.DrawFromCursors(sb, position, BackgroundSourceRect, BackgroundWidth, this.Height);
 
         this.HoverIndex = ((int) (MousePositionY - position.Y)) / ScaledHeight;
-        this.IsHoveringOnItem =
+        this.IsHoveringOnItem = // Necessary check because HoverIndex is not guaranteed to be valid.
             this.IsHovering && (0 <= this.HoverIndex) && (this.HoverIndex < this.ItemCount);
-
-        this.InteractionBounds.X = (int) position.X;
-        this.InteractionBounds.Y = (int) position.Y - ScaledHeight;
 
         if (this.IsHoveringOnItem) {
           this.HighlightBounds.X = (int) position.X + PixelZoom;
@@ -119,12 +109,18 @@ internal class Dropdown : Widget.Composite {
     }
 
     public bool TryConsumeClick() {
-      if (this.BackgroundWidget.GetHoverInfo() is int hoverIndex) {
+      if (this.BackgroundWidget.GetHoverStatus() is int hoverIndex) {
+        // The dropdown will handle the click, and any widgets underneath the clicked item will
+        // be prevented from receiving/handling the click.
         this.ClickAction(hoverIndex);
         return true;
       } else {
+        // Clicking anywhere outside of the expansion bounds will close the dropdown.
         this.ToggleExpandedState(forceValue: false);
-        return this.BackgroundWidget.HandlesCurrentMousePosition();
+
+        // If the click was inside the selection bounds, prevent the selection from receiving the
+        // click (because the expected behavior is to close the dropdown, which was already done).
+        return SelectionBounds.Contains(MousePositionX, MousePositionY);
       }
     }
 
@@ -153,6 +149,7 @@ internal class Dropdown : Widget.Composite {
       (ref Vector2 position, int _, int _) => position += TextOffset;
 
   private static int BackgroundWidth;
+  private static Rectangle SelectionBounds;
 
   private readonly Action OnSelectionClicked;
   private readonly Action<int> OnExpansionClicked;
@@ -170,6 +167,7 @@ internal class Dropdown : Widget.Composite {
 
     Selection selection = new(
         loadValue, saveValue, onValueChanged, () => this.OnSelectionClicked?.Invoke());
+    SelectionBounds.Height = ScaledHeight;
 
     Expansion expansion = new(
         values: (formatValue == null) ? values : values.Select(value => formatValue(value)),
