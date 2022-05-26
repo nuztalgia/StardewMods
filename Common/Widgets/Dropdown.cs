@@ -25,6 +25,7 @@ internal class Dropdown : Widget.Composite {
 
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
       BackgroundWidth = (totalWidth / 2) - (ScaledButtonWidth * 2) - BackgroundPadding;
+      HighlightWidth = BackgroundWidth - (PixelZoom * 2);
       SelectionBounds.Width = BackgroundWidth + ScaledButtonWidth;
       return (SelectionBounds.Width, DefaultHeight);
     }
@@ -42,20 +43,19 @@ internal class Dropdown : Widget.Composite {
 
       private const int HighlightHeight = ScaledHeight - PixelZoom;
 
-      public Action ClickAction { get; }
       public bool IsHovering { get; set; }
+      public Action ClickAction { get; }
 
-      private readonly int ItemCount;
-      private readonly int Height;
+      private Rectangle HighlightBounds;
+
+      private int ItemCount;
+      private int Height;
 
       private int HoverIndex;
       private bool IsHoveringOnItem;
-      private Rectangle HighlightBounds;
 
-      internal Background(Action clickAction, int itemCount) {
+      internal Background(Action clickAction) {
         this.ClickAction = clickAction;
-        this.ItemCount = itemCount;
-        this.Height = (itemCount * ScaledHeight) + PixelZoom;
         this.HighlightBounds.Height = HighlightHeight;
       }
 
@@ -63,8 +63,13 @@ internal class Dropdown : Widget.Composite {
         return this.IsHoveringOnItem ? this.HoverIndex : null;
       }
 
+      internal void UpdateItemCount(int itemCount) {
+        this.ItemCount = itemCount;
+        this.Height = (itemCount * ScaledHeight) + PixelZoom;
+      }
+
       protected override (int width, int height) UpdateDimensions(int totalWidth) {
-        this.HighlightBounds.Width = BackgroundWidth - (PixelZoom * 2);
+        this.HighlightBounds.Width = HighlightWidth;
         return (BackgroundWidth, this.Height);
       }
 
@@ -87,26 +92,50 @@ internal class Dropdown : Widget.Composite {
       }
     }
 
+    private const int MaxDisplayedItemCount = 8;
     private const int ScrollDeltaPerItem = 120;
 
-    private readonly Background BackgroundWidget;
+    private static readonly int BottomCutoff = Game1.uiViewport.Height - 116;
+
+    private readonly int TotalItemCount;
     private readonly Action<int> ClickAction;
+    private readonly Background BackgroundWidget;
 
-    private bool IsExpanded = false;
+    private int MaxScrollIndex => this.TotalItemCount - this.DisplayedItemCount;
+    private int OutOfViewIndex => this.ScrollIndex + this.DisplayedItemCount;
 
-    internal Expansion(IEnumerable<string> values, Action<int> clickAction) {
+    private bool IsExpanded;
+    private bool IsScrollable;
+    private int ScrollIndex;
+    private int DisplayedItemCount;
+
+    internal Expansion(IEnumerable<string> values, Action<int> clickAction)
+        : this(values, clickAction, hideableEntries: new Dictionary<Widget, Func<bool>>()) {}
+
+    private Expansion(
+        IEnumerable<string> values,
+        Action<int> clickAction,
+        IDictionary<Widget, Func<bool>> hideableEntries)
+            : base(hideableWidgets: hideableEntries) {
+
+      this.TotalItemCount = values.Count();
       this.ClickAction = clickAction;
-      this.BackgroundWidget = new Background(() => this.TryConsumeClick(), values.Count());
+      this.BackgroundWidget = new Background(clickAction: () => this.TryConsumeClick());
 
       this.AddSubWidget(
-          this.BackgroundWidget,
-          preDraw: (ref Vector2 position, int _, int _) => position.Y += ScaledHeight - PixelZoom,
-          postDraw: TextOffsetAdjustment);
+          this.BackgroundWidget, preDraw: this.OnBackgroundDraw, postDraw: TextOffsetAdjustment);
 
-      foreach (string value in values) {
-        this.AddSubWidget(
-            StaticText.CreateDropdownEntry(value),
+      for (int i = 0; i < this.TotalItemCount; ++i) {
+        int index = i; // Closure variable.
+        Widget dropdownEntry = StaticText.CreateDropdownEntry(values.ElementAt(index));
+
+        hideableEntries.Add(dropdownEntry, () => ShouldHideWidgetAtIndex(index));
+        this.AddSubWidget(dropdownEntry,
             postDraw: (ref Vector2 position, int _, int _) => position.Y += ScaledHeight);
+      }
+
+      bool ShouldHideWidgetAtIndex(int index) {
+        return this.IsScrollable && ((index < this.ScrollIndex) || (index >= this.OutOfViewIndex));
       }
     }
 
@@ -114,7 +143,7 @@ internal class Dropdown : Widget.Composite {
       if (this.BackgroundWidget.GetHoverStatus() is int hoverIndex) {
         // The dropdown will handle the click, and any widgets underneath the clicked item will
         // be prevented from receiving/handling the click.
-        this.ClickAction(hoverIndex);
+        this.ClickAction(hoverIndex + this.ScrollIndex);
         return true;
       } else {
         // Clicking anywhere outside of the expansion bounds will close the dropdown.
@@ -127,17 +156,33 @@ internal class Dropdown : Widget.Composite {
     }
 
     public void OnScrolled(int scrollDelta) {
-      int itemsScrolled = scrollDelta / ScrollDeltaPerItem;
-      // TODO: Implement this!
+      if (this.IsScrollable && this.BackgroundWidget.IsHovering) {
+        this.ScrollIndex = Math.Clamp(
+            this.ScrollIndex - (scrollDelta / ScrollDeltaPerItem), 0, this.MaxScrollIndex);
+      }
     }
 
     public void OnDismissed() {
       this.IsExpanded = false;
+      this.ScrollIndex = 0;
     }
 
     internal void ToggleExpandedState(bool? forceValue = null) {
       this.IsExpanded = forceValue ?? !this.IsExpanded;
+      this.ScrollIndex = 0;
       this.SetOverlayStatus(isActive: this.IsExpanded);
+    }
+
+    private void OnBackgroundDraw(ref Vector2 position, int width, int height) {
+      position.Y += ScaledHeight - PixelZoom;
+      int displayedItemCount =
+          Math.Min(MaxDisplayedItemCount, (BottomCutoff - (int) position.Y) / ScaledHeight);
+
+      if (displayedItemCount != this.DisplayedItemCount) {
+        this.DisplayedItemCount = displayedItemCount;
+        this.IsScrollable = displayedItemCount < this.TotalItemCount;
+        this.BackgroundWidget.UpdateItemCount(Math.Min(displayedItemCount, this.TotalItemCount));
+      }
     }
   }
 
@@ -156,6 +201,7 @@ internal class Dropdown : Widget.Composite {
       (ref Vector2 position, int _, int _) => position += TextOffset;
 
   private static int BackgroundWidth;
+  private static int HighlightWidth;
   private static Rectangle SelectionBounds;
 
   private readonly Action OnSelectionClicked;
@@ -171,10 +217,11 @@ internal class Dropdown : Widget.Composite {
       string? tooltip = null) : base(name, tooltip) {
 
     string[] values = GetUniqueValues(allowedValues).ToArray();
+    SelectionBounds.Height = ScaledHeight;
 
     Selection selection = new(
-        loadValue, saveValue, onValueChanged, () => this.OnSelectionClicked?.Invoke());
-    SelectionBounds.Height = ScaledHeight;
+        loadValue, saveValue, onValueChanged,
+        clickAction: () => this.OnSelectionClicked?.Invoke());
 
     Expansion expansion = new(
         values: (formatValue == null) ? values : values.Select(value => formatValue(value)),

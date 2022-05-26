@@ -54,7 +54,9 @@ internal abstract partial class Widget {
       this.Draw(sb, position, null, null);
 
       if (ActiveOverlayDrawPosition != default) {
-        (ActiveOverlay as Widget)?.Draw(sb, ActiveOverlayDrawPosition);
+        Widget widget = (ActiveOverlay as Widget)!;
+        (widget.Width, widget.Height) = widget.UpdateDimensions(TotalWidth);
+        widget.Draw(sb, ActiveOverlayDrawPosition);
       }
 
       (ActiveTooltip as Widget)?.Draw(sb, default); // Tooltips don't need a draw position.
