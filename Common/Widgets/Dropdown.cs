@@ -26,8 +26,7 @@ internal class Dropdown : Widget.Composite {
     protected override (int width, int height) UpdateDimensions(int totalWidth) {
       BackgroundWidth = (totalWidth / 2) - (ScaledButtonWidth * 2) - BackgroundPadding;
       HighlightWidth = BackgroundWidth - (PixelZoom * 2);
-      SelectionBounds.Width = BackgroundWidth + ScaledButtonWidth;
-      return (SelectionBounds.Width, DefaultHeight);
+      return (BackgroundWidth + ScaledButtonWidth, DefaultHeight);
     }
 
     protected override void Draw(SpriteBatch sb, Vector2 position) {
@@ -41,31 +40,42 @@ internal class Dropdown : Widget.Composite {
 
     private class Background : Widget, IHoverable, IClickable {
 
-      private const int HighlightHeight = ScaledHeight - PixelZoom;
-
-      public bool IsHovering { get; set; }
       public Action ClickAction { get; }
 
-      private Rectangle HighlightBounds;
+      public bool IsHovering {
+        get => this.IsHovering_Field && this.IsIndexInBounds(this.HoverIndex);
+        set {
+          if (value != this.IsHovering_Field) {
+            this.IsHovering_Field = value;
+            TryPlaySound(this.IsHovering ? HoverSoundName : null);
+          }
+        }
+      }
 
-      private int ItemCount;
-      private int Height;
+      internal int HoverIndex {
+        get => this.HoverIndex_Field;
+        private set {
+          value = Math.Clamp(value, SelectionWidgetIndex, this.ItemCount);
+          if (value != this.HoverIndex_Field) {
+            this.HoverIndex_Field = value;
+            TryPlaySound(this.IsHovering ? HoverSoundName : null);
+          }
+        }
+      }
 
-      private int HoverIndex;
-      private bool IsHoveringOnItem;
+      internal int ItemCount;
+      internal int Height;
 
-      internal Background(Action clickAction) {
+      private readonly Func<int> GetRelativeSelectedIndex;
+
+      private Rectangle HighlightBounds = new(0, 0, 0, height: ScaledHeight - PixelZoom);
+
+      private bool IsHovering_Field = false;
+      private int HoverIndex_Field = SelectionWidgetIndex;
+
+      internal Background(Action clickAction, Func<int> getRelativeSelectedIndex) {
         this.ClickAction = clickAction;
-        this.HighlightBounds.Height = HighlightHeight;
-      }
-
-      internal int? GetHoverIndex() {
-        return this.IsHoveringOnItem ? this.HoverIndex : null;
-      }
-
-      internal void UpdateSizeInfo(int itemCount, int height) {
-        this.ItemCount = itemCount;
-        this.Height = height;
+        this.GetRelativeSelectedIndex = getRelativeSelectedIndex;
       }
 
       protected override (int width, int height) UpdateDimensions(int totalWidth) {
@@ -74,21 +84,20 @@ internal class Dropdown : Widget.Composite {
       }
 
       protected override void Draw(SpriteBatch sb, Vector2 position) {
-        // We only care about the selection bounds while the expansion is open (i.e. being drawn).
-        SelectionBounds.X = (int) position.X;
-        SelectionBounds.Y = (int) position.Y - ScaledHeight;
-
+        this.HoverIndex = (int) Math.Floor((MousePositionY - position.Y) / ScaledHeight);
         this.DrawFromCursors(sb, position, BackgroundSourceRect, BackgroundWidth, this.Height);
 
-        this.HoverIndex = ((int) (MousePositionY - position.Y)) / ScaledHeight;
-        this.IsHoveringOnItem = // Necessary check because HoverIndex is not guaranteed to be valid.
-            this.IsHovering && (0 <= this.HoverIndex) && (this.HoverIndex < this.ItemCount);
+        int drawIndex = this.IsHovering ? this.HoverIndex : this.GetRelativeSelectedIndex();
 
-        if (this.IsHoveringOnItem) {
+        if (this.IsIndexInBounds(drawIndex)) {
           this.HighlightBounds.X = (int) position.X + PixelZoom;
-          this.HighlightBounds.Y = (int) position.Y + (this.HoverIndex * ScaledHeight) + PixelZoom;
+          this.HighlightBounds.Y = (int) position.Y + (drawIndex * ScaledHeight) + PixelZoom;
           DrawRectangle(sb, this.HighlightBounds, Color.Wheat);
         }
+      }
+
+      private bool IsIndexInBounds(int index) {
+        return (0 <= index) && (index < this.ItemCount);
       }
     }
 
@@ -142,6 +151,11 @@ internal class Dropdown : Widget.Composite {
       }
     }
 
+    private const string ToggleSoundName = "drumkit6";
+    private const string HoverSoundName = "Cowboy_Footstep";
+    private const string ScrollSoundName = "shwip";
+
+    private const int SelectionWidgetIndex = -1;
     private const int MaxDisplayedItemCount = 6;
     private const int ScrollDeltaPerItem = 120;
 
@@ -160,16 +174,35 @@ internal class Dropdown : Widget.Composite {
     private int ScrollIndex {
       get => this.ScrollIndex_Field;
       set {
-        this.ScrollIndex_Field = Math.Clamp(value, 0 , this.MaxScrollIndex);
-        this.ScrollbarWidget.UpdateScrollIndex(this.ScrollIndex_Field);
+        value = Math.Clamp(value, 0, this.MaxScrollIndex);
+
+        if (value != this.ScrollIndex_Field) {
+          // Don't play this sound on the very first expansion, when there hasn't been a scroll yet.
+          TryPlaySound(this.ShouldPlayScrollSound ? ScrollSoundName : null);
+          this.ShouldPlayScrollSound = true;
+
+          this.ScrollIndex_Field = value;
+          this.ScrollbarWidget.UpdateScrollIndex(this.ScrollIndex_Field);
+        }
       }
     }
 
-    private bool IsExpanded;
-    private bool IsScrollable;
+    private bool IsExpanded {
+      get => this.IsExpanded_Field;
+      set {
+        if (value != this.IsExpanded_Field) {
+          TryPlaySound(ToggleSoundName);
+          this.IsExpanded_Field = value;
+        }
+      }
+    }
+
     private int DisplayedItemCount;
+    private bool IsScrollable;
+    private bool ShouldPlayScrollSound;
 
     private int ScrollIndex_Field;
+    private bool IsExpanded_Field;
 
     internal Expansion(
         IEnumerable<string> values, Action<int> clickAction, Func<int> getSelectedIndex)
@@ -186,7 +219,9 @@ internal class Dropdown : Widget.Composite {
       this.ClickAction = clickAction;
       this.GetSelectedIndex = getSelectedIndex;
 
-      this.BackgroundWidget = new Background(clickAction: () => this.TryConsumeClick());
+      this.BackgroundWidget = new Background(
+          clickAction: () => this.TryConsumeClick(),
+          getRelativeSelectedIndex: () => this.GetSelectedIndex() - this.ScrollIndex);
       this.ScrollbarWidget = new Scrollbar(getMaxScrollIndex: () => this.MaxScrollIndex);
 
       this.AddSubWidget(this.BackgroundWidget, preDraw: this.OnBackgroundDraw);
@@ -207,10 +242,10 @@ internal class Dropdown : Widget.Composite {
     }
 
     public bool TryConsumeClick() {
-      if (this.BackgroundWidget.GetHoverIndex() is int hoverIndex) {
+      if (this.BackgroundWidget.IsHovering) {
         // The dropdown will handle the click, and any widgets underneath the clicked item will
         // be prevented from receiving/handling the click.
-        this.ClickAction(hoverIndex + this.ScrollIndex);
+        this.ClickAction(this.BackgroundWidget.HoverIndex + this.ScrollIndex);
         return true;
       } else {
         // Clicking anywhere outside of the expansion bounds will close the dropdown.
@@ -218,7 +253,7 @@ internal class Dropdown : Widget.Composite {
 
         // If the click was inside the selection bounds, prevent the selection from receiving the
         // click (because the expected behavior is to close the dropdown, which was already done).
-        return SelectionBounds.Contains(MousePositionX, MousePositionY);
+        return this.BackgroundWidget.HoverIndex == SelectionWidgetIndex;
       }
     }
 
@@ -240,7 +275,9 @@ internal class Dropdown : Widget.Composite {
     }
 
     private void ResetScrollIndex() {
-      this.ScrollIndex = this.GetSelectedIndex() - (this.DisplayedItemCount / 2) + 1;
+      if (this.DisplayedItemCount > 0) {
+        this.ScrollIndex = this.GetSelectedIndex() - (this.DisplayedItemCount / 2) + 1;
+      }
     }
 
     private void OnBackgroundDraw(ref Vector2 position, int width, int height) {
@@ -253,11 +290,10 @@ internal class Dropdown : Widget.Composite {
         this.DisplayedItemCount = this.IsScrollable ? displayedItemCount : this.TotalItemCount;
         this.ResetScrollIndex();
 
-        int actualItemCount = Math.Min(displayedItemCount, this.TotalItemCount);
-        int expansionHeight = (actualItemCount * ScaledHeight) + PixelZoom;
+        this.BackgroundWidget.ItemCount = Math.Min(displayedItemCount, this.TotalItemCount);
+        this.BackgroundWidget.Height = (this.BackgroundWidget.ItemCount * ScaledHeight) + PixelZoom;
 
-        this.BackgroundWidget.UpdateSizeInfo(itemCount: actualItemCount, height: expansionHeight);
-        this.ScrollbarWidget.UpdateDrawInfo(this.IsScrollable, trackHeight: expansionHeight);
+        this.ScrollbarWidget.UpdateDrawInfo(this.IsScrollable, this.BackgroundWidget.Height);
       }
     }
   }
@@ -278,7 +314,6 @@ internal class Dropdown : Widget.Composite {
 
   private static int BackgroundWidth;
   private static int HighlightWidth;
-  private static Rectangle SelectionBounds;
 
   private readonly Action OnSelectionClicked;
   private readonly Action<int> OnExpansionClicked;
@@ -293,7 +328,6 @@ internal class Dropdown : Widget.Composite {
       string? tooltip = null) : base(name, tooltip) {
 
     string[] values = GetUniqueValues(allowedValues).ToArray();
-    SelectionBounds.Height = ScaledHeight;
 
     Selection selection = new(
         loadValue, saveValue, onValueChanged,
