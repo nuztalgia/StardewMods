@@ -8,15 +8,8 @@ internal class Label : StaticText {
 
     private readonly Tooltip Tooltip;
 
-    public bool IsHovering {
-      get => this.IsHovering_Field;
-      set {
-        this.Tooltip.SetHoverState(value);
-        this.IsHovering_Field = value;
-      }
-    }
-
-    private bool IsHovering_Field = false;
+    public bool IsHovering { get; set; }
+    public string HoverSoundName => "shiny4";
 
     internal WithTooltip(string labelText, string tooltipText, string? tooltipTitle)
         : base(alignment: Alignment.Left) {
@@ -27,6 +20,14 @@ internal class Label : StaticText {
 
       this.AddSubWidget(new Label(labelText));
       this.AddSubWidget(this.Tooltip);
+    }
+
+    public void OnHoverStart() {
+      this.Tooltip.SetHoverState(isHovering: true);
+    }
+
+    public void OnHoverStop() {
+      this.Tooltip.SetHoverState(isHovering: false);
     }
   }
 

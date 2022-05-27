@@ -10,6 +10,8 @@ internal class Button : Widget.Composite {
     public string ClickSoundName => "bigSelect";
 
     public bool IsHovering { get; set; }
+    public string HoverSoundName => "Cowboy_Footstep";
+
     private Color TintColor => this.IsHovering ? Color.Wheat : Color.White;
 
     private readonly int TargetWidth;

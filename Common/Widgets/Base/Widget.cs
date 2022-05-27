@@ -68,6 +68,12 @@ internal abstract partial class Widget {
     (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
   }
 
+  protected static void TryPlaySound(string? soundName) {
+    if (soundName != null) {
+      Game1.playSound(soundName);
+    }
+  }
+
   private static void UpdateStaticWidths() {
     if (ViewportWidth != Game1.uiViewport.Width) {
       ViewportWidth = Game1.uiViewport.Width;
