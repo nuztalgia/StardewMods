@@ -55,7 +55,7 @@ internal class Dropdown : Widget.Composite {
       internal int HoverIndex {
         get => this.HoverIndex_Field;
         private set {
-          value = Math.Clamp(value, SelectionWidgetIndex, this.ItemCount);
+          value = Math.Clamp(value, SelectionWidgetIndex - 1, this.ItemCount);
           if (value != this.HoverIndex_Field) {
             this.HoverIndex_Field = value;
             TryPlaySound(this.IsHovering ? HoverSoundName : null);
@@ -178,7 +178,7 @@ internal class Dropdown : Widget.Composite {
 
         if (value != this.ScrollIndex_Field) {
           // Don't play this sound on the very first expansion, when there hasn't been a scroll yet.
-          TryPlaySound(this.ShouldPlayScrollSound ? ScrollSoundName : null);
+          TryPlaySound((this.ShouldPlayScrollSound && this.IsExpanded) ? ScrollSoundName : null);
           this.ShouldPlayScrollSound = true;
 
           this.ScrollIndex_Field = value;
@@ -191,12 +191,17 @@ internal class Dropdown : Widget.Composite {
       get => this.IsExpanded_Field;
       set {
         if (value != this.IsExpanded_Field) {
-          TryPlaySound(ToggleSoundName);
+          int selectedIndex = this.GetSelectedIndex();
+          bool playToggleSound = value || (selectedIndex != this.ReferenceIndex);
+          TryPlaySound(playToggleSound ? ToggleSoundName : HoverSoundName);
+
+          this.ReferenceIndex = selectedIndex;
           this.IsExpanded_Field = value;
         }
       }
     }
 
+    private int ReferenceIndex;
     private int DisplayedItemCount;
     private bool IsScrollable;
     private bool ShouldPlayScrollSound;
@@ -218,6 +223,8 @@ internal class Dropdown : Widget.Composite {
       this.TotalItemCount = values.Count();
       this.ClickAction = clickAction;
       this.GetSelectedIndex = getSelectedIndex;
+
+      this.ReferenceIndex = getSelectedIndex();
 
       this.BackgroundWidget = new Background(
           clickAction: () => this.TryConsumeClick(),
