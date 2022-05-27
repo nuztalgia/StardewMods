@@ -59,13 +59,13 @@ internal class Dropdown : Widget.Composite {
         this.HighlightBounds.Height = HighlightHeight;
       }
 
-      internal int? GetHoverStatus() {
+      internal int? GetHoverIndex() {
         return this.IsHoveringOnItem ? this.HoverIndex : null;
       }
 
-      internal void UpdateItemCount(int itemCount) {
+      internal void UpdateSizeInfo(int itemCount, int height) {
         this.ItemCount = itemCount;
-        this.Height = (itemCount * ScaledHeight) + PixelZoom;
+        this.Height = height;
       }
 
       protected override (int width, int height) UpdateDimensions(int totalWidth) {
@@ -92,38 +92,105 @@ internal class Dropdown : Widget.Composite {
       }
     }
 
-    private const int MaxDisplayedItemCount = 8;
+    private class Scrollbar : Widget {
+
+      private const int RawWidth = 6;
+      private const int ScaledWidth = RawWidth * PixelZoom;
+
+      private const int RawBarHeight = 10;
+      private const int RawTrackHeight = 6;
+
+      private static readonly Rectangle BarSourceRect = new(435, 463, RawWidth, RawBarHeight);
+      private static readonly Rectangle TrackSourceRect = new(403, 383, RawWidth, RawTrackHeight);
+
+      private readonly Func<int> GetMaxScrollIndex;
+
+      private bool IsScrollable;
+      private int TrackHeight;
+      private int HeightMultiplier;
+
+      private int HorizontalOffset;
+      private int VerticalBarOffset;
+
+      internal Scrollbar(Func<int> getMaxScrollIndex) {
+        this.GetMaxScrollIndex = getMaxScrollIndex;
+      }
+
+      internal void UpdateDrawInfo(bool isScrollable, int trackHeight) {
+        this.IsScrollable = isScrollable;
+        this.TrackHeight = trackHeight;
+        this.HeightMultiplier = trackHeight - (RawBarHeight * PixelZoom);
+        this.HorizontalOffset = BackgroundWidth - ScaledWidth;
+      }
+
+      internal void UpdateScrollIndex(int scrollIndex) {
+        float percentScrolled = (float) scrollIndex / this.GetMaxScrollIndex();
+        this.VerticalBarOffset = (int) (percentScrolled * this.HeightMultiplier);
+      }
+
+      protected override (int width, int height) UpdateDimensions(int totalWidth) {
+        return this.IsScrollable ? (ScaledWidth, this.TrackHeight) : (0, 0);
+      }
+
+      protected override void Draw(SpriteBatch sb, Vector2 position) {
+        if (this.IsScrollable) {
+          position.X += this.HorizontalOffset;
+          this.DrawFromCursors(sb, position, TrackSourceRect);
+          position.Y += this.VerticalBarOffset;
+          DrawFromCursors(sb, position, BarSourceRect);
+        }
+      }
+    }
+
+    private const int MaxDisplayedItemCount = 6;
     private const int ScrollDeltaPerItem = 120;
 
-    private static readonly int BottomCutoff = Game1.uiViewport.Height - 116;
+    private static readonly int BottomCutoff = Game1.uiViewport.Height - 128;
 
     private readonly int TotalItemCount;
     private readonly Action<int> ClickAction;
+    private readonly Func<int> GetSelectedIndex;
+
     private readonly Background BackgroundWidget;
+    private readonly Scrollbar ScrollbarWidget;
 
     private int MaxScrollIndex => this.TotalItemCount - this.DisplayedItemCount;
     private int OutOfViewIndex => this.ScrollIndex + this.DisplayedItemCount;
 
+    private int ScrollIndex {
+      get => this.ScrollIndex_Field;
+      set {
+        this.ScrollIndex_Field = Math.Clamp(value, 0 , this.MaxScrollIndex);
+        this.ScrollbarWidget.UpdateScrollIndex(this.ScrollIndex_Field);
+      }
+    }
+
     private bool IsExpanded;
     private bool IsScrollable;
-    private int ScrollIndex;
     private int DisplayedItemCount;
 
-    internal Expansion(IEnumerable<string> values, Action<int> clickAction)
-        : this(values, clickAction, hideableEntries: new Dictionary<Widget, Func<bool>>()) {}
+    private int ScrollIndex_Field;
+
+    internal Expansion(
+        IEnumerable<string> values, Action<int> clickAction, Func<int> getSelectedIndex)
+            : this(values, clickAction, getSelectedIndex, new Dictionary<Widget, Func<bool>>()) { }
 
     private Expansion(
         IEnumerable<string> values,
         Action<int> clickAction,
+        Func<int> getSelectedIndex,
         IDictionary<Widget, Func<bool>> hideableEntries)
             : base(hideableWidgets: hideableEntries) {
 
       this.TotalItemCount = values.Count();
       this.ClickAction = clickAction;
-      this.BackgroundWidget = new Background(clickAction: () => this.TryConsumeClick());
+      this.GetSelectedIndex = getSelectedIndex;
 
-      this.AddSubWidget(
-          this.BackgroundWidget, preDraw: this.OnBackgroundDraw, postDraw: TextOffsetAdjustment);
+      this.BackgroundWidget = new Background(clickAction: () => this.TryConsumeClick());
+      this.ScrollbarWidget = new Scrollbar(getMaxScrollIndex: () => this.MaxScrollIndex);
+
+      this.AddSubWidget(this.BackgroundWidget, preDraw: this.OnBackgroundDraw);
+      this.AddSubWidget(this.ScrollbarWidget, postDraw: TextOffsetAdjustment);
 
       for (int i = 0; i < this.TotalItemCount; ++i) {
         int index = i; // Closure variable.
@@ -140,7 +207,7 @@ internal class Dropdown : Widget.Composite {
     }
 
     public bool TryConsumeClick() {
-      if (this.BackgroundWidget.GetHoverStatus() is int hoverIndex) {
+      if (this.BackgroundWidget.GetHoverIndex() is int hoverIndex) {
         // The dropdown will handle the click, and any widgets underneath the clicked item will
         // be prevented from receiving/handling the click.
         this.ClickAction(hoverIndex + this.ScrollIndex);
@@ -157,20 +224,23 @@ internal class Dropdown : Widget.Composite {
 
     public void OnScrolled(int scrollDelta) {
       if (this.IsScrollable && this.BackgroundWidget.IsHovering) {
-        this.ScrollIndex = Math.Clamp(
-            this.ScrollIndex - (scrollDelta / ScrollDeltaPerItem), 0, this.MaxScrollIndex);
+        this.ScrollIndex -= scrollDelta / ScrollDeltaPerItem;
       }
     }
 
     public void OnDismissed() {
       this.IsExpanded = false;
-      this.ScrollIndex = 0;
+      this.ResetScrollIndex();
     }
 
     internal void ToggleExpandedState(bool? forceValue = null) {
       this.IsExpanded = forceValue ?? !this.IsExpanded;
-      this.ScrollIndex = 0;
+      this.ResetScrollIndex();
       this.SetOverlayStatus(isActive: this.IsExpanded);
+    }
+
+    private void ResetScrollIndex() {
+      this.ScrollIndex = this.GetSelectedIndex() - (this.DisplayedItemCount / 2) + 1;
     }
 
     private void OnBackgroundDraw(ref Vector2 position, int width, int height) {
@@ -179,9 +249,15 @@ internal class Dropdown : Widget.Composite {
           Math.Min(MaxDisplayedItemCount, (BottomCutoff - (int) position.Y) / ScaledHeight);
 
       if (displayedItemCount != this.DisplayedItemCount) {
-        this.DisplayedItemCount = displayedItemCount;
         this.IsScrollable = displayedItemCount < this.TotalItemCount;
-        this.BackgroundWidget.UpdateItemCount(Math.Min(displayedItemCount, this.TotalItemCount));
+        this.DisplayedItemCount = this.IsScrollable ? displayedItemCount : this.TotalItemCount;
+        this.ResetScrollIndex();
+
+        int actualItemCount = Math.Min(displayedItemCount, this.TotalItemCount);
+        int expansionHeight = (actualItemCount * ScaledHeight) + PixelZoom;
+
+        this.BackgroundWidget.UpdateSizeInfo(itemCount: actualItemCount, height: expansionHeight);
+        this.ScrollbarWidget.UpdateDrawInfo(this.IsScrollable, trackHeight: expansionHeight);
       }
     }
   }
@@ -225,7 +301,8 @@ internal class Dropdown : Widget.Composite {
 
     Expansion expansion = new(
         values: (formatValue == null) ? values : values.Select(value => formatValue(value)),
-        clickAction: (value) => this.OnExpansionClicked?.Invoke(value));
+        clickAction: (value) => this.OnExpansionClicked?.Invoke(value),
+        getSelectedIndex: () => Array.IndexOf(values, selection.GetValue()));
 
     TextWidget selectionText = DynamicText.CreateDropdownEntry(
         GetValueTextFunction(values, selection.GetValue, formatValue));
