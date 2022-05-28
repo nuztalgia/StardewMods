@@ -174,6 +174,8 @@ internal class Dropdown : Widget.Composite {
     private readonly Background BackgroundWidget;
     private readonly Scrollbar ScrollbarWidget;
 
+    public bool HasScrollFocus => this.IsScrollable && this.BackgroundWidget.IsHovering;
+
     private int MaxScrollIndex => this.TotalItemCount - this.DisplayedItemCount;
     private int OutOfViewIndex => this.ScrollIndex + this.DisplayedItemCount;
 
@@ -278,9 +280,7 @@ internal class Dropdown : Widget.Composite {
     }
 
     public void OnScrolled(int scrollDelta) {
-      if (this.IsScrollable && this.BackgroundWidget.IsHovering) {
-        this.ScrollIndex -= scrollDelta / ScrollDeltaPerItem;
-      }
+      this.ScrollIndex -= scrollDelta / ScrollDeltaPerItem;
     }
 
     public void OnDismissed() {

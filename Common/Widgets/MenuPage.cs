@@ -13,16 +13,29 @@ internal abstract partial class Widget {
 
     private const int VerticalSpacing = 16;
 
+    private static MenuPage? ActivePage = null;
+    private static bool ActiveOverlayHasScrollFocus =>
+        (ActivePage != null) && (ActiveOverlay != null) && ActiveOverlay.HasScrollFocus;
+
     internal MenuPage(
         IEnumerable<Widget> orderedWidgets,
         IDictionary<Widget, Func<bool>>? hideableWidgets) : base(
-            hideableWidgets: hideableWidgets, linearMode: LinearMode.Vertical, isFullWidth: true) {
+            hideableWidgets: hideableWidgets,
+            linearMode: LinearMode.Vertical,
+            isFullWidth: true,
+            isHeightManager: true) {
 
       orderedWidgets.ForEach((Widget widget) => this.AddSubWidget(widget,
           postDraw: (ref Vector2 position, int _, int _) => position.Y += VerticalSpacing));
     }
 
-    internal static void Initialize(IInputEvents inputEvents) {
+    internal static void Initialize(string modId, IInputEvents inputEvents) {
+#if HARMONY
+      // This patch will only affect GMCM pages that were built using this class (MenuPage).
+      new HarmonyPatcher(modId)
+          .ForMethod("SpaceShared.UI.Scrollbar", "ScrollBy")?
+          .ApplyPrefixPatch(typeof(MenuPage), nameof(Scrollbar_ScrollBy_Prefix));
+#endif
       InputEvents = inputEvents;
     }
 
@@ -55,7 +68,7 @@ internal abstract partial class Widget {
 
       if (ActiveOverlayDrawPosition != default) {
         Widget widget = (ActiveOverlay as Widget)!;
-        (widget.Width, widget.Height) = widget.UpdateDimensions(TotalWidth);
+        (widget.Width, widget.Height) = widget.UpdateDimensions(ContainerWidth);
         widget.Draw(sb, ActiveOverlayDrawPosition);
       }
 
@@ -63,18 +76,35 @@ internal abstract partial class Widget {
     }
 
     private void OnMenuOpening() {
-      UpdateStaticWidths();
+      UpdateStaticDimensions();
       this.RefreshStateAndSize();
       InputEvents.MouseWheelScrolled += OnMouseWheelScrolled;
+      ActivePage = this;
     }
 
     private void OnMenuClosing() {
+      ActivePage = null;
       InputEvents.MouseWheelScrolled -= OnMouseWheelScrolled;
       this.RefreshStateAndSize();
     }
 
     private static void OnMouseWheelScrolled(object? sender, MouseWheelScrolledEventArgs args) {
-      ActiveOverlay?.OnScrolled(scrollDelta: args.Delta);
+      if (ActiveOverlayHasScrollFocus) {
+        ActiveOverlay?.OnScrolled(scrollDelta: args.Delta);
+      }
     }
+
+#if HARMONY
+    private static bool Scrollbar_ScrollBy_Prefix(ref int amount) {
+      if (ActiveOverlayHasScrollFocus) {
+        // When there's an active overlay with scroll focus, disregard external page scrolls.
+        amount = 0; 
+      } else if ((ActivePage != null) && (ActivePage.Height < ContainerHeight)) {
+        // On non-scrollable pages, force the scroll position to the top (and keep it there).
+        amount = int.MinValue;
+      }
+      return true;
+    }
+#endif
   }
 }

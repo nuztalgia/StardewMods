@@ -4,11 +4,14 @@ internal abstract partial class Widget {
 
   protected const int DefaultHeight = 48;
 
-  private const int MinTotalWidth = 1200;
-  private const int ViewportPadding = 200;
+  private const int MinContainerWidth = 1200;
+  private const int ViewportPaddingX = 200;
+  private const int ViewportPaddingY = 244;
 
   private static int ViewportWidth;
-  private static int TotalWidth;
+  private static int ViewportHeight;
+  private static int ContainerWidth;
+  private static int ContainerHeight;
 
   private static bool WasClickConsumed;
   private static bool WasMousePressed;
@@ -55,7 +58,7 @@ internal abstract partial class Widget {
     if (this.IsDrawable()) {
       this.Alignable?.Align(
           ref position, this.Width, this.Height,
-          containerWidth ?? TotalWidth, containerHeight ?? DefaultHeight,
+          containerWidth ?? ContainerWidth, containerHeight ?? ContainerHeight,
           (containerWidth == null) || (containerHeight == null));
       this.Interactable?.Update(position, this.Width, this.Height);
       this.Draw(sb, position);
@@ -65,7 +68,7 @@ internal abstract partial class Widget {
   private void RefreshStateAndSize() {
     ClearActiveOverlay();
     this.ResetState();
-    (this.Width, this.Height) = this.UpdateDimensions(TotalWidth);
+    (this.Width, this.Height) = this.UpdateDimensions(ContainerWidth);
   }
 
   protected static void TryPlaySound(string? soundName) {
@@ -74,10 +77,12 @@ internal abstract partial class Widget {
     }
   }
 
-  private static void UpdateStaticWidths() {
-    if (ViewportWidth != Game1.uiViewport.Width) {
+  private static void UpdateStaticDimensions() {
+    if ((ViewportWidth != Game1.uiViewport.Width) || (ViewportHeight != Game1.uiViewport.Height)) {
       ViewportWidth = Game1.uiViewport.Width;
-      TotalWidth = Math.Min(ViewportWidth - ViewportPadding, MinTotalWidth);
+      ViewportHeight = Game1.uiViewport.Height;
+      ContainerWidth = Math.Min(ViewportWidth - ViewportPaddingX, MinContainerWidth);
+      ContainerHeight = ViewportHeight - ViewportPaddingY;
     }
   }
 }

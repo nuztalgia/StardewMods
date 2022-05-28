@@ -5,6 +5,8 @@ internal interface IOverlayable {
   // Overlays do not occupy any actual "real estate" on the page.
   static readonly (int width, int height) Dimensions = (0, 0);
 
+  bool HasScrollFocus => false;
+
   bool TryConsumeClick();
 
   void OnScrolled(int scrollDelta) { }

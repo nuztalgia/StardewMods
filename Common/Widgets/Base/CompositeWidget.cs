@@ -16,14 +16,19 @@ internal abstract partial class Widget {
         Adjustment? PostDraw
     );
 
-    private readonly IList<SubWidget> SubWidgets = new List<SubWidget>();
+    private readonly List<SubWidget> SubWidgets = new();
+    private readonly HashSet<Widget> HiddenWidgets = new();
+
     private readonly IDictionary<Widget, Func<bool>>? HideableWidgets;
     private readonly LinearMode Mode;
     private readonly bool IsFullWidth;
+    private readonly bool IsHeightManager;
 
     protected int SubWidgetCount => this.SubWidgets.Count;
     protected int CompositeWidth => this.Width;
     protected int CompositeHeight => this.Height;
+
+    private bool ShouldUpdateDimensionsOnDraw = false;
 
     protected Composite(
         string? name = null,
@@ -31,12 +36,14 @@ internal abstract partial class Widget {
         Alignment? alignment = null,
         IDictionary<Widget, Func<bool>>? hideableWidgets = null,
         LinearMode linearMode = LinearMode.Off,
-        bool isFullWidth = false)
+        bool isFullWidth = false,
+        bool isHeightManager = false)
             : base(name, tooltip, alignment) {
 
       this.HideableWidgets = hideableWidgets;
       this.Mode = linearMode;
       this.IsFullWidth = isFullWidth;
+      this.IsHeightManager = isHeightManager;
     }
 
     protected void AddSubWidget(
@@ -46,8 +53,9 @@ internal abstract partial class Widget {
 
     protected override sealed (int width, int height) UpdateDimensions(int totalWidth) {
       (int width, int height) = (0, 0);
+      int? managedHeight = null;
 
-      this.ForEachWidget((Widget widget) => {
+      foreach ((Widget widget, Adjustment? preDraw, Adjustment? postDraw) in this.SubWidgets) {
         (widget.Width, widget.Height) = widget.UpdateDimensions(totalWidth);
 
         if (widget.NameLabel is Widget label) {
@@ -55,14 +63,24 @@ internal abstract partial class Widget {
           widget.Height = Math.Max(widget.Height, label.Height);
         }
 
+        if (this.IsHeightManager && (this.Mode == LinearMode.Vertical)) {
+          Vector2 measurement = Vector2.Zero;
+          preDraw?.Invoke(ref measurement, widget.Width, widget.Height);
+          postDraw?.Invoke(ref measurement, widget.Width, widget.Height);
+
+          managedHeight = this.ShouldDrawWidget(widget)
+              ? (height + widget.Height + (int) measurement.Y)
+              : 0;
+        }
+
         width = (this.Mode == LinearMode.Horizontal)
             ? width + widget.Width
             : Math.Max(width, widget.Width);
 
         height = (this.Mode == LinearMode.Vertical)
-            ? height + widget.Height
+            ? managedHeight ?? (height + widget.Height)
             : Math.Max(height, widget.Height);
-      });
+      }
 
       return (this is IOverlayable)
           ? IOverlayable.Dimensions
@@ -70,54 +88,61 @@ internal abstract partial class Widget {
     }
 
     protected override sealed void Draw(SpriteBatch sb, Vector2 position) {
+      if (this.ShouldUpdateDimensionsOnDraw) {
+        (this.Width, this.Height) = this.UpdateDimensions(ContainerWidth);
+        this.ShouldUpdateDimensionsOnDraw = false;
+      }
 
       foreach ((Widget widget, Adjustment? preDraw, Adjustment? postDraw) in this.SubWidgets) {
         if (widget == ActiveOverlay) {
           ActiveOverlayDrawPosition = new(position.X, position.Y);
-        } else if (!ShouldHideWidget(widget)) {
-          DrawSubWidget(widget, preDraw, postDraw);
-          AdjustPosition(widget);
-        }
-      }
+        } else if (this.ShouldDrawWidget(widget)) {
 
-      bool ShouldHideWidget(Widget widget) {
-        return (this.HideableWidgets != null)
-            && this.HideableWidgets.TryGetValue(widget, out Func<bool>? shouldHide)
-            && shouldHide();
-      }
+          preDraw?.Invoke(ref position, widget.Width, widget.Height);
+          widget.Draw(sb, position, this.Width, this.Height);
+          widget.NameLabel?.Draw(sb, position, this.Width, this.Height);
+          postDraw?.Invoke(ref position, widget.Width, widget.Height);
 
-      void DrawSubWidget(Widget widget, Adjustment? preDraw, Adjustment? postDraw) {
-        preDraw?.Invoke(ref position, widget.Width, widget.Height);
-        widget.Draw(sb, position, this.Width, this.Height);
-        widget.NameLabel?.Draw(sb, position, this.Width, this.Height);
-        postDraw?.Invoke(ref position, widget.Width, widget.Height);
-      }
-
-      void AdjustPosition(Widget widget) {
-        if (this.Mode == LinearMode.Horizontal) {
-          position.X += widget.Width;
-        } else if (this.Mode == LinearMode.Vertical) {
-          position.Y += widget.Height;
+          if (this.Mode == LinearMode.Horizontal) {
+            position.X += widget.Width;
+          } else if (this.Mode == LinearMode.Vertical) {
+            position.Y += widget.Height;
+          }
         }
       }
     }
 
     protected override void ResetState() {
-      this.ForEachWidget((Widget widget) => widget.ResetState());
+      foreach (SubWidget subWidget in this.SubWidgets) {
+        subWidget.Widget.ResetState();
+      }
     }
 
     protected override void SaveState() {
-      this.ForEachWidget((Widget widget) => widget.SaveState());
+      foreach (SubWidget subWidget in this.SubWidgets) {
+        subWidget.Widget.SaveState();
+      }
     }
 
     protected static (int width, int height) GetTextDimensions(TextWidget textWidget) {
       return textWidget.UpdateDimensions(int.MaxValue);
     }
 
-    private void ForEachWidget(Action<Widget> action) {
-      foreach (SubWidget subWidget in this.SubWidgets) {
-        action(subWidget.Widget);
+    private bool ShouldDrawWidget(Widget widget) {
+      if ((this.HideableWidgets == null)
+          || !this.HideableWidgets.TryGetValue(widget, out Func<bool>? hideWhen)) {
+        return true;
       }
+
+      bool shouldHide = hideWhen();
+
+      if (this.IsHeightManager && (shouldHide != this.HiddenWidgets.Contains(widget))) {
+        this.ShouldUpdateDimensionsOnDraw = true;
+        if (!this.HiddenWidgets.Add(widget)) {
+          this.HiddenWidgets.Remove(widget);
+        }
+      }
+      return !shouldHide;
     }
   }
 }
