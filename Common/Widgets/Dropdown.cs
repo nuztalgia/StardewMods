@@ -101,11 +101,9 @@ internal class Dropdown : Widget.Composite {
       }
     }
 
-    private class Scrollbar : Widget {
+    private class Scrollbar : Widget, IDraggable {
 
       private const int RawWidth = 6;
-      private const int ScaledWidth = RawWidth * PixelZoom;
-
       private const int RawBarHeight = 10;
       private const int RawTrackHeight = 6;
 
@@ -113,23 +111,24 @@ internal class Dropdown : Widget.Composite {
       private static readonly Rectangle TrackSourceRect = new(403, 383, RawWidth, RawTrackHeight);
 
       private readonly Func<int> GetMaxScrollIndex;
+      private readonly Action<int> SetScrollIndex;
+
+      public bool IsDragging { get; set; }
 
       private bool IsScrollable;
       private int TrackHeight;
       private int HeightMultiplier;
-
-      private int HorizontalOffset;
       private int VerticalBarOffset;
 
-      internal Scrollbar(Func<int> getMaxScrollIndex) {
+      internal Scrollbar(Func<int> getMaxScrollIndex, Action<int> setScrollIndex) {
         this.GetMaxScrollIndex = getMaxScrollIndex;
+        this.SetScrollIndex = setScrollIndex;
       }
 
       internal void UpdateDrawInfo(bool isScrollable, int trackHeight) {
         this.IsScrollable = isScrollable;
         this.TrackHeight = trackHeight;
         this.HeightMultiplier = trackHeight - (RawBarHeight * PixelZoom);
-        this.HorizontalOffset = BackgroundWidth - ScaledWidth;
       }
 
       internal void UpdateScrollIndex(int scrollIndex) {
@@ -138,16 +137,23 @@ internal class Dropdown : Widget.Composite {
       }
 
       protected override (int width, int height) UpdateDimensions(int totalWidth) {
-        return this.IsScrollable ? (ScaledWidth, this.TrackHeight) : (0, 0);
+        return this.IsScrollable ? (RawWidth * PixelZoom, this.TrackHeight) : (0, 0);
       }
 
       protected override void Draw(SpriteBatch sb, Vector2 position) {
-        if (this.IsScrollable) {
-          position.X += this.HorizontalOffset;
-          this.DrawFromCursors(sb, position, TrackSourceRect);
-          position.Y += this.VerticalBarOffset;
-          DrawFromCursors(sb, position, BarSourceRect);
+        if (!this.IsScrollable) {
+          return;
         }
+
+        if (this.IsDragging) {
+          int maxScrollIndex = this.GetMaxScrollIndex();
+          float unboundedIndex = (MousePositionY - position.Y) / this.TrackHeight * maxScrollIndex;
+          this.SetScrollIndex(Math.Clamp((int) unboundedIndex, 0, maxScrollIndex));
+        }
+
+        this.DrawFromCursors(sb, position, TrackSourceRect);
+        position.Y += this.VerticalBarOffset;
+        DrawFromCursors(sb, position, BarSourceRect);
       }
     }
 
@@ -229,10 +235,14 @@ internal class Dropdown : Widget.Composite {
       this.BackgroundWidget = new Background(
           clickAction: () => this.TryConsumeClick(),
           getRelativeSelectedIndex: () => this.GetSelectedIndex() - this.ScrollIndex);
-      this.ScrollbarWidget = new Scrollbar(getMaxScrollIndex: () => this.MaxScrollIndex);
+
+      this.ScrollbarWidget = new Scrollbar(
+          getMaxScrollIndex: () => this.MaxScrollIndex,
+          setScrollIndex: (index) => this.ScrollIndex = index);
 
       this.AddSubWidget(this.BackgroundWidget, preDraw: this.OnBackgroundDraw);
-      this.AddSubWidget(this.ScrollbarWidget, postDraw: TextOffsetAdjustment);
+      this.AddSubWidget(this.ScrollbarWidget,
+          preDraw: this.BeforeScrollbarDraw, postDraw: this.AfterScrollbarDraw);
 
       for (int i = 0; i < this.TotalItemCount; ++i) {
         int index = i; // Closure variable.
@@ -249,9 +259,12 @@ internal class Dropdown : Widget.Composite {
     }
 
     public bool TryConsumeClick() {
-      if (this.BackgroundWidget.IsHovering) {
-        // The dropdown will handle the click, and any widgets underneath the clicked item will
-        // be prevented from receiving/handling the click.
+      if (this.ScrollbarWidget.IsDragging) {
+        // Prevent the background and other widgets from receiving the end-of-scrollbar-drag click.
+        return true;
+      } else if (this.BackgroundWidget.IsHovering) {
+        // The dropdown's background (i.e. this expansion) will handle the click, and any widgets
+        // underneath the clicked item will be prevented from receiving/handling the click.
         this.ClickAction(this.BackgroundWidget.HoverIndex + this.ScrollIndex);
         return true;
       } else {
@@ -303,6 +316,19 @@ internal class Dropdown : Widget.Composite {
         this.ScrollbarWidget.UpdateDrawInfo(this.IsScrollable, this.BackgroundWidget.Height);
       }
     }
+
+    private void BeforeScrollbarDraw(ref Vector2 position, int width, int height) {
+      if (this.IsScrollable) {
+        position.X += BackgroundWidth - width;
+      }
+    }
+
+    private void AfterScrollbarDraw(ref Vector2 position, int width, int height) {
+      if (this.IsScrollable) {
+        position.X -= BackgroundWidth - width;
+      }
+      position += TextOffset;
+    }
   }
 
   private const int BackgroundPadding = 64;
@@ -314,10 +340,7 @@ internal class Dropdown : Widget.Composite {
 
   private static readonly Rectangle ButtonSourceRect = new(437, 450, RawButtonWidth, RawHeight);
   private static readonly Rectangle BackgroundSourceRect = new(433, 451, 3, 3);
-
   private static readonly Vector2 TextOffset = new(x: 12, y: 9);
-  private static readonly Adjustment TextOffsetAdjustment =
-      (ref Vector2 position, int _, int _) => position += TextOffset;
 
   private static int BackgroundWidth;
   private static int HighlightWidth;
@@ -356,7 +379,8 @@ internal class Dropdown : Widget.Composite {
 
     this.AddSubWidget(selection);
     this.AddSubWidget(expansion);
-    this.AddSubWidget(selectionText, preDraw: TextOffsetAdjustment);
+    this.AddSubWidget(selectionText,
+        preDraw: (ref Vector2 position, int _, int _) => position += TextOffset);
   }
 
   private static IEnumerable<string> GetUniqueValues(IEnumerable<string> allValues) {
