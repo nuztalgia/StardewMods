@@ -51,6 +51,7 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
       if (mainMenuPageWidget == null) {
         mainMenuPageBuilder!.EndPage();
       }
+      this.Api.Unregister(manifest); // Just in case.
       this.Api.Register(manifest, onReset, onSave);
       mainMenuPageWidget!.AddToConfigMenu(this.Api, this.Manifest);
     }
@@ -69,6 +70,11 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
       }
       return menuBuilder;
     }
+  }
+
+  internal IConfigPageBuilder CreateSinglePageMenuBuilder(IManifest? modManifest = null) {
+    this.CreateMenuBuilder(out IConfigPageBuilder pageBuilder, modManifest);
+    return pageBuilder;
   }
 
   internal void OpenMenuForMod(IManifest modManifest) {

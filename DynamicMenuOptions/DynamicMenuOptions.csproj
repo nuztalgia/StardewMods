@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>DynamicMenuOptions</AssemblyName>
+    <Version>0.1.0</Version>
+    <RootNamespace>Nuztalgia.StardewMods.DynamicMenuOptions</RootNamespace>
+    <DefineConstants>GMCM; HARMONY; MOD_REGISTRY</DefineConstants>
+  </PropertyGroup>
+
+  <Import Project="..\common.targets" />
+
+</Project>

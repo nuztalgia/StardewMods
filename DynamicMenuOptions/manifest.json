@@ -1,0 +1,20 @@
+{
+  "Name": "Dynamic Menu Options",
+  "Author": "Nuztalgia",
+  "Version": "0.1.0",
+  "Description": "WIP!",
+  "UniqueID": "Nuztalgia.DynamicMenuOptions",
+  "UpdateKeys": [],
+  "MinimumApiVersion": "3.14.6",
+  "EntryDll": "DynamicMenuOptions.dll",
+  "Dependencies": [
+    {
+      "UniqueID": "Pathoschild.ContentPatcher",
+      "MinimumVersion": "1.26.5"
+    },
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "MinimumVersion": "1.9.1"
+    }
+  ]
+}
