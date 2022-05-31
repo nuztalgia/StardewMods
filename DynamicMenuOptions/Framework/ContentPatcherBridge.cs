@@ -16,24 +16,19 @@ internal static class ContentPatcherBridge {
   internal static string MissingMethodText { get; private set; } = string.Empty;
 
   internal static void Initialize(string modId, Action onContentPatcherInitialized) {
-    MethodInfo? readConfigFile = GetContentPatcherMethod("Framework.ConfigFileHandler:Read");
+    MethodInfo? readConfig = GetContentPatcherMethod("Framework.ConfigFileHandler:Read");
     MethodInfo? initializeMod = GetContentPatcherMethod("ModEntry:Initialize");
 
-    if ((readConfigFile == null) || (initializeMod == null)) {
+    if ((readConfig == null) || (initializeMod == null)) {
       return;
     }
 
+    HarmonyPatcher harmonyPatcher = new(modId, typeof(ContentPatcherBridge));
+    harmonyPatcher.ForMethod(readConfig).ApplyPostfixPatch(nameof(ConfigFileHandler_Read_Postfix));
+    harmonyPatcher.ForMethod(initializeMod).ApplyPostfixPatch(nameof(ModEntry_Initialize_Postfix));
+
     AllRawConfigs = new Dictionary<string, object?>();
     OnContentPatcherInitialized = onContentPatcherInitialized;
-
-    HarmonyPatcher harmonyPatcher = new(modId);
-    ApplyPostfix(readConfigFile, nameof(ConfigFileHandler_Read_Postfix));
-    ApplyPostfix(initializeMod, nameof(ModEntry_Initialize_Postfix));
-
-    void ApplyPostfix(MethodInfo originalMethod, string patchMethodName) {
-      harmonyPatcher.ForMethod(originalMethod)
-          .ApplyPostfixPatch(typeof(ContentPatcherBridge), patchMethodName);
-    }
 
     static MethodInfo? GetContentPatcherMethod(string methodName) {
       string qualifiedMethodName = $"ContentPatcher.{methodName}";

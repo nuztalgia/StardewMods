@@ -32,9 +32,9 @@ internal abstract partial class Widget {
     internal static void Initialize(string modId, IInputEvents inputEvents) {
 #if HARMONY
       // This patch will only affect GMCM pages that were built using this class (MenuPage).
-      new HarmonyPatcher(modId)
+      new HarmonyPatcher(modId, typeof(MenuPage))
           .ForMethod("SpaceShared.UI.Scrollbar", "ScrollBy")?
-          .ApplyPrefixPatch(typeof(MenuPage), nameof(Scrollbar_ScrollBy_Prefix));
+          .ApplyPrefixPatch(nameof(Scrollbar_ScrollBy_Prefix));
 #endif
       InputEvents = inputEvents;
     }

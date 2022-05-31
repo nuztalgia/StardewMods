@@ -22,12 +22,16 @@ internal static class ModRegistryUtils {
     return SmapiModRegistry.Get(modId)?.Manifest;
   }
 
+  internal static Dictionary<string, string>? LoadConfigFromContentPack(string modId) {
+    return LoadExternalAsset<IContentPack, Dictionary<string, string>>(modId, "config.json");
+  }
+
   internal static Texture2D? LoadImageFromContentPack(string modId, string assetPath) {
     return LoadExternalAsset<IContentPack, Texture2D>(modId, assetPath);
   }
 
-  internal static Dictionary<string, string>? LoadConfigFromContentPack(string modId) {
-    return LoadExternalAsset<IContentPack, Dictionary<string, string>>(modId, "config.json");
+  internal static List<TItem>? LoadListDataFromContentPack<TItem>(string modId, string assetPath) {
+    return LoadExternalAsset<IContentPack, List<TItem>>(modId, assetPath);
   }
 
   private static TAsset? LoadExternalAsset<TMod, TAsset>(string modId, string assetPath)
@@ -42,7 +46,7 @@ internal static class ModRegistryUtils {
       try {
         return contentHelper.Load<TAsset>(assetPath);
       } catch (ContentLoadException) {
-        Log.Debug($"Couldn't load '{typeof(TAsset)}' asset '{assetPath}' from mod '{modId}'.");
+        Log.Error($"Couldn't load '{typeof(TAsset)}' asset '{assetPath}' from mod '{modId}'.");
       }
     }
     return default;

@@ -5,18 +5,17 @@ internal static class PatchHelper {
   private const string ChatCommandsModId = "cat.chatcommands";
 
   internal static void ApplyPatches(string modId) {
-    HarmonyPatcher patcher = new HarmonyPatcher(modId);
-    Type type = typeof(PatchHelper);
+    HarmonyPatcher patcher = new (modId, typeof(PatchHelper));
 
     patcher.ForMethod("StardewModdingAPI.Framework.CommandManager", "TryParse")?
-        .ApplyPrefixPatch(type, nameof(CommandManager_TryParse_Prefix));
+        .ApplyPrefixPatch(nameof(CommandManager_TryParse_Prefix));
 
     patcher.ForMethod("StardewModdingAPI.Framework.ModHelpers.CommandHelper", "Trigger")?
-        .ApplyPrefixPatch(type, nameof(CommandHelper_Trigger_Prefix));
+        .ApplyPrefixPatch(nameof(CommandHelper_Trigger_Prefix));
 
     if (ModRegistryUtils.IsLoaded(ChatCommandsModId)) {
       patcher.ForMethod("ChatCommands.CommandValidator", "IsValidCommand")?
-          .ApplyPrefixPatch(type, nameof(CommandValidator_IsValidCommand_Prefix));
+          .ApplyPrefixPatch(nameof(CommandValidator_IsValidCommand_Prefix));
     }
   }
 

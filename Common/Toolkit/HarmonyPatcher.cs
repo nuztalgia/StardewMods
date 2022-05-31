@@ -1,37 +1,47 @@
 namespace Nuztalgia.StardewMods.Common;
 
-internal class HarmonyPatcher {
+internal sealed class HarmonyPatcher {
 
   internal interface IMethodPatcher {
-    void ApplyPrefixPatch(Type methodType, string methodName);
-    void ApplyPostfixPatch(Type methodType, string methodName);
-    void ApplyTranspilerPatch(Type methodType, string methodName);
-    void ApplyFinalizerPatch(Type methodType, string methodName);
+    void ApplyPrefixPatch(string methodName);
+    void ApplyPostfixPatch(string methodName);
+    void ApplyTranspilerPatch(string methodName);
+    void ApplyFinalizerPatch(string methodName);
   }
 
-  private record MethodPatcher(Harmony Harmony, MethodInfo OriginalMethod) : IMethodPatcher {
+  private sealed class MethodPatcher : IMethodPatcher {
 
     private enum PatchType { Prefix, Postfix, Transpiler, Finalizer }
 
-    public void ApplyPrefixPatch(Type methodType, string methodName) {
-      this.TryApplyPatch(methodType, methodName, PatchType.Prefix);
+    private readonly Harmony Harmony;
+    private readonly Type SourceType;
+    private readonly MethodInfo OriginalMethod;
+
+    internal MethodPatcher(HarmonyPatcher harmonyPatcher, MethodInfo originalMethod) {
+      this.Harmony = harmonyPatcher.Harmony;
+      this.SourceType = harmonyPatcher.SourceType;
+      this.OriginalMethod = originalMethod;
     }
 
-    public void ApplyPostfixPatch(Type methodType, string methodName) {
-      this.TryApplyPatch(methodType, methodName, PatchType.Postfix);
+    public void ApplyPrefixPatch(string methodName) {
+      this.TryApplyPatch(methodName, PatchType.Prefix);
     }
 
-    public void ApplyTranspilerPatch(Type methodType, string methodName) {
-      this.TryApplyPatch(methodType, methodName, PatchType.Transpiler);
+    public void ApplyPostfixPatch(string methodName) {
+      this.TryApplyPatch(methodName, PatchType.Postfix);
     }
 
-    public void ApplyFinalizerPatch(Type methodType, string methodName) {
-      this.TryApplyPatch(methodType, methodName, PatchType.Finalizer);
+    public void ApplyTranspilerPatch(string methodName) {
+      this.TryApplyPatch(methodName, PatchType.Transpiler);
     }
 
-    private void TryApplyPatch(Type methodType, string methodName, PatchType patchType) {
+    public void ApplyFinalizerPatch(string methodName) {
+      this.TryApplyPatch(methodName, PatchType.Finalizer);
+    }
+
+    private void TryApplyPatch(string methodName, PatchType patchType) {
       try {
-        HarmonyMethod harmonyMethod = new(methodType, methodName);
+        HarmonyMethod harmonyMethod = new(this.SourceType, methodName);
         this.Harmony.Patch(
             original: this.OriginalMethod,
             prefix: (patchType is PatchType.Prefix) ? harmonyMethod : null,
@@ -45,9 +55,11 @@ internal class HarmonyPatcher {
   }
 
   private readonly Harmony Harmony;
+  private readonly Type SourceType;
 
-  internal HarmonyPatcher(string modId) {
+  internal HarmonyPatcher(string modId, Type sourceType) {
     this.Harmony = new Harmony(modId);
+    this.SourceType = sourceType;
   }
 
   internal IMethodPatcher? ForMethod(string qualifiedClassName, string originalMethodName) {
@@ -61,6 +73,10 @@ internal class HarmonyPatcher {
       return null;
     }
 
-    return new MethodPatcher(this.Harmony, originalMethod);
+    return this.ForMethod(originalMethod);
+  }
+
+  internal IMethodPatcher ForMethod(MethodInfo originalMethod) {
+    return new MethodPatcher(this, originalMethod);
   }
 }
