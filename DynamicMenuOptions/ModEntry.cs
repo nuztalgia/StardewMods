@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using StardewModdingAPI.Events;
 
 namespace Nuztalgia.StardewMods.DynamicMenuOptions;
@@ -52,42 +53,18 @@ internal sealed class ModEntry : BaseMod {
 
   private void OnContentPatcherInitialized() {
     if (this.ConfigMenu != null) {
-      // TODO: Add the managed mods' configs to GMCM as their own menus (not in this mod's menu).
-      IConfigPageBuilder pageBuilder = this.ConfigMenu.CreateSinglePageMenuBuilder();
-
-      foreach (string modId in this.RawMenuSpecs.Keys) {
-        pageBuilder.AddStaticHeader(ModRegistryUtils.GetModManifest(modId)?.Name ?? modId);
-        foreach (ConfigFieldData configField in ContentPatcherBridge.GetModConfig(modId)) {
-          AddConfigFieldWidget(pageBuilder, configField);
-        }
-      }
-      pageBuilder.EndPage().PublishMenu();
+      ConfigMenuBuilder.PopulateConfigMenu(
+          this.ConfigMenu,
+          this.RawMenuSpecs.ToImmutableDictionary(
+              kvp => kvp.Key, // Mod ID.
+              kvp => CreateModMenuData(kvp.Key, kvp.Value)));
     }
 
-    static void AddConfigFieldWidget(IConfigPageBuilder pageBuilder, ConfigFieldData configField) {
-      string name = configField.Key;
-      switch (configField.GetDataForUI()) {
-        case ConfigFieldData.CheckboxData checkboxData:
-          pageBuilder.AddCheckboxOption(name,
-              loadValue: () => checkboxData.CurrentValue,
-              saveValue: (value) => Log.Trace($"TODO: Save value '{value}' for checkbox {name}."));
-          return;
-        case ConfigFieldData.DropdownData dropdownData:
-          pageBuilder.AddDropdownOption(name,
-              allowedValues: dropdownData.AllowedValues,
-              loadValue: () => dropdownData.CurrentValue,
-              saveValue: (value) => Log.Trace($"TODO: Save value '{value}' for dropdown {name}."));
-          return;
-        case ConfigFieldData.SliderData sliderData:
-          pageBuilder.AddSliderOption(name,
-              loadValue: () => sliderData.CurrentValue,
-              saveValue: (value) => Log.Trace($"TODO: Save value '{value}' for slider {name}."));
-          return;
-        default:
-          // TODO: Implement TextField widget and use it to display TextFieldData.
-          Log.Error($"Unsupported widget type for config field {name}. Not adding it to the menu.");
-          break;
-      }
+    static ConfigMenuBuilder.ModMenuData CreateModMenuData(string modId, MenuSpec.RawData rawSpec) {
+      return new(
+          Manifest: ModRegistryUtils.GetModManifest(modId)!,
+          ConfigFields: ContentPatcherBridge.GetModConfig(modId),
+          MenuSpec: MenuSpec.ResolveData(modId, rawSpec));
     }
   }
 }

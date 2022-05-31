@@ -30,6 +30,8 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
     Action<string> logTrace = (message) => customLog(Log.Trace, message);
     Action<string> logVerbose = (message) => customLog(Log.Verbose, message);
 
+    logTrace("Initializing new menu builder.");
+
     IConfigMenuBuilder menuBuilder = new ConfigMenuBuilder(
         MenuId: manifest.UniqueID,
         Register: RegisterMenu,
@@ -53,12 +55,12 @@ internal sealed class GenericModConfigMenuIntegration : BaseIntegration<IGeneric
       }
       this.Api.Unregister(manifest); // Just in case.
       this.Api.Register(manifest, onReset, onSave);
-      mainMenuPageWidget!.AddToConfigMenu(this.Api, this.Manifest);
+      mainMenuPageWidget!.AddToConfigMenu(this.Api, manifest);
     }
 
     void AddPageToMenu(string pageId, string pageTitle, Widget.MenuPage menuPageWidget) {
       this.Api.AddPage(manifest, pageId, () => pageTitle);
-      menuPageWidget.AddToConfigMenu(this.Api, this.Manifest);
+      menuPageWidget.AddToConfigMenu(this.Api, manifest);
     }
 
     IConfigMenuBuilder EndMainMenuPage(Widget.MenuPage? menuPageWidget) {
