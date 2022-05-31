@@ -56,12 +56,38 @@ internal sealed class ModEntry : BaseMod {
       IConfigPageBuilder pageBuilder = this.ConfigMenu.CreateSinglePageMenuBuilder();
 
       foreach (string modId in this.RawMenuSpecs.Keys) {
-        pageBuilder.AddStaticHeader(modId);
-        foreach (ConfigFieldData configFieldData in ContentPatcherBridge.GetModConfig(modId)) {
-          pageBuilder.AddStaticText($"  > {configFieldData.Key}");
+        pageBuilder.AddStaticHeader(ModRegistryUtils.GetModManifest(modId)?.Name ?? modId);
+        foreach (ConfigFieldData configField in ContentPatcherBridge.GetModConfig(modId)) {
+          AddConfigFieldWidget(pageBuilder, configField);
         }
       }
       pageBuilder.EndPage().PublishMenu();
+    }
+
+    static void AddConfigFieldWidget(IConfigPageBuilder pageBuilder, ConfigFieldData configField) {
+      string name = configField.Key;
+      switch (configField.GetDataForUI()) {
+        case ConfigFieldData.CheckboxData checkboxData:
+          pageBuilder.AddCheckboxOption(name,
+              loadValue: () => checkboxData.CurrentValue,
+              saveValue: (value) => Log.Trace($"TODO: Save value '{value}' for checkbox {name}."));
+          return;
+        case ConfigFieldData.DropdownData dropdownData:
+          pageBuilder.AddDropdownOption(name,
+              allowedValues: dropdownData.AllowedValues,
+              loadValue: () => dropdownData.CurrentValue,
+              saveValue: (value) => Log.Trace($"TODO: Save value '{value}' for dropdown {name}."));
+          return;
+        case ConfigFieldData.SliderData sliderData:
+          pageBuilder.AddSliderOption(name,
+              loadValue: () => sliderData.CurrentValue,
+              saveValue: (value) => Log.Trace($"TODO: Save value '{value}' for slider {name}."));
+          return;
+        default:
+          // TODO: Implement TextField widget and use it to display TextFieldData.
+          Log.Error($"Unsupported widget type for config field {name}. Not adding it to the menu.");
+          break;
+      }
     }
   }
 }
