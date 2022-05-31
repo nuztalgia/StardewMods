@@ -9,6 +9,7 @@ internal sealed class ModEntry : BaseMod {
   private Dictionary<string, MenuSpec.RawData> RawMenuSpecs =>
       this.Helper.GameContent.Load<Dictionary<string, MenuSpec.RawData>>(DataAssetNameString);
 
+  private GenericModConfigMenuIntegration? ConfigMenu;
   private IAssetName? DataAssetName;
 
   protected override void OnModEntry() {
@@ -28,18 +29,12 @@ internal sealed class ModEntry : BaseMod {
       return;
     }
 
+    this.ConfigMenu = gmcmIntegration;
+
     this.Helper.Events.Content.AssetRequested += this.OnAssetRequested;
     this.Helper.Events.Content.AssetsInvalidated += this.OnAssetsInvalidated;
 
     _ = this.RawMenuSpecs; // Trigger an asset request so EditData patches can be applied/evaluated.
-
-    gmcmIntegration.CreateSinglePageMenuBuilder()
-        .AddStaticHeader("Hello World!")
-        .AddStaticText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
-            "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis " +
-            "nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
-        .EndPage()
-        .PublishMenu();
   }
 
   private void OnAssetRequested(object? sender, AssetRequestedEventArgs args) {
@@ -56,6 +51,17 @@ internal sealed class ModEntry : BaseMod {
   }
 
   private void OnContentPatcherInitialized() {
-    // TODO: Add the managed mods' config menus to GMCM.
+    if (this.ConfigMenu != null) {
+      // TODO: Add the managed mods' configs to GMCM as their own menus (not in this mod's menu).
+      IConfigPageBuilder pageBuilder = this.ConfigMenu.CreateSinglePageMenuBuilder();
+
+      foreach (string modId in this.RawMenuSpecs.Keys) {
+        pageBuilder.AddStaticHeader(modId);
+        foreach (ConfigFieldData configFieldData in ContentPatcherBridge.GetModConfig(modId)) {
+          pageBuilder.AddStaticText($"  > {configFieldData.Key}");
+        }
+      }
+      pageBuilder.EndPage().PublishMenu();
+    }
   }
 }
