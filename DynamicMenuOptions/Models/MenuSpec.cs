@@ -1,29 +1,28 @@
 namespace Nuztalgia.StardewMods.DynamicMenuOptions;
 
-public sealed record MenuSpec(List<MenuSpec.PageItem> MenuPage) {
+public sealed record MenuSpec(IEnumerable<MenuPageItem> MenuPageItems) {
 
   public sealed class RawData {
     // Exactly ONE of the following fields MUST be set to determine how this menu is loaded.
-    public List<PageItem>? MenuPage;
+    public List<MenuPageItem.RawData>? MenuPage;
     public string? MenuPageFile;
   }
 
-  public sealed class PageItem {
-    // TODO: Implement this.
-  }
-
   internal static MenuSpec ResolveData(string modId, RawData data) {
-    List<PageItem>? menuPage = data.MenuPage;
+    List<MenuPageItem.RawData>? menuPageData = data.MenuPage;
 
-    if (menuPage == null) {
-      if (data.MenuPageFile != null) {
-        menuPage = ModRegistryUtils.LoadListDataFromContentPack<PageItem>(modId, data.MenuPageFile);
+    if (menuPageData == null) {
+      if (data.MenuPageFile is string fileName) {
+        menuPageData =
+            ModRegistryUtils.LoadListDataFromContentPack<MenuPageItem.RawData>(modId, fileName);
       } else {
-        Log.Error($"[{modId}] Menu is not properly defined and will appear blank. " +
-            "(To fix this, specify either a MenuPage or a MenuPageFile.)");
+        Log.Error($"Menu for mod '{modId}' is improperly defined and will appear blank in GMCM.");
       }
     }
 
-    return new MenuSpec(MenuPage: menuPage ?? new List<PageItem>());
+    return new MenuSpec(
+        MenuPageItems: (menuPageData != null)
+            ? MenuPageItem.ResolveData(modId, menuPageData)
+            : new List<MenuPageItem>());
   }
 }
